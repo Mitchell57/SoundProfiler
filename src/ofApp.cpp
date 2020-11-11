@@ -10,12 +10,15 @@ void ofApp::setup(){
     // 44100 samples per second
     // 4096 samples per buffer
     // 4 num buffers (latency)
-    bufferSize = 4096;
+    //bufferSize = 4096;
     
     // Create FFT and ChromaticParse objects
-    fft = ofxFft::create(bufferSize, OF_FFT_WINDOW_BARTLETT);
+    
     //std::vector<int> binlist = freq2bin();
     //cp.init(fft->binlist);
+    inputBool = true;
+    
+    
     
     oct_size = chromaticScale.size();
     singleOctave = new float[oct_size];
@@ -28,11 +31,27 @@ void ofApp::setup(){
     }
     
     // Setup soundstream (default output / input channels)
-    // On Mac:
-    //      0 = current audio output device
-    //      1 = current audio input device
-    ofSoundStreamSetup(0, 1, this, 44100, bufferSize, 4);
-    //ofSoundStreamStart();
+    // 2 output channels,
+    // 1 input channel
+    // 44100 samples per second
+    // 4096 samples per buffer
+    // 4 num buffers (latency)
+    //bufferSize = 4096;
+    file.openFile(ofToDataPath("flamenco-sketches.wav",true));
+    stk::Stk::setSampleRate(44100.0);
+    int bufferSize = 4096;
+    ofSoundStreamSettings settings;
+    settings.setOutListener(this);
+    settings.setInListener(this);
+    settings.numOutputChannels = 2;
+    settings.numInputChannels = 1;
+    settings.numBuffers = 8;
+    settings.bufferSize = bufferSize;
+    soundStream.setup(settings);
+    
+    fftIn = ofxFft::create(bufferSize, OF_FFT_WINDOW_BARTLETT);
+    fftOut = ofxFft::create(bufferSize, OF_FFT_WINDOW_BARTLETT);
+    
     
     // Graph initialization
     //  bars take up 80% of total width
@@ -50,64 +69,143 @@ void ofApp::setup(){
 }
 
 //--------------------------------------------------------------
-void ofApp::audioReceived(float* input, int bufferSize, int nChannels) {
-    
-    
-    // Scale audio input frame to {-1, 1}
-    float maxValue = 0;
-    for(int i = 0; i < bufferSize; i++) {
-        if(abs(input[i]) > maxValue) {
-            maxValue = abs(input[i]);
+void ofApp::audioIn(ofSoundBuffer& buffer) {
+    if(inputBool){
+        auto& input = buffer.getBuffer();
+        auto bufferSize = buffer.getNumFrames();
+        auto numChannels = buffer.getNumChannels();
+        stk::StkFrames frames(bufferSize,numChannels);
+        
+        if(numChannels > 1){
+            stk::StkFrames leftChannel(bufferSize,1);
+            frames.getChannel(0, leftChannel, 0);
+            for (int i = 0; i < bufferSize ; i++) {
+                input[2*i] = leftChannel(i,0);
+                input[2*i+1] = leftChannel(i,0);
+            }
         }
-    }
-    for(int i = 0; i < bufferSize; i++) {
-        input[i] = input[i] / maxValue;
-    }
-    
-    
-    // Send scaled frame to FFT
-    fft->setSignal(input);
-    
-    const std::lock_guard<std::mutex> lock(mtx);
-    // Sum values per note across octaves
-    float single_max = 0;
-    for(int i=0; i<oct_size; i++){
-        float val = 0;
-        for(int j=-2; j<3; j+=1){
-            val += fft->getAmplitudeAtFrequency(chromaticScale[i]*pow(2, j));
+
+        // Scale audio input frame to {-1, 1}
+        float maxValue = 0;
+        float* normalizedOut = new float[bufferSize];
+        for(int i = 0; i < bufferSize; i+=2) {
+            if(abs((float)input[i]) > maxValue) {
+                maxValue = abs(input[i]);
+            }
             
         }
-        singleOctave[i] = val;
-        if(val > single_max) single_max = val;
+        for(int i = 0; i < bufferSize; i++) {
+            normalizedOut[i] = (float)input[i] / maxValue;
+        }
+            
+        // Send scaled frame to FFT
+        fftIn->setSignal(input);
+        
+        // audio listeners run in a separate thread
+        //   so we must ensure control before making changes to
+        //   a shared variable
+        const std::lock_guard<std::mutex> lock(mtx);
+        
+        // Sum values per note across octaves
+        float single_max = 0;
+        for(int i=0; i<oct_size; i++){
+            float val = 0;
+            for(int j=-2; j<3; j+=1){
+                val += fftIn->getAmplitudeAtFrequency(chromaticScale[i]*pow(2, j));
+                
+            }
+            singleOctave[i] = val;
+            if(val > single_max) single_max = val;
+        }
+        
+        for(int i=0; i<oct_size; i++){
+            singleOctave[i] /= single_max;
+        }
+        
     }
-    for(int i=0; i<oct_size; i++){
-        singleOctave[i] /= single_max;
-    }
-    
-    
-    // Get amplitude bins from FFT
-    //float* curFft = fft->getAmplitude();
+}
 
+//--------------------------------------------------------------
+void ofApp::audioOut(ofSoundBuffer& buffer){
+    if( !inputBool ){
+        auto& output = buffer.getBuffer();
+        auto bufferSize = buffer.getNumFrames();
+        if (shouldPlayAudio) {
+            stk::StkFrames frames(bufferSize,2);
+            file.tick(frames);
+            
+            // the file is usually 2 channels , however we only want one
+            // so we will just use the left channel.
+            stk::StkFrames leftChannel(bufferSize,1);
+            // copy the left Channel of 'frames' into `leftChannel`
+            frames.getChannel(0, leftChannel, 0);
+            for (int i = 0; i < bufferSize ; i++) {
+                output[2*i] = leftChannel(i,0);
+                output[2*i+1] = leftChannel(i,0);
+            }
+        }
+
+        // Scale audio input frame to {-1, 1}
+        float maxValue = 0;
+        float* normalizedOut = new float[bufferSize];
+        for(int i = 0; i < bufferSize; i+=2) {
+            if(abs((float)output[i]) > maxValue) {
+                maxValue = abs(output[i]);
+            }
+            
+        }
+        for(int i = 0; i < bufferSize; i++) {
+            normalizedOut[i] = (float)output[i] / maxValue;
+        }
+        
+        // Send scaled frame to FFT
+        fftOut->setSignal(output);
+        
+        // audio listeners run in a separate thread
+        //   so we must ensure control before making changes to
+        //   a shared variable
+        const std::lock_guard<std::mutex> lock(mtx);
+        
+        // Sum values per note across octaves
+        float single_max = 0;
+        for(int i=0; i<oct_size; i++){
+            float val = 0;
+            for(int j=-2; j<3; j+=1){
+                val += fftOut->getAmplitudeAtFrequency(chromaticScale[i]*pow(2, j));
+                
+            }
+            singleOctave[i] = val;
+            if(val > single_max) single_max = val;
+        }
+        for(int i=0; i<oct_size; i++){
+            singleOctave[i] /= single_max;
+        }
+        //printf("max: %f\n", outputTotal);
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    // audio listeners run in a separate thread
+    //   so we must ensure control before making changes to
+    //   a shared variable
     const std::lock_guard<std::mutex> lock(mtx);
+    
+    // copy octave data to buffer
     memcpy(buffer, singleOctave, oct_size*sizeof(float));
     
 }
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-    //ofSoundStreamStop();
-    //ofSoundStreamClose();
+
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     
     // Update display data
-    for(int i=0; i<oct_size; i++){
+    /*for(int i=0; i<oct_size; i++){
         float diff = buffer[i] - displayOctave[i];
         if(diff > 0){
             if(buffer[i] >= displayOctave[i]*1.2){
@@ -125,16 +223,18 @@ void ofApp::draw(){
                 displayOctave[i] = buffer[i];
             }
         }
-    }
+    }*/
     
+    // NaN checker
+    // (doesn't get used often but sometimes it's helpful
     if(displayOctave[0] != displayOctave[0]){
         for(int i=0; i<oct_size; i++){
             displayOctave[i] = 0.01;
         }
     }
-    /*for(int i=0; i<oct_size; i++){
-        displayOctave[i] = singleOctave[i];
-    }*/
+    for(int i=0; i<oct_size; i++){
+        displayOctave[i] = buffer[i];
+    }
     
     
     // Initialize graph values
@@ -143,6 +243,12 @@ void ofApp::draw(){
     int octaveNum = 0;
     int labelXOffset = max((barWidth-15)/2, 0);
     int yPos;
+    
+    string mode;
+    if(inputBool) mode = "input";
+    else mode = "output";
+    ofDrawBitmapString(mode, 10, 10);
+    
     
     ofPushMatrix();
     ofTranslate(margin, y_offset); //Move to bottom-left corner for start
@@ -192,8 +298,15 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+    if (key == ' ') {
+        shouldPlayAudio = !shouldPlayAudio;
+    }
+    if (key == 'm'){
+        inputBool = !inputBool;
+    }
 }
+
+
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
@@ -271,7 +384,7 @@ std::vector<int> ofApp::freq2bin(){
     
     // Translate frequency list to bin list
     for(int i=0; i<freqlist.size(); i++){
-        float bin = fft->getBinFromFrequency(freqlist[i], 44100);
+        float bin = fftIn->getBinFromFrequency(freqlist[i], 44100);
         binlist.push_back((int)bin);
     }
     

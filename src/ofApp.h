@@ -2,11 +2,13 @@
 
 #include "ofMain.h"
 #include "ofxFft.h"
+#include "ofxStk.h"
 #include "chromaticParse.hpp"
 #include <mutex>          // std::mutex
 
 #define WIN_WIDTH 600
 #define WIN_HEIGHT 600
+
 
 class ofApp : public ofBaseApp{
 
@@ -28,13 +30,21 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
         
-        void audioReceived(float* input, int bufferSize, int nChannels);
+        void audioIn(ofSoundBuffer& buffer);
+        void audioOut(ofSoundBuffer& buffer);
+        void soundstream_init();
         std::vector<int> freq2bin();
+        
 
-        int bufferSize;
+        //int bufferSize;
     
-        ofxFft* fft;
-        ofSoundPlayer player;
+        ofxFft* fftIn;
+        ofxFft* fftOut;
+        stk::FileLoop file;
+        ofSoundStream soundStream;
+        bool shouldPlayAudio;
+        bool inputBool;
+
 
         std::vector<float> chromaticScale = {440, 466.16, 493.88, 523.25, 554.37, 587.33, 622.25, 659.26, 698.46, 739.99, 783.99, 830.61};
         std::vector<string> noteNames = {"A", "A#","B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"};
