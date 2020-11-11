@@ -21,29 +21,20 @@ ChromaticParse::~ChromaticParse(){}
 
 
 
-void ChromaticParse::init(int nbins){
+void ChromaticParse::init(int nbins, std::vector<int> binlist){
 
     numBins = nbins;
-    
+    chromaticBins = binlist;
     
     // Populate binList with 7 octaves of chromatic scale (centered at octave starting with A=440Hz)
     // Each octave is 2x the frequency of previous octave,
     // So by finding bin# of scale * successive powers of 2 we can obtain the bins
     // needed to find amplitude along a contiguous portion of chromatic scale
-    for(int i=-2; i<=3; i++){
-        for(int j=0; j<chromaticScale.size(); j++){
-            float freq = chromaticScale[j]*pow(2, i);
-            chromaticBins.push_back(freq2bin(freq, nbins));
-            oldRaw.push_back(0.0);
-            keyList.push_back(0);
-        }
-    }
+    
     
     singleOctave.resize(12);
     c_size = chromaticBins.size();
-    oldRaw.resize(c_size);
     raws.resize(c_size);
-    deltas.resize(c_size);
     delta_max = 0.0000001;
 }
 
@@ -64,12 +55,12 @@ void ChromaticParse::updateData(float* bins){
         if(raw > frame_max) frame_max = raw;
         if(harmonic > frame_max) frame_max=harmonic;
         raws[i] = raw*5;
-        deltas[i] = harmonic;
+        //deltas[i] = harmonic;
     }
     
     
     for(int i=0; i<c_size; i++){
-        deltas[i] /= frame_max;
+        //deltas[i] /= frame_max;
     }
 
     float single_max = 0;
@@ -87,10 +78,6 @@ void ChromaticParse::updateData(float* bins){
     parseData();
 }
 
-std::vector<int> ChromaticParse::getKeys(){
-    return keyList;
-}
-
 std::vector<float> ChromaticParse::getOctave(){
     return singleOctave;
 }
@@ -99,9 +86,6 @@ std::vector<float> ChromaticParse::getRaw(){
     return raws;
 }
 
-std::vector<float> ChromaticParse::getDeltas(){
-    return deltas;
-}
 
 int ChromaticParse::getCSize(){
     return c_size;

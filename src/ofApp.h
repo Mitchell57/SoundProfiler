@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofxFft.h"
 #include "chromaticParse.hpp"
+#include <mutex>          // std::mutex
 
 #define WIN_WIDTH 600
 #define WIN_HEIGHT 600
@@ -12,6 +13,7 @@ class ofApp : public ofBaseApp{
 	public:
 		void setup();
 		void update();
+        void exit();
 		void draw();
 
 		void keyPressed(int key);
@@ -25,33 +27,24 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-    
-        void chromaticPlot(vector<float> buffer, float width, float height);
-        void rawPlot(vector<float> buffer, float width, float height);
-        void barkPlot(vector<int> buffer, float width, float height);
-        void harmonicPlot(vector<float> buffer, float width, float height);
+        
         void audioReceived(float* input, int bufferSize, int nChannels);
-        void chromaticMap(vector<float> buffer, ofImage img);
-        
-    
-        int plotHeight, bufferSize, barkSize, windowSize, width, height;
-        float maxUp, maxDown;
-        
-        ChromaticParse cp;
+        std::vector<int> freq2bin();
+
+        int bufferSize;
     
         ofxFft* fft;
-        ofImage img;
-        ofShader shader;
-        ofPlanePrimitive plane;
-        
-        ofMutex soundMutex;
-        std::vector<int> middleBins;
-        std::vector<float> deltaBins;
-        std::vector<float> superRaw;
+        ofSoundPlayer player;
 
+        std::vector<float> chromaticScale = {440, 466.16, 493.88, 523.25, 554.37, 587.33, 622.25, 659.26, 698.46, 739.99, 783.99, 830.61};
         std::vector<string> noteNames = {"A", "A#","B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"};
         std::vector<ofColor> colors = {ofColor::red, ofColor::orange, ofColor::yellow, ofColor::greenYellow, ofColor::green, ofColor::aquamarine, ofColor::cyan, ofColor::cadetBlue, ofColor::blueViolet, ofColor::lavender, ofColor::purple, ofColor::pink};
     
         int barWidth, margin, maxHeight, y_offset;
+        float* singleOctave;
+        float* buffer;
+        float* displayOctave;
+        int oct_size;
     
+        std::mutex mtx;
 };
