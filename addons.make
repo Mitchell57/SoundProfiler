@@ -1,3 +1,3 @@
 ofxFft
+ofxGuiExtended
 ofxStk
-ofxVectorGraphics
