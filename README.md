@@ -24,5 +24,5 @@ Dependencies:
 4. Clone Project
     - Navigate to openFrameworks directory
     - Make new folder for lab project `mkdir apps/CS1L ; cd apps/CS1L`
-    - Clone project `git clone git@github.com:Mitchell57/SoundProfiler.git'
+    - Clone project `git clone git@github.com:Mitchell57/SoundProfiler.git`
 5. Open project in XCode and run!
