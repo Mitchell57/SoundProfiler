@@ -6,7 +6,7 @@ Dependencies:
 - ofxStk: Used for audio input / output, audio file management
 - ofxGuiExtended: Used to display data and control settings
 
-## Installation  
+## Installation (Mac) 
 1. Install [openFrameworks](https://openframeworks.cc/download/)
 2. (optional) Install SoundFlower for input streaming
     - Download and install [SoundFlower](https://github.com/mattingalls/Soundflower/releases/tag/2.0b2)
