@@ -104,7 +104,7 @@ void ofApp::setup(){
     fileManager->add(loadButton.set("Load File"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
     fileManager->add(playButton.set("Play / Pause"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
     fileManager->minimize();
-    panel->addSpacer(0,10);
+    panel->addSpacer(0,5);
     
     // Graph / Data Controls
     graphControls = panel->addGroup("Graph Controls");
@@ -129,10 +129,12 @@ void ofApp::loadFile(){
         ofFileDialogResult result = ofSystemLoadDialog("Load file");
         if(result.bSuccess) {
             string path = result.getPath();
+            string name = result.getName();
             cout << path << endl;
-            if(path.substr(path.length()-4).compare("wav") == 0){
+
+            if(0 == path.compare (path.length() - 3, 3, "wav")){
                 file.openFile(ofToDataPath(path,true));
-                filePath.set(result.getName());
+                filePath.set(name);
             }
             else{
                 ofSystemAlertDialog("Error: Must load .wav file");
@@ -330,20 +332,17 @@ void ofApp::analyzeAudio(std::vector<float> sample, int bufferSize){
     }
     
     // Normalize summed data
-    //if(scale_max != 0){
-        for(int i=0; i<oct_size; i++){
-            audioData[i] /= scale_max;
-        }
-   // }
+    for(int i=0; i<oct_size; i++){
+        audioData[i] /= scale_max;
+    }
+
     
     // Normalize individual data
-    //if(single_max != 0){
-        for(int i=oct_size; i<wholeDataSize; i++){
-            audioData[i] /= single_max;
-        }
-    //}
+    for(int i=oct_size; i<wholeDataSize; i++){
+        audioData[i] /= single_max;
+    }
     
-    cout << single_max << " : " << scale_max << endl;
+    // Note: This will output NaN when there is no sound, but this is accounted for
 }
 
 //--------------------------------------------------------------
