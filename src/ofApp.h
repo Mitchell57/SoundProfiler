@@ -4,7 +4,6 @@
 #include "ofxFft.h"
 #include "ofxStk.h"
 #include "ofxGuiExtended.h"
-#include "chromaticParse.hpp"
 #include <mutex>          // std::mutex
 
 #define WIN_WIDTH 800
@@ -44,7 +43,7 @@ class ofApp : public ofBaseApp{
         ofxFft* fft;
         stk::FileLoop file;
         ofSoundStream soundStream;
-        bool shouldPlayAudio, inputBool, shouldFactorAgg;
+        bool shouldPlayAudio, inputBool, shouldFactorAgg, shouldSmooth;
         
         std::vector<int> fullBinList;
         std::vector<float> freqlist;
@@ -75,14 +74,18 @@ class ofApp : public ofBaseApp{
         ofParameter<bool> inputToggle;
         ofParameter<bool> outputToggle;
         ofParameter<bool> factorToggle;
+        ofParameter<bool> smoothToggle;
         ofParameter<void> loadButton;
         ofParameter<void> playButton;
         ofParameter<void> resetButton;
+        ofParameter<string> filePath;
     
         ofxGuiGroup *audioModes, *graphControls;
         void inputPressed(bool &inputToggle);
         void outputPressed(bool &outputToggle);
         void factorAggPressed(bool &factorToggle);
+        void smoothPressed(bool &smoothToggle);
+        void loadFile();
         void loadButtonPresed();
         void playButtonPressed();
         void updateLayout(int w, int h);

@@ -5,12 +5,13 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
    
-    ofSetFrameRate(120);
+    ofSetFrameRate(60);
     inputBool = true;
-    shouldFactorAgg = true;
+    shouldFactorAgg = false;
+    shouldSmooth = false;
     
     bufferSize = 2048;
-    file.openFile(ofToDataPath("flamenco-sketches.wav",true));
+    //file.openFile(ofToDataPath("flamenco-sketches.wav",true));
     fft = ofxFft::create(bufferSize, OF_FFT_WINDOW_BARTLETT);
     
     // data array initialization
@@ -66,6 +67,8 @@ void ofApp::setup(){
     inputToggle.addListener(this, &ofApp::inputPressed);
     outputToggle.addListener(this, &ofApp::outputPressed);
     factorToggle.addListener(this, &ofApp::factorAggPressed);
+    smoothToggle.addListener(this, &ofApp::smoothPressed);
+    loadButton.addListener(this, &ofApp::loadFile);
     panel = gui.addGroup("Chromatic Profiler");
     //panel = gui.addPanel("Chromatic Profiler");
     panel->setPosition(10,10);
@@ -73,15 +76,35 @@ void ofApp::setup(){
     audioModes = panel->addGroup("Audio Mode");
     audioModes->add(inputToggle.set("Stream Audio", true));
     audioModes->add(outputToggle.set("Play File", false));
+    audioModes->minimize();
     panel->addSpacer(0,20);
     graphControls = panel->addGroup("Graph Controls");
-    graphControls->add(factorToggle.set("Factor Aggregate", true));
+    graphControls->add(smoothToggle.set("Smooth", false));
+    graphControls->add(factorToggle.set("Factor Octaves", false));
     panel->addSpacer(0,20);
-    panel->add(loadButton.set("Load File"));
-    panel->add(playButton.set("Play File"));
+    panel->add(filePath.set("Path/To/WavFile"));
+    panel->add(loadButton.set("Load File"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
+    //panel->add(playButton.set("Play File"));
     
     updateLayout(WIN_WIDTH, WIN_HEIGHT);
 }
+
+//--------------------------------------------------------------
+void ofApp::loadFile(){
+    ofFileDialogResult result = ofSystemLoadDialog("Load file");
+    if(result.bSuccess) {
+        string path = result.getPath();
+        cout << path << endl;
+        if(path.substr(path.length()-4).compare("wav")){
+            file.openFile(ofToDataPath(path,true));
+            filePath.set(result.getName());
+        }
+        else{
+            ofSystemAlertDialog("Error: Must load .wav file");
+            filePath.set("Invalid File Type");
+            //file.closeFile();
+        }
+    }}
 
 //--------------------------------------------------------------
 void ofApp::inputPressed(bool &inputToggle){
@@ -111,6 +134,11 @@ void ofApp::outputPressed(bool &outputToggle){
 //--------------------------------------------------------------
 void ofApp::factorAggPressed(bool &factorToggle){
     shouldFactorAgg = factorToggle;
+}
+
+//--------------------------------------------------------------
+void ofApp::smoothPressed(bool &smoothToggle){
+    shouldSmooth = smoothToggle;
 }
 
 //--------------------------------------------------------------
@@ -242,13 +270,22 @@ void ofApp::draw(){
         // NaN. skip frame
         if(!inputBool) clearGraphs();
     }
+    else if(shouldSmooth){
+        for(int i=0; i<wholeDataSize; i++){
+            if(!(buffer[i] != buffer[i])){
+                if(shouldFactorAgg && i >= oct_size) {
+                    displayData[i] = (buffer[i] + 2*displayData[i] + displayData[i%oct_size])/4.0;
+                }
+                else displayData[i] = (buffer[i] + displayData[i])/2;
+                if(displayData[i] < 0.5) displayData[i] *= displayData[i];
+            }
+        }
+    }
     else{
         for(int i=0; i<wholeDataSize; i++){
-            if(shouldFactorAgg && i >= oct_size) {
-                displayData[i] = (buffer[i] + 2*displayData[i] + displayData[i%oct_size])/4.0;
+            if(!(buffer[i] != buffer[i]) && buffer[i] < 1 && buffer[i] > -1){
+                displayData[i] = buffer[i];
             }
-            else displayData[i] = (buffer[i] + displayData[i])/2;
-            displayData[i] *= displayData[i];
         }
     }
     
@@ -396,9 +433,9 @@ void ofApp::drawMultiOctave(float width, float height){
         
         // Draw note label
         if(labelsOn){
-            ofSetColor(ofColor::white);
-            std::string label = noteNames[noteNum]+"\n"+to_string(octaveNum);
-            ofDrawBitmapString(label, x+labelXOffset, yPos);
+            //ofSetColor(ofColor::white);
+            //std::string label = noteNames[noteNum]+"\n"+to_string(octaveNum);
+            //ofDrawBitmapString(label, x+labelXOffset, yPos);
         }
         
         // increment x position, note, and octave (if necessary)
