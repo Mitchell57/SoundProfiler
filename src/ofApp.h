@@ -43,13 +43,13 @@ class ofApp : public ofBaseApp{
         ofxFft* fft;
         stk::FileLoop file;
         ofSoundStream soundStream;
-        bool shouldPlayAudio, inputBool, shouldFactorAgg, shouldSmooth;
+        bool shouldPlayAudio, shouldFactorAgg, shouldSmooth;
+        bool inputBool, loadPressed, playPressed;
         
         std::vector<int> fullBinList;
         std::vector<float> freqlist;
         std::vector<float> chromaticScale = {440, 466.16, 493.88, 523.25, 554.37, 587.33, 622.25, 659.26, 698.46, 739.99, 783.99, 830.61};
-        std::vector<string> noteNames = {"A", "A#","B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"};
-        std::vector<ofColor> colors = {ofColor::red, ofColor::orange, ofColor::yellow, ofColor::greenYellow, ofColor::green, ofColor::aquamarine, ofColor::cyan, ofColor::cadetBlue, ofColor::blueViolet, ofColor::lavender, ofColor::purple, ofColor::pink};
+        
     
     
     // Drawing
@@ -63,8 +63,10 @@ class ofApp : public ofBaseApp{
         float* buffer;
         float* displayData;
         int wholeDataSize, oct_size, scale_size;
-    
         std::mutex mtx;
+    
+        std::vector<string> noteNames = {"A", "A#","B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"};
+        std::vector<ofColor> colors = {ofColor::red, ofColor::orange, ofColor::yellow, ofColor::greenYellow, ofColor::green, ofColor::aquamarine, ofColor::cyan, ofColor::cadetBlue, ofColor::blueViolet, ofColor::lavender, ofColor::purple, ofColor::pink};
     
     
     // GUI
@@ -80,14 +82,13 @@ class ofApp : public ofBaseApp{
         ofParameter<void> resetButton;
         ofParameter<string> filePath;
     
-        ofxGuiGroup *audioModes, *graphControls;
+        ofxGuiGroup *audioModes, *graphControls, *fileManager;
         void inputPressed(bool &inputToggle);
         void outputPressed(bool &outputToggle);
         void factorAggPressed(bool &factorToggle);
         void smoothPressed(bool &smoothToggle);
         void loadFile();
-        void loadButtonPresed();
-        void playButtonPressed();
+        void playFile();
         void updateLayout(int w, int h);
     
         int singleW, singleH, multiW, multiH, singleXOffset, singleYOffset, multiXOffset, multiYOffset;

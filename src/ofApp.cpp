@@ -4,25 +4,43 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-   
-    ofSetFrameRate(60);
-    inputBool = true;
-    shouldFactorAgg = false;
-    shouldSmooth = false;
+    ofSetFrameRate(30);
+    ofBackground(40);
     
-    bufferSize = 2048;
-    //file.openFile(ofToDataPath("flamenco-sketches.wav",true));
+    // Boolean initialization
+    inputBool = true;
+    shouldFactorAgg = true;
+    shouldSmooth = true;
+    loadPressed = false;
+    
+    
+    // Buffer Size determines # of FFT Bins
+    // Ideally we want to make it as large as possible before it lags
+    bufferSize = 4096;
+    
+    
+    // Create FFT object
     fft = ofxFft::create(bufferSize, OF_FFT_WINDOW_BARTLETT);
     
-    // data array initialization
-    // build list of frequencies from A2-G#7
+    
+    // Data array initialization
+    // Builds list of frequencies from A2-G#7
     for(int i=-2; i<=3; i++){
         for(int j=0; j<chromaticScale.size(); j++){
             freqlist.push_back(chromaticScale[j]*pow(2, i));
         }
     }
+    
+    
+    // Builds corresponding list of FFT bins
     fullBinList = freq2bin();
     
+    
+    // Resize data structures
+    // In order to simplify passing octave + individual note data between
+    // audio and drawing threads, we use one array where:
+    //     audioData[0,oct_size-1] = octave data
+    //     audioData[oct_size, wholeDataSize] = individual note data
     oct_size = chromaticScale.size();
     scale_size = fullBinList.size();
     wholeDataSize = oct_size+scale_size;
@@ -31,10 +49,12 @@ void ofApp::setup(){
     buffer = new float[wholeDataSize];
     displayData = new float[wholeDataSize];
     
+    
     // Initialization for display values
     for(int i=0; i<wholeDataSize; i++){
         displayData[i] = 0.01;
     }
+    
     
     // Setup soundstream (default output / input channels)
     // 2 output channels,
@@ -54,65 +74,104 @@ void ofApp::setup(){
     soundStream.setup(settings);
     
     
+    // GUI Initialization
+    //--------------------------------------------------------------
     
-    
-    
-    // Dark grey background
-    ofBackground(40);
-    
-    
-    
-    
-    
+    // Button Listeners
     inputToggle.addListener(this, &ofApp::inputPressed);
     outputToggle.addListener(this, &ofApp::outputPressed);
     factorToggle.addListener(this, &ofApp::factorAggPressed);
     smoothToggle.addListener(this, &ofApp::smoothPressed);
     loadButton.addListener(this, &ofApp::loadFile);
+    playButton.addListener(this, &ofApp::playFile);
+    
+    // Main panel
     panel = gui.addGroup("Chromatic Profiler");
-    //panel = gui.addPanel("Chromatic Profiler");
     panel->setPosition(10,10);
     panel->setDraggable(false);
+    
+    // Input mode
     audioModes = panel->addGroup("Audio Mode");
+    audioModes->setShowHeader(false);
     audioModes->add(inputToggle.set("Stream Audio", true));
     audioModes->add(outputToggle.set("Play File", false));
-    audioModes->minimize();
-    panel->addSpacer(0,20);
-    graphControls = panel->addGroup("Graph Controls");
-    graphControls->add(smoothToggle.set("Smooth", false));
-    graphControls->add(factorToggle.set("Factor Octaves", false));
-    panel->addSpacer(0,20);
-    panel->add(filePath.set("Path/To/WavFile"));
-    panel->add(loadButton.set("Load File"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
-    //panel->add(playButton.set("Play File"));
+    panel->addSpacer(0,5);
     
+    // File Manager
+    fileManager = panel->addGroup("File Manager");
+    fileManager->setShowHeader(false);
+    fileManager->add(filePath.set("Path/To/WavFile"));
+    fileManager->add(loadButton.set("Load File"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
+    fileManager->add(playButton.set("Play / Pause"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
+    fileManager->minimize();
+    panel->addSpacer(0,10);
+    
+    // Graph / Data Controls
+    graphControls = panel->addGroup("Graph Controls");
+    graphControls->add(smoothToggle.set("Smooth", true));
+    graphControls->add(factorToggle.set("Factor Octaves", true));
+    graphControls->minimize();
+    
+    // Resize graph and GUI layout
     updateLayout(WIN_WIDTH, WIN_HEIGHT);
 }
 
 //--------------------------------------------------------------
 void ofApp::loadFile(){
-    ofFileDialogResult result = ofSystemLoadDialog("Load file");
-    if(result.bSuccess) {
-        string path = result.getPath();
-        cout << path << endl;
-        if(path.substr(path.length()-4).compare("wav")){
-            file.openFile(ofToDataPath(path,true));
-            filePath.set(result.getName());
+    
+    // Listener fires twice when pressed (click & release I think)
+    // So this check makes sure it only prompts once
+    if(!loadPressed){
+        loadPressed = true;
+        
+        // Opens system dialog asking for a file
+        // Checks to make sure it's .wav then loads
+        ofFileDialogResult result = ofSystemLoadDialog("Load file");
+        if(result.bSuccess) {
+            string path = result.getPath();
+            cout << path << endl;
+            if(path.substr(path.length()-4).compare("wav") == 0){
+                file.openFile(ofToDataPath(path,true));
+                filePath.set(result.getName());
+            }
+            else{
+                ofSystemAlertDialog("Error: Must load .wav file");
+                filePath.set("Invalid File Type");
+            }
         }
-        else{
-            ofSystemAlertDialog("Error: Must load .wav file");
-            filePath.set("Invalid File Type");
-            //file.closeFile();
-        }
-    }}
+    }
+    
+    loadPressed = false;
+    
+}
+
+//--------------------------------------------------------------
+void ofApp::playFile(){
+    
+    // Listener fires twice when pressed (click & release I think)
+    // So this check makes sure it only prompts once
+    if(!playPressed){
+        playPressed = true;
+        
+        shouldPlayAudio = !shouldPlayAudio;
+    }
+    
+    playPressed = false;
+    
+}
 
 //--------------------------------------------------------------
 void ofApp::inputPressed(bool &inputToggle){
-    //this->inputToggle.set(true);
     
+    // If input button is set to true and mode is not set to input
+    //     Set mode to input
+    //     Set output button to false
+    //     Hide file manager
+    //     Reset graphs
     if(!inputBool && inputToggle){
         inputBool = true;
         outputToggle.set(false);
+        fileManager->minimize();
         clearGraphs();
     }
 
@@ -121,11 +180,16 @@ void ofApp::inputPressed(bool &inputToggle){
 
 //--------------------------------------------------------------
 void ofApp::outputPressed(bool &outputToggle){
-    //this->outputToggle.set(true);
     
+    // If output button is set to true and mode is set to input
+    //     Set mode to output
+    //     Set input button to false
+    //     Show file manager
+    //     Reset graphs
     if(inputBool && outputToggle){
         inputBool = false;
         inputToggle.set(false);
+        fileManager->maximize();
         clearGraphs();
     }
     
@@ -139,25 +203,39 @@ void ofApp::factorAggPressed(bool &factorToggle){
 //--------------------------------------------------------------
 void ofApp::smoothPressed(bool &smoothToggle){
     shouldSmooth = smoothToggle;
+    
+    // If smoothing is off, octave factoring must also be off
+    if(!smoothToggle){
+        factorToggle.set(false);
+    }
 }
 
 //--------------------------------------------------------------
 void ofApp::audioIn(ofSoundBuffer& buffer) {
     if(inputBool){
+        
+        // Grab input buffer, size, and number of channels
         auto& input = buffer.getBuffer();
         auto bufferSize = buffer.getNumFrames();
         auto numChannels = buffer.getNumChannels();
+        
+        // Store those in an StkFrames structure
         stk::StkFrames frames(bufferSize,numChannels);
         
+        // Number of channels ~should~ always be 1, but if not, only use the left
         if(numChannels > 1){
             stk::StkFrames leftChannel(bufferSize,1);
             frames.getChannel(0, leftChannel, 0);
+            
+            // Audio buffer is interleaved {left frame, right frame, left frame, ...}
+            // So copy left frames into right frame spots
             for (int i = 0; i < bufferSize ; i++) {
                 input[2*i] = leftChannel(i,0);
                 input[2*i+1] = leftChannel(i,0);
             }
         }
-
+        
+        // Send buffer to analysis
         analyzeAudio(input, bufferSize);
         
     }
@@ -165,11 +243,18 @@ void ofApp::audioIn(ofSoundBuffer& buffer) {
 
 //--------------------------------------------------------------
 void ofApp::audioOut(ofSoundBuffer& buffer){
+    
     if( !inputBool ){
+        // Grab output buffer and size
         auto& output = buffer.getBuffer();
         auto bufferSize = buffer.getNumFrames();
+        
+        // If file is playing...
         if (shouldPlayAudio) {
+            // Create StkFrames object with current frames
             stk::StkFrames frames(bufferSize,2);
+            
+            // Move file forward
             file.tick(frames);
             
             // the file is usually 2 channels , however we only want one
@@ -183,8 +268,8 @@ void ofApp::audioOut(ofSoundBuffer& buffer){
             }
         }
 
+        // Send to analysis
         analyzeAudio(output, (int)bufferSize);
-        //printf("max: %f\n", outputTotal);
     }
 }
 
@@ -193,55 +278,82 @@ void ofApp::analyzeAudio(std::vector<float> sample, int bufferSize){
     // Scale audio input frame to {-1, 1}
     float maxValue = 0;
     float* normalizedOut = new float[bufferSize];
+    
     for(int i = 0; i < bufferSize; i+=2) {
         if(abs((float)sample[i]) > maxValue) {
             maxValue = abs(sample[i]);
         }
-        
     }
+    
     for(int i = 0; i < bufferSize; i++) {
         normalizedOut[i] = (float)sample[i] / maxValue;
     }
     
     // Send scaled frame to FFT
-    fft->setSignal(sample);
+    fft->setSignal(normalizedOut);
     
-    // audio listeners run in a separate thread
-    //   so we must ensure control before making changes to
-    //   a shared variable
+    // Audio listeners run in a separate thread
+    // so we must ensure control before making changes to a shared variable
     const std::lock_guard<std::mutex> lock(mtx);
     
-    // Sum values per note across octaves
+    // Max values for normalization
     float single_max = 0;
     float scale_max = 0;
+
+    
+    // Clear out summed data
     for(int i=0; i<oct_size; i++){
-        float val = 0;
-        for(int j=-2; j<3; j+=1){
-            val += fft->getAmplitudeAtFrequency(chromaticScale[i]*pow(2, j));
-            
-        }
-        audioData[i] = val;
-        if(val > single_max) single_max = val;
-    }
-    for(int i=0; i<oct_size; i++){
-        audioData[i] /= single_max;
+        audioData[i] = 0;
     }
     
-    for(int i=oct_size; i<wholeDataSize; i++){
-        float val = fft->getAmplitudeAtBin(fullBinList[i-oct_size]);
-        if(val > scale_max) scale_max = val;
-        audioData[i] = val;
+    
+    // Record new amplitudes for individual notes and summed notes
+    int note;
+    for(int i=0; i<scale_size; i++){
+        // Simplification for summing notes across octaves (i.e. every A, B, C, etc.)
+        note = i%12;
+        
+        float val = fft->getAmplitudeAtBin(fullBinList[i]);
+        
+        // record single note data / max
+        audioData[i+oct_size] = val; // individual notes start at audioData[oct_size]
+        if(val > single_max) {
+            single_max = val;
+        }
+        
+        
+        // Sum each note across octaves
+        audioData[note] += val;
+        if(i >= scale_size-oct_size){ // Only need to update max sums on last octave
+            if(audioData[note] > scale_max) scale_max = audioData[note];
+        }
     }
-    for(int i=oct_size; i<wholeDataSize; i++){
-        audioData[i] /= scale_max;
-    }
+    
+    // Normalize summed data
+    //if(scale_max != 0){
+        for(int i=0; i<oct_size; i++){
+            audioData[i] /= scale_max;
+        }
+   // }
+    
+    // Normalize individual data
+    //if(single_max != 0){
+        for(int i=oct_size; i<wholeDataSize; i++){
+            audioData[i] /= single_max;
+        }
+    //}
+    
+    cout << single_max << " : " << scale_max << endl;
 }
 
 //--------------------------------------------------------------
 void ofApp::clearGraphs(){
+    
+    // Reset graph during mode changes
     for(int i=0; i<wholeDataSize; i++){
         displayData[i] = 0.02;
     }
+    
 }
 
 //--------------------------------------------------------------
@@ -251,44 +363,62 @@ void ofApp::update(){
     //   a shared variable
     const std::lock_guard<std::mutex> lock(mtx);
     
-    // copy octave data to buffer
+    // copy analysis data to buffer for drawing
     memcpy(buffer, audioData, wholeDataSize*sizeof(float));
     
 }
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-
+    // I feel like I should be using this but whenever I add stuff it breaks
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+ 
+    // Smoothing+Moving data from buffer
     
-    // NaN checker
-    // (doesn't get used often but sometimes it's helpful
+    // NaN checker (doesn't get used often but sometimes it's helpful
     if(buffer[0] != buffer[0]){
         // NaN. skip frame
+        
+        // Clear graphs if NaN and on output mode (usually means file not playing)
         if(!inputBool) clearGraphs();
+        // Sometimes buffer will be NaN during input lag
+        // So if we reset the graph each time (on input mode) it would be jumpy
+        // Haven't observed the same issue on output
     }
+    
+    // At the moment, smoothing consists of:
+    //   - averaging new value with previous to make it less 'jumpy'
+    //   - squaring values below 0.5 to reduce noise
     else if(shouldSmooth){
         for(int i=0; i<wholeDataSize; i++){
-            if(!(buffer[i] != buffer[i])){
+                buffer[i] = ofClamp(buffer[i], 0, 1); // clamp new data
+                
+                // When octave data is factored in:
+                //    value = 0.25(new value) + 0.5(old value) + 0.25(overall note value)
                 if(shouldFactorAgg && i >= oct_size) {
                     displayData[i] = (buffer[i] + 2*displayData[i] + displayData[i%oct_size])/4.0;
                 }
-                else displayData[i] = (buffer[i] + displayData[i])/2;
-                if(displayData[i] < 0.5) displayData[i] *= displayData[i];
-            }
+                else{
+                    displayData[i] = (buffer[i] + 2*displayData[i])/3.0;
+                }
+                // Square values below 0.5 to reduce noise
+                if(displayData[i] < 0.3) displayData[i] *= displayData[i];
         }
     }
     else{
+        
+        // When smoothing is off,
         for(int i=0; i<wholeDataSize; i++){
-            if(!(buffer[i] != buffer[i]) && buffer[i] < 1 && buffer[i] > -1){
-                displayData[i] = buffer[i];
-            }
+            buffer[i] = ofClamp(buffer[i], 0, 1); // clamp new data
+            displayData[i] = buffer[i];           // write to display
         }
     }
     
+    
+    // Draw graphs
     ofPushMatrix();
     ofTranslate(singleXOffset,singleYOffset);
     drawSingleOctave(singleW, singleH);
@@ -303,6 +433,7 @@ void ofApp::draw(){
 //--------------------------------------------------------------
 void ofApp::drawSingleOctave(float width, float height){
     
+    // Draw border
     ofPushStyle();
     ofSetColor(ofColor::white);
     ofNoFill();
@@ -315,17 +446,24 @@ void ofApp::drawSingleOctave(float width, float height){
     ofPopStyle();
     
     // Initialize graph values
-    int dataSize = 12;
+    //    Data = Summed Octave
+    //    Bars take up 80% of total width
+    //    Margins take up rest of total width
+    //    Max bar height is 95% of height
+    //    Labels are displayed if bar width > 12 pixels
+    int dataSize = oct_size;
     barWidth = (((float)width) * 0.8) / (float)dataSize;
-    bool labelsOn = (barWidth > 12);
     margin = (((float)width) - barWidth*dataSize) / ((float)dataSize+1);
     maxHeight = ((float)height)*0.95;
     y_offset = (float)(height + maxHeight)/2;
+    bool labelsOn = (barWidth > 12);
+    
+    
     int x = 0;
     int noteNum = 0;
     int octaveNum = 0;
-    int labelXOffset = max((barWidth-15)/2, 0);
-    int yPos;
+    int labelXOffset = max((barWidth-15)/2, 0); // labels are ~15px, so offset centers them
+    int yPosLabel;
     
     ofPushMatrix();
     ofTranslate(margin, y_offset); //Move to bottom-left corner for start
@@ -346,11 +484,11 @@ void ofApp::drawSingleOctave(float width, float height){
         // y-axis is 'flipped' i.e. negative is upwards
         if(displayData[i] < 0.05 || displayData[i] != displayData[i]) {
             rect.height =  -3;
-            yPos = -6;
+            yPosLabel = -6;
         }
         else{
             rect.height = -displayData[i]*maxHeight;
-            yPos = std::max((int)rect.height-6, (int)-maxHeight-10);
+            yPosLabel = std::max((int)rect.height-6, (int)-maxHeight-10);
         }
         
         ofDrawRectangle(rect);
@@ -360,7 +498,7 @@ void ofApp::drawSingleOctave(float width, float height){
         if(labelsOn){
             ofSetColor(ofColor::white);
             std::string label = noteNames[noteNum];
-            ofDrawBitmapString(label, x+labelXOffset, yPos);
+            ofDrawBitmapString(label, x+labelXOffset, yPosLabel);
         }
         
         // increment x position, note, and octave (if necessary)
@@ -375,9 +513,11 @@ void ofApp::drawSingleOctave(float width, float height){
     ofPopMatrix();
 }
 
+// TODO: Merge these methods into one
 //--------------------------------------------------------------
 void ofApp::drawMultiOctave(float width, float height){
     
+    // Draw border
     ofPushStyle();
     ofSetColor(ofColor::white);
     ofNoFill();
@@ -390,17 +530,21 @@ void ofApp::drawMultiOctave(float width, float height){
     ofPopStyle();
     
     // Initialize graph values
+    //    Data = Summed Octave
+    //    Bars take up 80% of total width
+    //    Margins take up rest of total width
+    //    Max bar height is 95% of height
+    //    No labels
     int dataSize = scale_size;
     barWidth = (((float)width) * 0.8) / (float)dataSize;
-    bool labelsOn = (barWidth > 12);
     margin = (((float)width) - barWidth*dataSize) / ((float)dataSize+1);
     maxHeight = ((float)height)*0.95;
     y_offset = (float)(height + maxHeight)/2;
+    
     int x = 0;
     int noteNum = 0;
     int octaveNum = 2;
     int labelXOffset = max((barWidth-15)/2, 0);
-    int yPos;
     
     ofPushMatrix();
     ofTranslate(margin, y_offset); //Move to bottom-left corner for start
@@ -417,26 +561,16 @@ void ofApp::drawMultiOctave(float width, float height){
         rect.width = barWidth;
 
         // If rectangle height is below min. threshold, draw min rectangle
-        // Note label follows rectangle if possible, otherwise sits on top of min rect.
         // y-axis is 'flipped' i.e. negative is upwards
         if(displayData[i] < 0.05 || displayData[i] != displayData[i]) {
             rect.height =  -3;
-            yPos = -6;
         }
         else{
             rect.height = -displayData[i]*maxHeight;
-            yPos = std::max((int)rect.height-6, (int)-maxHeight-10);
         }
         
         ofDrawRectangle(rect);
         ofPopStyle();
-        
-        // Draw note label
-        if(labelsOn){
-            //ofSetColor(ofColor::white);
-            //std::string label = noteNames[noteNum]+"\n"+to_string(octaveNum);
-            //ofDrawBitmapString(label, x+labelXOffset, yPos);
-        }
         
         // increment x position, note, and octave (if necessary)
         x += barWidth+margin;
@@ -504,6 +638,8 @@ void ofApp::windowResized(int w, int h){
 }
 
 void ofApp::updateLayout(int w, int h){
+    
+    // Calculates new positions for graphs / controls when window is resized
     int topPadding = h*0.03;
     int lrPadding = w*0.02;
     panel->setPosition(lrPadding, topPadding);
