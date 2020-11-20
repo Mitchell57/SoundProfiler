@@ -18,11 +18,11 @@ Dependencies:
 3. Clone addons
     - Navigate to openFrameworks directory
     - Enter addons folder `cd addons`
-    - Clone ofxFft `git clone git@github.com:kylemcdonald/ofxFft.git`
-    - Clone ofxStk `git clone git@github.com:Ahbee/ofxStk.git`
-    - Clone ofxGuiExtended `git clone git@github.com:frauzufall/ofxGuiExtended.git`
+    - Clone ofxFft `git clone https://github.com/kylemcdonald/ofxFft.git`
+    - Clone ofxStk `git clone https://github.com/Ahbee/ofxStk.git`
+    - Clone ofxGuiExtended `git clone https://github.com/frauzufall/ofxGuiExtended.git`
 4. Clone Project
     - Navigate to openFrameworks directory
     - Make new folder for lab project `mkdir apps/CS1L ; cd apps/CS1L`
-    - Clone project `git clone git@github.com:Mitchell57/SoundProfiler.git`
+    - Clone project `git clone https://github.com/Mitchell57/SoundProfiler.git`
 5. Open project in XCode and run!
