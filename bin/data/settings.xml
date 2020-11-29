@@ -3,4 +3,13 @@
 <Chromatic_Profiler>
 	<External_Audio>0</External_Audio>
 	<Internal_Audio>0</Internal_Audio>
+	<Audio_Mode>
+		<Stream_Audio>1</Stream_Audio>
+		<Play_File>0</Play_File>
+	</Audio_Mode>
+	<File_Manager />
+	<Graph_Controls>
+		<Smooth>1</Smooth>
+		<Factor_Octaves>1</Factor_Octaves>
+	</Graph_Controls>
 </Chromatic_Profiler>

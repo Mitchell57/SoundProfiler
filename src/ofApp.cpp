@@ -4,7 +4,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    ofSetFrameRate(30);
+    ofSetFrameRate(60);
     ofBackground(40);
     
     // Boolean initialization
@@ -12,15 +12,18 @@ void ofApp::setup(){
     shouldFactorAgg = true;
     shouldSmooth = true;
     loadPressed = false;
+    viewMode = 0;
     
     
     // Buffer Size determines # of FFT Bins
     // Ideally we want to make it as large as possible before it lags
-    bufferSize = 4096;
+    bufferSize = 2048;
     
     
     // Create FFT object
     fft = ofxFft::create(bufferSize, OF_FFT_WINDOW_BARTLETT);
+    
+    
     
     
     // Data array initialization
@@ -31,10 +34,26 @@ void ofApp::setup(){
         }
     }
     
+    overtoneBinList = new std::vector<int>[freqlist.size()];
+    for(int i=0; i<freqlist.size(); i++){
+        std::vector<int> binBucket;
+        overtoneBinList[i] = binBucket;
+    }
     
     // Builds corresponding list of FFT bins
-    fullBinList = freq2bin();
-    
+    // Translate frequency list to bin list
+    for(int i=0; i<freqlist.size(); i++){
+        float bin = fft->getBinFromFrequency(freqlist[i], 44100);
+        fullBinList.push_back((int)bin);
+        
+        // Save bin containing first five overtones of each note freq.
+        for(int j=2; j<7; j++){
+            if(freqlist[i]*j < 10000){
+                float otBin = fft->getBinFromFrequency(freqlist[i]*j, 44100);
+                overtoneBinList[i].push_back((int)otBin);
+            }
+        }
+    }
     
     // Resize data structures
     // In order to simplify passing octave + individual note data between
@@ -45,6 +64,13 @@ void ofApp::setup(){
     scale_size = fullBinList.size();
     wholeDataSize = oct_size+scale_size;
     
+    overtoneData = new float[scale_size];
+    overtoneBuff = new float[scale_size];
+    
+    for(int i=0; i<oct_size; i++){
+        keyDetector.push_back(notepair(0, i));
+    }
+    
     audioData = new float[wholeDataSize];
     buffer = new float[wholeDataSize];
     displayData = new float[wholeDataSize];
@@ -53,6 +79,7 @@ void ofApp::setup(){
     // Initialization for display values
     for(int i=0; i<wholeDataSize; i++){
         displayData[i] = 0.01;
+        buffer[i] = 0.01;
     }
     
     
@@ -84,30 +111,83 @@ void ofApp::setup(){
     smoothToggle.addListener(this, &ofApp::smoothPressed);
     loadButton.addListener(this, &ofApp::loadFile);
     playButton.addListener(this, &ofApp::playFile);
+    viewModeToggle.addListener(this, &ofApp::viewModeChanged);
+    closeButton.addListener(this, &ofApp::closeMenu);
     
     // Main panel
-    panel = gui.addGroup("Chromatic Profiler");
-    panel->setPosition(10,10);
-    panel->setDraggable(false);
+    gui.setupFlexBoxLayout();
+    
+    all = gui.addGroup("", ofJson({
+        {"flex-direction", "row"},
+        {"flex", 1},
+        {"margin", 2},
+        {"padding", 2},
+        {"height", 30},
+        {"background-color", "transparent"},
+        {"width", "100%"},
+        {"flex-wrap", "wrap"},
+        {"show-header", false},
+        {"position", "static"},
+    }));
+    
+    all->add(closeButton.set("X"), ofJson({
+        {"type", "fullsize"},
+        {"text-align", "center"},
+        {"align-self", "flex-start"},
+        {"margin", 5},
+        {"border-radius", 5}
+    }));
+    
+    // View mode
+    viewControls = all->addGroup("View", ofJson({
+        {"type", "panel"},
+        {"align-self", "flex-start"}
+        
+    }));
+    viewControls->loadTheme("default-theme.json");
+    viewControls->setShowHeader(true);
+    viewControls->setWidth(100);
+    //viewControls->setPosition(0, 0);
+    viewControls->add(viewModeLabel.set("Linear"));
+    viewControls->add(viewModeToggle.set("Change View"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
+    
+    
     
     // Input mode
-    audioModes = panel->addGroup("Audio Mode");
-    audioModes->setShowHeader(false);
-    audioModes->add(inputToggle.set("Stream Audio", true));
-    audioModes->add(outputToggle.set("Play File", false));
-    panel->addSpacer(0,5);
+    audioModes = all->addGroup("Input", ofJson({
+        {"type", "panel"},
+        {"align-self", "flex-start"}
+        
+    }));
+    audioModes->loadTheme("default-theme.json");
+    audioModes->setShowHeader(true);
+    audioModes->setWidth(100);
+    //audioModes->setPosition(0, 0);
     
     // File Manager
-    fileManager = panel->addGroup("File Manager");
+    fileManager = audioModes->addGroup("File Manager");
+    fileManager->loadTheme("default-theme.json");
     fileManager->setShowHeader(false);
     fileManager->add(filePath.set("Path/To/WavFile"));
     fileManager->add(loadButton.set("Load File"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
-    fileManager->add(playButton.set("Play / Pause"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
+    fileManager->add(playButton.set("Play"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
     fileManager->minimize();
-    panel->addSpacer(0,5);
+    
+    audioModes->add(inputToggle.set("Stream Audio", true));
+    audioModes->add(outputToggle.set("Play File", false));
+    audioModes->minimize();
+    
+
     
     // Graph / Data Controls
-    graphControls = panel->addGroup("Graph Controls");
+    graphControls = all->addGroup("Data", ofJson({
+        {"type", "panel"},
+        {"align-self", "flex-start"}
+        
+    }));
+    //graphControls->setPosition(0, 0);
+    graphControls->loadTheme("default-theme.json");
+    graphControls->setWidth(100);
     graphControls->add(smoothToggle.set("Smooth", true));
     graphControls->add(factorToggle.set("Factor Octaves", true));
     graphControls->minimize();
@@ -115,6 +195,12 @@ void ofApp::setup(){
     // Resize graph and GUI layout
     updateLayout(WIN_WIDTH, WIN_HEIGHT);
 }
+
+//--------------------------------------------------------------
+void ofApp::closeMenu(){
+    all->minimizeAll();
+}
+
 
 //--------------------------------------------------------------
 void ofApp::loadFile(){
@@ -133,7 +219,12 @@ void ofApp::loadFile(){
             cout << path << endl;
 
             if(0 == path.compare (path.length() - 3, 3, "wav")){
-                file.openFile(ofToDataPath(path,true));
+                try{
+                    file.openFile(ofToDataPath(path,true));
+                }
+                catch(...){
+                    cout << "oops" << endl;
+                }
                 filePath.set(name);
             }
             else{
@@ -154,11 +245,30 @@ void ofApp::playFile(){
     // So this check makes sure it only prompts once
     if(!playPressed){
         playPressed = true;
+        if(shouldPlayAudio) playButton.setName("Play");
+        else playButton.setName("Pause");
+        
         
         shouldPlayAudio = !shouldPlayAudio;
     }
     
     playPressed = false;
+    
+}
+
+//--------------------------------------------------------------
+void ofApp::viewModeChanged(){
+    // viewMode = 0 : linear charts
+    // viewMode = 1 : polar chart
+    
+    if(viewMode == 0){
+        viewMode = 1;
+        viewModeLabel.set("Polar");
+    }
+    else{
+        viewMode = 0;
+        viewModeLabel.set("Linear");
+    }
     
 }
 
@@ -175,6 +285,9 @@ void ofApp::inputPressed(bool &inputToggle){
         outputToggle.set(false);
         fileManager->minimize();
         clearGraphs();
+    }
+    else{
+        outputToggle.set(true);
     }
 
     
@@ -193,6 +306,9 @@ void ofApp::outputPressed(bool &outputToggle){
         inputToggle.set(false);
         fileManager->maximize();
         clearGraphs();
+    }
+    else{
+        inputToggle.set(true);
     }
     
 }
@@ -301,7 +417,7 @@ void ofApp::analyzeAudio(std::vector<float> sample, int bufferSize){
     // Max values for normalization
     float single_max = 0;
     float scale_max = 0;
-
+    float overtone_max = 0;
     
     // Clear out summed data
     for(int i=0; i<oct_size; i++){
@@ -329,17 +445,28 @@ void ofApp::analyzeAudio(std::vector<float> sample, int bufferSize){
         if(i >= scale_size-oct_size){ // Only need to update max sums on last octave
             if(audioData[note] > scale_max) scale_max = audioData[note];
         }
+        
+        // Sum overtones
+        overtoneData[i] = 0;
+        for(int j=0; j<overtoneBinList[i].size(); j++){
+            overtoneData[i] += fft->getAmplitudeAtBin(overtoneBinList[i][j]);
+        }
+        if(overtoneData[i] > overtone_max) overtone_max = overtoneData[i];
     }
     
     // Normalize summed data
     for(int i=0; i<oct_size; i++){
         audioData[i] /= scale_max;
+        if(audioData[i] == 1){
+            keyDetector[i].first ++;
+        }
     }
 
     
     // Normalize individual data
-    for(int i=oct_size; i<wholeDataSize; i++){
-        audioData[i] /= single_max;
+    for(int i=0; i<scale_size; i++){
+        audioData[i+oct_size] /= single_max;
+        overtoneData[i] /= overtone_max;
     }
     
     // Note: This will output NaN when there is no sound, but this is accounted for
@@ -364,6 +491,14 @@ void ofApp::update(){
     
     // copy analysis data to buffer for drawing
     memcpy(buffer, audioData, wholeDataSize*sizeof(float));
+    memcpy(overtoneBuff, overtoneData, scale_size*sizeof(float));
+    
+    std::sort(keyDetector.begin(), keyDetector.end());
+    int keycode = 4095;
+    for(int i=0; i<5; i++){
+        keycode -= pow(2, keyDetector[i].second);
+    }
+    //cout << keycode << endl;
     
 }
 
@@ -397,8 +532,13 @@ void ofApp::draw(){
                 
                 // When octave data is factored in:
                 //    value = 0.25(new value) + 0.5(old value) + 0.25(overall note value)
-                if(shouldFactorAgg && i >= oct_size) {
-                    displayData[i] = (buffer[i] + 2*displayData[i] + displayData[i%oct_size])/4.0;
+                if(i >= oct_size) {
+                    if(shouldFactorAgg){
+                        displayData[i] = (buffer[i] + 2*displayData[i] + overtoneBuff[i-oct_size])/4.0;
+                    }
+                    else{
+                        displayData[i] = (buffer[i] + 2*displayData[i] + displayData[i%oct_size])/4.0;
+                    }
                 }
                 else{
                     displayData[i] = (buffer[i] + 2*displayData[i])/3.0;
@@ -418,15 +558,24 @@ void ofApp::draw(){
     
     
     // Draw graphs
-    ofPushMatrix();
-    ofTranslate(singleXOffset,singleYOffset);
-    drawSingleOctave(singleW, singleH);
-    ofPopMatrix();
     
-    ofPushMatrix();
-    ofTranslate(multiXOffset, multiYOffset);
-    drawMultiOctave(multiW, multiH);
-    ofPopMatrix();
+    if(viewMode == 0){
+        ofPushMatrix();
+        ofTranslate(singleXOffset,singleYOffset);
+        drawSingleOctave(singleW, singleH);
+        ofPopMatrix();
+        
+        ofPushMatrix();
+        ofTranslate(multiXOffset, multiYOffset);
+        drawMultiOctave(multiW, multiH);
+        ofPopMatrix();
+    }
+    if(viewMode == 1){
+        ofPushMatrix();
+        ofTranslate(0, 30);
+        drawCircles(width, height-30);
+        ofPopMatrix();
+    }
 }
 
 //--------------------------------------------------------------
@@ -453,7 +602,7 @@ void ofApp::drawSingleOctave(float width, float height){
     int dataSize = oct_size;
     barWidth = (((float)width) * 0.8) / (float)dataSize;
     margin = (((float)width) - barWidth*dataSize) / ((float)dataSize+1);
-    maxHeight = ((float)height)*0.95;
+    maxHeight = (-20)+((float)height)*0.95;
     y_offset = (float)(height + maxHeight)/2;
     bool labelsOn = (barWidth > 12);
     
@@ -471,7 +620,6 @@ void ofApp::drawSingleOctave(float width, float height){
     for(int i=0; i<dataSize; i++){
         
         ofPushStyle();
-        ofSetColor(colors[noteNum]);
         
         ofRectangle rect;
         rect.x = x;
@@ -481,7 +629,7 @@ void ofApp::drawSingleOctave(float width, float height){
         // If rectangle height is below min. threshold, draw min rectangle
         // Note label follows rectangle if possible, otherwise sits on top of min rect.
         // y-axis is 'flipped' i.e. negative is upwards
-        if(displayData[i] < 0.05 || displayData[i] != displayData[i]) {
+        if(displayData[i] < 0.05 || displayData[i] > 1.0 || displayData[i] != displayData[i]) {
             rect.height =  -3;
             yPosLabel = -6;
         }
@@ -489,6 +637,13 @@ void ofApp::drawSingleOctave(float width, float height){
             rect.height = -displayData[i]*maxHeight;
             yPosLabel = std::max((int)rect.height-6, (int)-maxHeight-10);
         }
+        
+        float hue = (i%12)*(255.0/12);
+        float sat = 100+displayData[i]*155;
+        float brightness = 55+displayData[i]*200;
+        
+        ofColor color = ofColor::fromHsb(hue, sat, brightness);
+        ofSetColor(color);
         
         ofDrawRectangle(rect);
         ofPopStyle();
@@ -552,7 +707,7 @@ void ofApp::drawMultiOctave(float width, float height){
     for(int i=oct_size; i<wholeDataSize; i++){
         
         ofPushStyle();
-        ofSetColor(colors[noteNum]);
+        
         
         ofRectangle rect;
         rect.x = x;
@@ -561,12 +716,19 @@ void ofApp::drawMultiOctave(float width, float height){
 
         // If rectangle height is below min. threshold, draw min rectangle
         // y-axis is 'flipped' i.e. negative is upwards
-        if(displayData[i] < 0.05 || displayData[i] != displayData[i]) {
+        if(displayData[i] < 0.05 || displayData[i] > 1.0 || displayData[i] != displayData[i]) {
             rect.height =  -3;
         }
         else{
             rect.height = -displayData[i]*maxHeight;
         }
+        
+        float hue = 128+(i%12)*(128.0/12);
+        float sat = 100+displayData[i]*155;
+        float brightness = 55+displayData[i]*200;
+        
+        ofColor color = ofColor::fromHsb(hue, sat, brightness);
+        ofSetColor(color);
         
         ofDrawRectangle(rect);
         ofPopStyle();
@@ -578,6 +740,86 @@ void ofApp::drawMultiOctave(float width, float height){
             noteNum = 0;
             octaveNum++;
         }
+    }
+    
+    ofPopMatrix();
+}
+
+void ofApp::drawCircles(float width, float height){
+    float constraint = min(width, height);
+    float rMin = (constraint*0.1)/2;
+    float rMax = (constraint*0.9)/2;
+    
+    float numOctaves = (wholeDataSize-oct_size)/oct_size;
+    float r_inc = rMax / numOctaves;
+    // first octave: rmin to r_inc*1
+    //
+
+    ofPushMatrix();
+    ofTranslate(width/2, height/2);
+    
+    float deg = 0;
+    float deg2;
+    float rSmall = 0;
+    float x1,y1,x2,y2,x3,y3,x4,y4;
+    float rData, rad1, rad2, hue, sat, brightness;
+    for(int i=oct_size; i<wholeDataSize; i++){
+        if(i%12 == 0){
+            rSmall += r_inc;
+            deg = 0;
+        }
+        
+        deg += 360/12;
+        deg2 = deg+(360/12);
+                
+        if(displayData[i] < 0.1 || displayData[i] > 1 || displayData[i] != displayData[i]){
+            rData = 0.1;
+        }
+        else{
+            rData = displayData[i]*r_inc;
+        }
+        
+        rad1 = ofDegToRad(deg);
+        rad2 = ofDegToRad(deg2);
+        
+        x1 = rSmall * cos(rad1);
+        y1 = rSmall * sin(rad1);
+        
+        x2 = (rSmall+rData) * cos(rad1);
+        y2 = (rSmall+rData) * sin(rad1);
+        
+        x4 = rSmall * cos(rad2);
+        y4 = rSmall * sin(rad2);
+        
+        x3 = (rSmall+rData) * cos(rad2);
+        y3 = (rSmall+rData) * sin(rad2);
+        
+
+        
+        hue = (i%12)*(255.0/12);
+        sat = displayData[i]*255;
+        brightness = displayData[i]*255;
+        
+        ofPath path;
+        
+        ofColor color = ofColor::fromHsb(hue, sat, brightness);
+        path.setFillColor(color);
+        
+        path.moveTo(x1,y1);
+        path.arc(0,0,rSmall, rSmall, deg, deg2);
+        path.lineTo(x3, y3);
+        path.arcNegative(0,0, (rSmall+rData), (rSmall+rData), deg2, deg);
+        path.lineTo(x1,y1);
+        
+        path.close();
+        path.setFilled(true);
+        path.setStrokeHexColor(0);
+        path.setStrokeWidth(1);
+        path.draw();
+        
+        
+        
+        
     }
     
     ofPopMatrix();
@@ -637,20 +879,38 @@ void ofApp::windowResized(int w, int h){
 }
 
 void ofApp::updateLayout(int w, int h){
-    
+    width = w;
+    height = (h-45);
+    h -= 35;
     // Calculates new positions for graphs / controls when window is resized
-    int topPadding = h*0.03;
+    int topPadding = h*0.02;
     int lrPadding = w*0.02;
-    panel->setPosition(lrPadding, topPadding);
+    
+    
+    /*audioModes->setPosition(viewControls->getWidth(), 0);
+    graphControls->setPosition(audioModes->getWidth()+viewControls->getWidth(), 0);
+    
+    // Controls are being cut off
+    if(viewControls->getWidth()+audioModes->getWidth()+graphControls->getWidth() > width){
+        // If two buttons fit...
+        if(viewControls->getWidth()+audioModes->getWidth() < width){
+            graphControls->setPosition(0, viewControls->getHeight()+5);
+        }
+        else{
+            audioModes->setPosition(0, viewControls->getHeight()+5);
+            graphControls->setPosition(0, viewControls->getHeight()+10+audioModes->getHeight());
+        }
+        
+    }*/
     
     singleW = ((float)w*0.45);
     singleH =  ((float)h*0.45);
     multiW = ((float)w*0.96);
     multiH =  ((float)h*0.46);
     singleXOffset = w - (2*lrPadding+singleW);
-    singleYOffset = topPadding;
+    singleYOffset = 45+topPadding;
     multiXOffset = lrPadding;
-    multiYOffset = (singleH+2*topPadding);
+    multiYOffset = 45+(singleH+2*topPadding);
 }
 
 //--------------------------------------------------------------
@@ -664,19 +924,4 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 }
 
 
-//--------------------------------------------------------------
-std::vector<int> ofApp::freq2bin(){
-    
-    // vector initialization
-    std::vector<int> binlist;
-    
-    // Translate frequency list to bin list
-    for(int i=0; i<freqlist.size(); i++){
-        float bin = fft->getBinFromFrequency(freqlist[i], 44100);
-        binlist.push_back((int)bin);
-        cout << "bin: " << bin << "freq: " << freqlist[i] << endl;
-    }
-    
-    return binlist;
-}
 
