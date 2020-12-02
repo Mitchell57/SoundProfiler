@@ -17,7 +17,7 @@ void ofApp::setup(){
     
     // Buffer Size determines # of FFT Bins
     // Ideally we want to make it as large as possible before it lags
-    bufferSize = 2048;
+    bufferSize = 4096;
     
     
     // Create FFT object
@@ -130,13 +130,7 @@ void ofApp::setup(){
         {"position", "static"},
     }));
     
-    all->add(closeButton.set("X"), ofJson({
-        {"type", "fullsize"},
-        {"text-align", "center"},
-        {"align-self", "flex-start"},
-        {"margin", 5},
-        {"border-radius", 5}
-    }));
+    
     
     // View mode
     viewControls = all->addGroup("View", ofJson({
@@ -150,7 +144,7 @@ void ofApp::setup(){
     //viewControls->setPosition(0, 0);
     viewControls->add(viewModeLabel.set("Linear"));
     viewControls->add(viewModeToggle.set("Change View"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
-    
+    viewControls->minimize();
     
     
     // Input mode
@@ -191,6 +185,15 @@ void ofApp::setup(){
     graphControls->add(smoothToggle.set("Smooth", true));
     graphControls->add(factorToggle.set("Factor Octaves", true));
     graphControls->minimize();
+    
+    all->add(closeButton.set("X"), ofJson({
+        {"type", "fullsize"},
+        {"text-align", "center"},
+        {"align-self", "flex-start"},
+        {"margin", 5},
+        {"width", 25},
+        {"border-radius", 2}
+    }));
     
     // Resize graph and GUI layout
     updateLayout(WIN_WIDTH, WIN_HEIGHT);
@@ -638,8 +641,9 @@ void ofApp::drawSingleOctave(float width, float height){
             yPosLabel = std::max((int)rect.height-6, (int)-maxHeight-10);
         }
         
+        
         float hue = (i%12)*(255.0/12);
-        float sat = 100+displayData[i]*155;
+        float sat = 100+displayData[i%12]*155;
         float brightness = 55+displayData[i]*200;
         
         ofColor color = ofColor::fromHsb(hue, sat, brightness);
@@ -723,7 +727,7 @@ void ofApp::drawMultiOctave(float width, float height){
             rect.height = -displayData[i]*maxHeight;
         }
         
-        float hue = 128+(i%12)*(128.0/12);
+        float hue = (i%12)*(255.0/12);
         float sat = 100+displayData[i]*155;
         float brightness = 55+displayData[i]*200;
         
