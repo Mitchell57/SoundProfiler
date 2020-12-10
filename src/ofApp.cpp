@@ -1,5 +1,6 @@
 #include "ofApp.h"
 #include <string>
+#include <math.h>
 #include <algorithm>    // std::max
 
 //--------------------------------------------------------------
@@ -17,7 +18,7 @@ void ofApp::setup(){
     
     // Buffer Size determines # of FFT Bins
     // Ideally we want to make it as large as possible before it lags
-    bufferSize = 4096;
+    bufferSize = 2048;
     
     
     // Create FFT object
@@ -163,11 +164,11 @@ void ofApp::setup(){
     fileManager->loadTheme("default-theme.json");
     fileManager->setShowHeader(false);
     fileManager->add(filePath.set("Path/To/WavFile"));
-    fileManager->add(loadButton.set("Load File"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
+    fileManager->add(loadButton.set("Choose .wav"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
     fileManager->add(playButton.set("Play"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
     fileManager->minimize();
     
-    audioModes->add(inputToggle.set("Stream Audio", true));
+    audioModes->add(inputToggle.set("Listen", true));
     audioModes->add(outputToggle.set("Play File", false));
     audioModes->minimize();
     
@@ -324,11 +325,6 @@ void ofApp::factorAggPressed(bool &factorToggle){
 //--------------------------------------------------------------
 void ofApp::smoothPressed(bool &smoothToggle){
     shouldSmooth = smoothToggle;
-    
-    // If smoothing is off, octave factoring must also be off
-    if(!smoothToggle){
-        factorToggle.set(false);
-    }
 }
 
 //--------------------------------------------------------------
@@ -460,17 +456,18 @@ void ofApp::analyzeAudio(std::vector<float> sample, int bufferSize){
     // Normalize summed data
     for(int i=0; i<oct_size; i++){
         audioData[i] /= scale_max;
-        if(audioData[i] == 1){
-            keyDetector[i].first ++;
-        }
+    }
+    
+    float sum = 0;
+    p_note = 0;
+    for(int i=oct_size; i<wholeDataSize; i++){
+        audioData[i] /= single_max;
+        sum += audioData[i];
+        p_note += audioData[i]*(i);
     }
 
-    
-    // Normalize individual data
-    for(int i=0; i<scale_size; i++){
-        audioData[i+oct_size] /= single_max;
-        overtoneData[i] /= overtone_max;
-    }
+    if(sum != 0) p_note /= sum;
+
     
     // Note: This will output NaN when there is no sound, but this is accounted for
 }
@@ -496,12 +493,8 @@ void ofApp::update(){
     memcpy(buffer, audioData, wholeDataSize*sizeof(float));
     memcpy(overtoneBuff, overtoneData, scale_size*sizeof(float));
     
-    std::sort(keyDetector.begin(), keyDetector.end());
-    int keycode = 4095;
-    for(int i=0; i<5; i++){
-        keycode -= pow(2, keyDetector[i].second);
-    }
-    //cout << keycode << endl;
+    predictedNote = p_note;
+    cout << predictedNote << endl;    //cout << keycode << endl;
     
 }
 
@@ -537,10 +530,17 @@ void ofApp::draw(){
                 //    value = 0.25(new value) + 0.5(old value) + 0.25(overall note value)
                 if(i >= oct_size) {
                     if(shouldFactorAgg){
-                        displayData[i] = (buffer[i] + 2*displayData[i] + overtoneBuff[i-oct_size])/4.0;
+                        float overtone = 0;
+                        int count = 0;
+                        for(int j=i+12; j<wholeDataSize; j+=12){
+                            overtone += buffer[j];
+                            count += 1;
+                        }
+                        overtone /= count;
+                        displayData[i] = (buffer[i] + displayData[i] + overtone)/3.0;
                     }
                     else{
-                        displayData[i] = (buffer[i] + 2*displayData[i] + displayData[i%oct_size])/4.0;
+                        displayData[i] = (buffer[i] + 2*displayData[i] + displayData[i%12])/4.0;
                     }
                 }
                 else{
@@ -702,7 +702,7 @@ void ofApp::drawMultiOctave(float width, float height){
     int x = 0;
     int noteNum = 0;
     int octaveNum = 2;
-    int labelXOffset = max((barWidth-15)/2, 0);
+    int labelXOffset = ((barWidth-15)/2, 0);
     
     ofPushMatrix();
     ofTranslate(margin, y_offset); //Move to bottom-left corner for start
@@ -730,6 +730,11 @@ void ofApp::drawMultiOctave(float width, float height){
         float hue = (i%12)*(255.0/12);
         float sat = 100+displayData[i]*155;
         float brightness = 55+displayData[i]*200;
+        
+        if(roundf(predictedNote) == i){
+            brightness = 255;
+            sat = 255;
+        }
         
         ofColor color = ofColor::fromHsb(hue, sat, brightness);
         ofSetColor(color);

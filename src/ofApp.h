@@ -6,8 +6,8 @@
 #include "ofxGuiExtended.h"
 #include <mutex>          // std::mutex
 
-#define WIN_WIDTH 800
-#define WIN_HEIGHT 600
+#define WIN_WIDTH 1000
+#define WIN_HEIGHT 800
 
 
 class ofApp : public ofBaseApp{
@@ -63,6 +63,7 @@ class ofApp : public ofBaseApp{
         float* audioData;
         float* buffer;
         float* displayData;
+        float predictedNote, p_note;
         
         int wholeDataSize, oct_size, scale_size;
         std::mutex mtx;

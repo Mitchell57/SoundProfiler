@@ -1,1 +1,4 @@
-*.wavdebug.log $ git rm --cached debug.log rm bin/data/flamenco-sketches.wav $ git commit -m Start ignoring large files
+*.wav
+.DS_Store
+debug.log 
+#ignoring large files

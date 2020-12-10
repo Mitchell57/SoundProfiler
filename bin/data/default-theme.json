@@ -8,11 +8,11 @@
         },
         "group-header": {
             "font-family": "Lato-Medium.ttf",
-            "font-size": 10
+            "font-size": 20
         },
         "panel-header": {
             "font-family": "Lato-Medium.ttf",
-            "font-size": 12
+            "font-size": 24
         },
         "toggle": {
 
