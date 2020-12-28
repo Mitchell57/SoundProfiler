@@ -49,6 +49,41 @@ void DisplayMode::draw(Analysis analysis){
             drawPolar(width, height, scaleSize, raw_scale);
             ofPopMatrix();
         }
+        if(mode == RAW){
+            float* raw_fft = analysis.getFft();
+            int fft_size = analysis.getFftSize();
+            
+            ofPushMatrix();
+            ofTranslate(singleXOffset, singleYOffset);
+            drawFftPlot(singleW, height*0.9, fft_size, raw_fft);
+            ofPopMatrix();
+            
+        }
+    }
+    else{
+        if(mode == LINEAR){
+            ofPushMatrix();
+            ofTranslate(singleXOffset,singleYOffset);
+            drawLinOctave(singleW, singleH, 1, 0);
+            ofPopMatrix();
+            
+            ofPushMatrix();
+            ofTranslate(multiXOffset, multiYOffset);
+            drawLinScale(multiW, multiH, 1, 0);
+            ofPopMatrix();
+        }
+        if(mode == POLAR){
+            ofPushMatrix();
+            drawPolar(width, height, 1, 0);
+            ofPopMatrix();
+        }
+        if(mode == RAW){
+            ofPushMatrix();
+            ofTranslate(singleXOffset, singleYOffset);
+            drawFftPlot(singleW, height*0.9, 1, 0);
+            ofPopMatrix();
+            
+        }
     }
 }
 
@@ -65,8 +100,11 @@ void DisplayMode::drawLinOctave(int w, int h, int dataSize, float* data){
     outer_rect.width = w;
     outer_rect.height = h;
     ofDrawRectangle(outer_rect);
+    std::string label = "Summed Octave";
+    if(singleYOffset > 20) ofDrawBitmapString(label, 0, -8);
     ofPopStyle();
     
+    if(dataSize <= 1) return;
     // Initialize graph values
     //    Data = Summed Octave
     //    Bars take up 80% of total width
@@ -135,7 +173,6 @@ void DisplayMode::drawLinOctave(int w, int h, int dataSize, float* data){
         noteNum++;
         if(noteNum > 11){
             noteNum = 0;
-            octaveNum++;
         }
     }
     
@@ -155,26 +192,29 @@ void DisplayMode::drawLinScale(int w, int h, int dataSize, float* data){
     outer_rect.width = w;
     outer_rect.height = h;
     ofDrawRectangle(outer_rect);
+    std::string label = "Full Scale";
+    if(singleYOffset > 20) ofDrawBitmapString(label, 0, -8);
     ofPopStyle();
     
+    if(dataSize <= 1) return;
     // Initialize graph values
     //    Data = Summed Octave
     //    Bars take up 80% of total width
     //    Margins take up rest of total width
     //    Max bar height is 95% of height
     //    No labels
-    barWidth = (((float)w) * 0.8) / (float)dataSize;
-    margin = (((float)w) - barWidth*dataSize) / ((float)dataSize+1);
+    barWidth = (((float)w) * 0.85) / (float)dataSize;
+    margin = (((float)w) - barWidth*dataSize) / ((float)dataSize-1);
+    float edgeMargin = ((float)w - (barWidth*dataSize + margin*(dataSize-1))) / 2;
     maxHeight = ((float)h)*0.95;
     y_offset = (float)(h + maxHeight)/2;
     
     int x = 0;
     int noteNum = 0;
     int octaveNum = 2;
-    int labelXOffset = ((barWidth-15)/2, 0);
     
     ofPushMatrix();
-    ofTranslate(margin, y_offset); //Move to bottom-left corner for start
+    ofTranslate(edgeMargin, y_offset); //Move to bottom-left corner for start
     
     //loop through raw values
     for(int i=0; i<dataSize; i++){
@@ -210,17 +250,19 @@ void DisplayMode::drawLinScale(int w, int h, int dataSize, float* data){
         
         // increment x position, note, and octave (if necessary)
         x += barWidth+margin;
-        noteNum++;
-        if(noteNum > 11){
-            noteNum = 0;
-            octaveNum++;
-        }
+//        noteNum++;
+//        if(noteNum > 11){
+//            noteNum = 0;
+//            octaveNum++;
+//        }
     }
     
     ofPopMatrix();
 }
 
 void DisplayMode::drawPolar(int w, int h, int dataSize, float* data){
+    if(dataSize <= 1) return;
+    
     float constraint = min(width, height);
     float rMin = (constraint*0.1)/2;
     float rMax = (constraint*0.9)/2;
@@ -300,6 +342,68 @@ void DisplayMode::drawPolar(int w, int h, int dataSize, float* data){
 }
 
 
+//--------------------------------------------------------------
+void DisplayMode::drawFftPlot(int w, int h, int dataSize, float* data){
+    
+    // Draw border
+    ofPushStyle();
+    ofSetColor(ofColor::white);
+    ofNoFill();
+    ofRectangle outer_rect;
+    outer_rect.x = 0;
+    outer_rect.y = 0;
+    outer_rect.width = w;
+    outer_rect.height = h;
+    ofDrawRectangle(outer_rect);
+    ofPopStyle();
+    
+    if(dataSize <= 1) return;
+    
+    dataSize *= 0.75;
+    // Initialize graph values
+    //    Data = Entire FFT Plot
+    //    Chart takes 95% of total width
+    //    Margins take up rest of total width
+    //    Max bar height is 95% of height
+
+    
+    float x_inc = (((float)w) * 0.95) / (float)dataSize;
+    margin = (((float)w) - x_inc*dataSize) / 2;
+    maxHeight = ((float)h)*0.95;
+    y_offset = (float)(h + maxHeight)/2;
+    bool labelsOn = (barWidth > 12);
+    
+    
+    float x = 0;
+    float y = 0;
+    
+    
+    ofPushMatrix();
+    ofTranslate(margin, y_offset); //Move to bottom-left corner for start
+    ofSetColor(255);
+    ofPath path;
+    
+    path.moveTo(0, -data[0]*maxHeight);
+    
+    //loop through values
+    for(int i=0; i<dataSize; i++){
+        x += x_inc;
+        y = -data[i]*maxHeight;
+        
+        path.lineTo(x, y);
+    }
+    
+    
+    path.setFilled(false);
+    path.setStrokeColor(ofColor::white);
+    path.setStrokeWidth(1);
+    path.draw();
+    
+    ofPopMatrix();
+}
+
+
+//--------------------------------------------------------------
 void DisplayMode::updateLayout(int w, int h){
     width = w;
     height = h;
@@ -317,4 +421,5 @@ void DisplayMode::updateLayout(int w, int h){
     multiXOffset = lrPadding;
     multiYOffset = singleH+(2*topPadding);
 }
+
 

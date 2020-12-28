@@ -59,12 +59,12 @@ void ofApp::setup(){
     // Main panel
     gui.setupFlexBoxLayout();
     
-    all = gui.addGroup("", ofJson({
+    all = gui.addGroup("Sonic Profiler", ofJson({
         {"flex-direction", "column"},
         {"flex", 1},
         {"margin", 2},
         {"padding", 2},
-        {"background-color", "#141414"},
+        {"background-color", "#181818"},
         {"flex-wrap", "wrap"},
         {"show-header", false},
         {"position", "static"},
@@ -90,7 +90,7 @@ void ofApp::setup(){
     displayToggles->getActiveToggleIndex().addListener(this, &ofApp::setDisplayMode);
     displayToggles->setActiveToggle(0);
     
-    // Input Mode
+    // Input Mode (& file manager)
     inputParameters.setName("Input Source");
     inputParameters.add(input0.set("Microphone", false));
     inputParameters.add(input1.set("Play File", false));
@@ -99,9 +99,6 @@ void ofApp::setup(){
     inputToggles->setExclusiveToggles(true);
     inputToggles->loadTheme("default-theme.json");
     inputToggles->setConfig(ofJson({{"type", "radio"}}));
-    
-    
-    
     
     fileManager = all->addGroup("File Manager");
     fileManager->loadTheme("default-theme.json");
@@ -113,34 +110,14 @@ void ofApp::setup(){
     
     inputToggles->getActiveToggleIndex().addListener(this, &ofApp::setInputMode);
     inputToggles->setActiveToggle(0);
-//    // Input mode
-//    audioModes = all->addGroup("Input Source", ofJson({
-//        {"type", "panel"},
-//        {"align-self", "flex-start"}
-//
-//    }));
-//    audioModes->loadTheme("default-theme.json");
-//    audioModes->setShowHeader(true);
-//    audioModes->setWidth(100);
-//    //audioModes->setPosition(0, 0);
-//
-//    // File Manager
-//
-//
-//    audioModes->add(outputToggle.set("Play File", false));
-//    audioModes->add(inputToggle.set("Microphone", true));
-//    audioModes->minimize();
-    
-
     
     // Graph / Data Controls
-    graphControls = all->addGroup("Data");
-    //graphControls->setPosition(0, 0);
+    graphControls = all->addGroup("Mode Controls");
     graphControls->loadTheme("default-theme.json");
     graphControls->add(smoothToggle.set("Smooth", true));
     graphControls->add(factorToggle.set("Factor Octaves", true));
-    graphControls->minimize();
     
+    // Minimize button
     all->add(closeButton.set("Minimize All"), ofJson({
         {"type", "fullsize"},
         {"text-align", "center"},
@@ -160,7 +137,7 @@ void ofApp::setDisplayMode(int& index){
     switch(index){
             default: case 0: dm.setMode(DisplayMode::LINEAR); break;
             case 1: dm.setMode(DisplayMode::POLAR); break;
-            case 2: break;
+        case 2: dm.setMode(DisplayMode::RAW); break;
             case 3: break;
 
         }

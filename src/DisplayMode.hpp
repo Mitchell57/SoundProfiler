@@ -16,7 +16,7 @@ class DisplayMode {
     public:
         DisplayMode();
         void init(int w, int h);
-        enum Mode{LINEAR, POLAR, OSC};
+        enum Mode{LINEAR, POLAR, RAW, OSC};
         void setMode(Mode m);
         Mode getMode();
         void draw(Analysis analysis);
@@ -32,6 +32,7 @@ class DisplayMode {
         void drawLinOctave(int w, int h, int dataSize, float* data);
         void drawLinScale(int w, int h, int dataSize, float* data);
         void drawPolar(int w, int h, int dataSize, float* data);
+        void drawFftPlot(int w, int h, int dataSize, float* data);
     
         std::vector<string> noteNames = {"A", "A#","B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"};
     

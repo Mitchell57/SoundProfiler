@@ -91,9 +91,15 @@ void Analysis::analyzeFrame(std::vector<float> sample, int bufferSize)
     // Send scaled frame to FFT
     fft->setSignal(normalizedOut);
     
+    float fft_max = 0;
     for(int i=0; i<fft_size; i++){
         raw_fft[i] = fft->getAmplitudeAtBin(i);
+        if(raw_fft[i] > fft_max) fft_max = raw_fft[i];
     }
+    for(int i=0; i<fft_size; i++){
+        //raw_fft[i] /= fft_max;
+    }
+    
     
     // Audio listeners run in a separate thread
     // so we must ensure control before making changes to a shared variable
