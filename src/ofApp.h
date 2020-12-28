@@ -44,7 +44,6 @@ class ofApp : public ofBaseApp{
         Analysis analysis;
     
         int bufferSize;
-        ofxFft* fft;
         stk::FileLoop file;
         ofSoundStream soundStream;
         bool shouldPlayAudio, shouldFactorAgg, shouldSmooth;
@@ -55,27 +54,16 @@ class ofApp : public ofBaseApp{
     
     // Drawing
         DisplayMode dm;
-    
-        int barWidth, margin, maxHeight, y_offset;
-        void drawSingleOctave(float width, float height);
-        void drawMultiOctave(float width, float height);
-        void drawCircles(float width, float height);
         void clearGraphs();
     
-        //Data
-        std::mutex mtx;
 
-    
-        
-        std::vector<ofColor> colors = {ofColor::red, ofColor::orange, ofColor::yellow, ofColor::greenYellow, ofColor::green, ofColor::aquamarine, ofColor::cyan, ofColor::cadetBlue, ofColor::blueViolet, ofColor::lavender, ofColor::purple, ofColor::pink};
     
     
     // GUI
         ofxGuiGroup* all;
         ofxGui gui;
         ofParameterGroup modeGroup;
-        ofParameter<string> viewModeLabel;
-        ofParameter<void> viewModeToggle;
+
         ofParameter<bool> inputToggle;
         ofParameter<bool> outputToggle;
         ofParameter<bool> factorToggle;
@@ -86,8 +74,26 @@ class ofApp : public ofBaseApp{
         ofParameter<void> closeButton;
         ofParameter<string> filePath;
     
-        ofxGuiGroup *audioModes, *graphControls, *fileManager, *viewControls;
-        void viewModeChanged();
+        // Display Mode Controles
+        ofxGuiGroup *displayToggles;
+        ofParameterGroup displayParameters;
+        ofParameter<bool> disp0;
+        ofParameter<bool> disp1;
+        ofParameter<bool> disp2;
+        ofParameter<bool> disp3;
+    
+        void setDisplayMode(int& index);
+    
+        ofxGuiGroup *inputToggles;
+        ofParameterGroup inputParameters;
+        ofParameter<bool> input0;
+        ofParameter<bool> input1;
+    
+        void setInputMode(int& index);
+    
+    
+    
+        ofxGuiGroup *audioModes, *graphControls, *fileManager;
         void inputPressed(bool &inputToggle);
         void outputPressed(bool &outputToggle);
         void factorAggPressed(bool &factorToggle);
@@ -97,6 +103,9 @@ class ofApp : public ofBaseApp{
         void playFile();
         void updateLayout(int w, int h);
     
+    
+    
+    
         int viewMode;
-        int width, height, singleW, singleH, multiW, multiH, singleXOffset, singleYOffset, multiXOffset, multiYOffset;
+        int width, height, controlWidth;
 };

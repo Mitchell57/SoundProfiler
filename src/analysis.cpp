@@ -35,7 +35,7 @@ void Analysis::init(int bufSize){
     
     // Data array initialization
     // Builds list of frequencies
-    for(int i=-2; i<=2; i++){
+    for(int i=-2; i<=3; i++){
         for(int j=0; j<chromaticScale.size(); j++){
             freqlist.push_back(chromaticScale[j]*pow(2, i));
         }
@@ -56,6 +56,10 @@ void Analysis::init(int bufSize){
     //     audioData[oct_size, wholeDataSize] = individual note data
     oct_size = chromaticScale.size();
     scale_size = fullBinList.size();
+    
+    
+    fft_size = fft->getBinSize();
+    raw_fft = new float[fft_size];
     
     raw_octave = new float[oct_size];
     raw_scale = new float[scale_size];
@@ -86,6 +90,10 @@ void Analysis::analyzeFrame(std::vector<float> sample, int bufferSize)
     
     // Send scaled frame to FFT
     fft->setSignal(normalizedOut);
+    
+    for(int i=0; i<fft_size; i++){
+        raw_fft[i] = fft->getAmplitudeAtBin(i);
+    }
     
     // Audio listeners run in a separate thread
     // so we must ensure control before making changes to a shared variable
@@ -118,13 +126,15 @@ void Analysis::analyzeFrame(std::vector<float> sample, int bufferSize)
         
         // Sum each note across octaves
         raw_octave[note] += val;
-        if(i >= scale_size-oct_size){ // Only need to update max sums on last octave
-            if(raw_octave[note] > octave_max) octave_max = raw_octave[note];
-        }
+
         
     }
     
     // Normalize summed data
+    for(int i=0; i<oct_size; i++){
+        if(raw_octave[i] > octave_max) octave_max = raw_octave[i];
+    }
+    
     for(int i=0; i<oct_size; i++){
         raw_octave[i] /= octave_max;
     }
@@ -154,8 +164,7 @@ bool Analysis::smoothFrame(){
     }
     
     // At the moment, smoothing consists of:
-    //   - averaging new value with previous to make it less 'jumpy'
-    //   - squaring values below 0.5 to reduce noise
+    //   - rolling average to make it less 'jumpy'
     for(int i=0; i<oct_size; i++){
         //raw_octave[i] = ofClamp(raw_octave[i], 0, 1); // clamp new data
         smooth_octave[i] = approxRollingAverage(smooth_octave[i], raw_octave[i]);
@@ -171,8 +180,13 @@ bool Analysis::smoothFrame(){
                 overtone += raw_scale[j];
                 count += 1;
             }
-            overtone /= count;
-            smooth_scale[i] = approxRollingAverage(smooth_scale[i], (raw_scale[i]+overtone)/2);
+            if(count > 0) {
+                overtone /= count;
+                smooth_scale[i] = approxRollingAverage(smooth_scale[i], (raw_scale[i]+overtone)/2);
+            }
+            else{
+                smooth_scale[i] = approxRollingAverage(smooth_scale[i], raw_scale[i]);
+            }
         }
         else{
             smooth_scale[i] = approxRollingAverage(smooth_scale[i], raw_scale[i]);
@@ -211,6 +225,17 @@ float* Analysis::getScale(){
 }
 
 //--------------------------------------------------------------
+float* Analysis::getFft(){
+    return raw_fft;
+}
+
+//--------------------------------------------------------------
+int Analysis::getFftSize(){
+    return fft_size;
+}
+
+
+//--------------------------------------------------------------
 int Analysis::getOctaveSize(){
     return oct_size;
 }
@@ -220,6 +245,7 @@ int Analysis::getScaleSize(){
     return scale_size;
 }
 
+//--------------------------------------------------------------
 void Analysis::setAddOvertone(bool b){
     addOvertone = b;
 }

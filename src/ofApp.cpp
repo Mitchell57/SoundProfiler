@@ -49,95 +49,149 @@ void ofApp::setup(){
     //--------------------------------------------------------------
     
     // Button Listeners
-    inputToggle.addListener(this, &ofApp::inputPressed);
-    outputToggle.addListener(this, &ofApp::outputPressed);
     factorToggle.addListener(this, &ofApp::factorAggPressed);
     smoothToggle.addListener(this, &ofApp::smoothPressed);
     loadButton.addListener(this, &ofApp::loadFile);
     playButton.addListener(this, &ofApp::playFile);
-    viewModeToggle.addListener(this, &ofApp::viewModeChanged);
+
     closeButton.addListener(this, &ofApp::closeMenu);
     
     // Main panel
     gui.setupFlexBoxLayout();
     
     all = gui.addGroup("", ofJson({
-        {"flex-direction", "row"},
+        {"flex-direction", "column"},
         {"flex", 1},
         {"margin", 2},
         {"padding", 2},
-        {"height", 30},
-        {"background-color", "transparent"},
-        {"width", "100%"},
+        {"background-color", "#141414"},
         {"flex-wrap", "wrap"},
         {"show-header", false},
         {"position", "static"},
     }));
+    all->loadTheme("default-theme.json");
     
     
     
-    // View mode
-    viewControls = all->addGroup("View", ofJson({
-        {"type", "panel"},
-        {"align-self", "flex-start"}
+
+    // Display Mode
+    displayParameters.setName("Display Mode");
+    displayParameters.add(disp0.set("Linear",false));
+    displayParameters.add(disp1.set("Polar",false));
+    displayParameters.add(disp2.set("Raw",false));
+    displayParameters.add(disp3.set("Oscilloscope",false));
+
         
-    }));
-    viewControls->loadTheme("default-theme.json");
-    viewControls->setShowHeader(true);
-    viewControls->setWidth(100);
-    //viewControls->setPosition(0, 0);
-    viewControls->add(viewModeLabel.set("Linear"));
-    viewControls->add(viewModeToggle.set("Change View"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
-    viewControls->minimize();
+    displayToggles = all->addGroup(displayParameters);
+    displayToggles->setExclusiveToggles(true);
+    displayToggles->loadTheme("default-theme.json");
+    displayToggles->setConfig(ofJson({{"type", "radio"}}));
+    
+    displayToggles->getActiveToggleIndex().addListener(this, &ofApp::setDisplayMode);
+    displayToggles->setActiveToggle(0);
+    
+    // Input Mode
+    inputParameters.setName("Input Source");
+    inputParameters.add(input0.set("Microphone", false));
+    inputParameters.add(input1.set("Play File", false));
+    
+    inputToggles = all->addGroup(inputParameters);
+    inputToggles->setExclusiveToggles(true);
+    inputToggles->loadTheme("default-theme.json");
+    inputToggles->setConfig(ofJson({{"type", "radio"}}));
     
     
-    // Input mode
-    audioModes = all->addGroup("Input", ofJson({
-        {"type", "panel"},
-        {"align-self", "flex-start"}
-        
-    }));
-    audioModes->loadTheme("default-theme.json");
-    audioModes->setShowHeader(true);
-    audioModes->setWidth(100);
-    //audioModes->setPosition(0, 0);
     
-    // File Manager
-    fileManager = audioModes->addGroup("File Manager");
+    
+    fileManager = all->addGroup("File Manager");
     fileManager->loadTheme("default-theme.json");
     fileManager->setShowHeader(false);
     fileManager->add(filePath.set("Path/To/WavFile"));
-    fileManager->add(loadButton.set("Choose .wav"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
+    fileManager->add(loadButton.set("Choose File"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
     fileManager->add(playButton.set("Play"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
     fileManager->minimize();
     
-    audioModes->add(inputToggle.set("Listen", true));
-    audioModes->add(outputToggle.set("Play File", false));
-    audioModes->minimize();
+    inputToggles->getActiveToggleIndex().addListener(this, &ofApp::setInputMode);
+    inputToggles->setActiveToggle(0);
+//    // Input mode
+//    audioModes = all->addGroup("Input Source", ofJson({
+//        {"type", "panel"},
+//        {"align-self", "flex-start"}
+//
+//    }));
+//    audioModes->loadTheme("default-theme.json");
+//    audioModes->setShowHeader(true);
+//    audioModes->setWidth(100);
+//    //audioModes->setPosition(0, 0);
+//
+//    // File Manager
+//
+//
+//    audioModes->add(outputToggle.set("Play File", false));
+//    audioModes->add(inputToggle.set("Microphone", true));
+//    audioModes->minimize();
     
 
     
     // Graph / Data Controls
-    graphControls = all->addGroup("Data", ofJson({
-        {"type", "panel"},
-        {"align-self", "flex-start"}
-        
-    }));
+    graphControls = all->addGroup("Data");
     //graphControls->setPosition(0, 0);
     graphControls->loadTheme("default-theme.json");
-    graphControls->setWidth(100);
     graphControls->add(smoothToggle.set("Smooth", true));
     graphControls->add(factorToggle.set("Factor Octaves", true));
     graphControls->minimize();
     
-    all->add(closeButton.set("X"), ofJson({
+    all->add(closeButton.set("Minimize All"), ofJson({
         {"type", "fullsize"},
         {"text-align", "center"},
         {"align-self", "flex-start"},
         {"margin", 5},
-        {"width", 25},
+        {"width", "100%"},
         {"border-radius", 2}
     }));
+
+    
+    windowResized(WIN_WIDTH, WIN_HEIGHT);
+
+}
+
+
+void ofApp::setDisplayMode(int& index){
+    switch(index){
+            default: case 0: dm.setMode(DisplayMode::LINEAR); break;
+            case 1: dm.setMode(DisplayMode::POLAR); break;
+            case 2: break;
+            case 3: break;
+
+        }
+}
+
+void ofApp::setInputMode(int& index){
+    switch (index) {
+        case 0:
+            inputBool = true;
+            try{
+                fileManager->minimize();
+            }
+            catch(exception e){
+                cout << "oops" << endl;
+            }
+            break;
+        case 1:
+            inputBool = false;
+            try{
+                fileManager->maximize();
+            }
+            catch(exception e){
+                cout << "oops" << endl;
+            }
+            break;
+            
+        default:
+            break;
+    }
+
+    
 
 }
 
@@ -201,64 +255,48 @@ void ofApp::playFile(){
     
 }
 
-//--------------------------------------------------------------
-void ofApp::viewModeChanged(){
-    // viewMode = 0 : linear charts
-    // viewMode = 1 : polar chart
-    
-    if(viewMode == 0){
-        viewMode = 1;
-        viewModeLabel.set("Polar");
-        dm.setMode(DisplayMode::POLAR);
-    }
-    else{
-        viewMode = 0;
-        viewModeLabel.set("Linear");
-        dm.setMode(DisplayMode::LINEAR);
-    }
-    
-}
 
-//--------------------------------------------------------------
-void ofApp::inputPressed(bool &inputToggle){
-    
-    // If input button is set to true and mode is not set to input
-    //     Set mode to input
-    //     Set output button to false
-    //     Hide file manager
-    //     Reset graphs
-    if(!inputBool && inputToggle){
-        inputBool = true;
-        outputToggle.set(false);
-        fileManager->minimize();
-        clearGraphs();
-    }
-    else{
-        outputToggle.set(true);
-    }
 
-    
-}
-
-//--------------------------------------------------------------
-void ofApp::outputPressed(bool &outputToggle){
-    
-    // If output button is set to true and mode is set to input
-    //     Set mode to output
-    //     Set input button to false
-    //     Show file manager
-    //     Reset graphs
-    if(inputBool && outputToggle){
-        inputBool = false;
-        inputToggle.set(false);
-        fileManager->maximize();
-        clearGraphs();
-    }
-    else{
-        inputToggle.set(true);
-    }
-    
-}
+////--------------------------------------------------------------
+//void ofApp::inputPressed(bool &inputToggle){
+//
+//    // If input button is set to true and mode is not set to input
+//    //     Set mode to input
+//    //     Set output button to false
+//    //     Hide file manager
+//    //     Reset graphs
+//    if(!inputBool && inputToggle){
+//        inputBool = true;
+//        outputToggle.set(false);
+//        fileManager->minimize();
+//        clearGraphs();
+//    }
+//    else{
+//        outputToggle.set(true);
+//    }
+//
+//
+//}
+//
+////--------------------------------------------------------------
+//void ofApp::outputPressed(bool &outputToggle){
+//
+//    // If output button is set to true and mode is set to input
+//    //     Set mode to output
+//    //     Set input button to false
+//    //     Show file manager
+//    //     Reset graphs
+//    if(inputBool && outputToggle){
+//        inputBool = false;
+//        inputToggle.set(false);
+//        fileManager->maximize();
+//        clearGraphs();
+//    }
+//    else{
+//        inputToggle.set(true);
+//    }
+//
+//}
 
 //--------------------------------------------------------------
 void ofApp::factorAggPressed(bool &factorToggle){
@@ -357,8 +395,12 @@ void ofApp::exit(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    ofPushMatrix();
+    ofTranslate(controlWidth, 0);
     
     dm.draw(analysis);
+    
+    ofPopMatrix();
 }
 
 
@@ -412,7 +454,8 @@ void ofApp::mouseExited(int x, int y){
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-    dm.updateLayout(w, h);
+    controlWidth = all->getWidth();
+    dm.updateLayout(w - controlWidth, h);
 }
 
 

@@ -24,13 +24,16 @@ class Analysis
         void setAddOvertone(bool b);
     
         float* getRawOctave();
-        float* getRawScale();
-    
         float* getOctave();
-        float* getScale();
-    
         int getOctaveSize();
+    
+        float* getRawScale();
+        float* getScale();
         int getScaleSize();
+    
+        float* getFft();
+        int getFftSize();
+        
         
     private:
         ofxFft* fft;
@@ -38,13 +41,16 @@ class Analysis
         bool frameReady, addOvertone;
         
         int bufferSize;
+    
+        int fft_size;
+        float* raw_fft;
+    
         int oct_size;
-        int scale_size;
-    
         float* raw_octave;
-        float* raw_scale;
-    
         float* smooth_octave;
+    
+        int scale_size;
+        float* raw_scale;
         float* smooth_scale;
 
     

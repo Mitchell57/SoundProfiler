@@ -46,8 +46,7 @@ void DisplayMode::draw(Analysis analysis){
             float* raw_scale = analysis.getRawScale();
             
             ofPushMatrix();
-            ofTranslate(0, 30);
-            drawPolar(width, height-30, scaleSize, raw_scale);
+            drawPolar(width, height, scaleSize, raw_scale);
             ofPopMatrix();
         }
     }
@@ -303,19 +302,19 @@ void DisplayMode::drawPolar(int w, int h, int dataSize, float* data){
 
 void DisplayMode::updateLayout(int w, int h){
     width = w;
-    height = (h-45);
-    h -= 35;
+    height = h;
+
     // Calculates new positions for graphs / controls when window is resized
-    int topPadding = h*0.02;
-    int lrPadding = w*0.02;
+    int topPadding = h*0.05;
+    int lrPadding = w*0.05;
     
-    singleW = ((float)w*0.45);
-    singleH =  ((float)h*0.45);
-    multiW = ((float)w*0.96);
-    multiH =  ((float)h*0.46);
-    singleXOffset = w - (2*lrPadding+singleW);
-    singleYOffset = 45+topPadding;
+    singleW = ((float)w*0.9);
+    singleH =  ((float)h*0.425);
+    multiW = ((float)w*0.90);
+    multiH =  ((float)h*0.425);
+    singleXOffset = lrPadding;
+    singleYOffset = topPadding;
     multiXOffset = lrPadding;
-    multiYOffset = 45+(singleH+2*topPadding);
+    multiYOffset = singleH+(2*topPadding);
 }
 
