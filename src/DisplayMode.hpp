@@ -42,6 +42,9 @@ class DisplayMode {
         void drawFftPlot(int w, int h, int dataSize, float* data);
         
         void drawOscillator(int w, int h, int dataSize, float* data, float* data2);
+        float* osc_data1;
+        float* osc_data2;
+        bool osc_started;
     
         std::vector<string> noteNames = {"A", "A#","B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"};
     

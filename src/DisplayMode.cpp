@@ -7,6 +7,16 @@
 
 #include "DisplayMode.hpp"
 
+// Approximate Rolling Average from:
+// https://bit.ly/3aIsQRD
+float approxRollingAverage (float avg, float new_sample, float n) {
+
+    avg -= avg / n;
+    avg += new_sample / n;
+
+    return avg;
+}
+
 DisplayMode::DisplayMode(){}
 
 void DisplayMode::init(int w, int h){
@@ -14,9 +24,11 @@ void DisplayMode::init(int w, int h){
     updateLayout(w, h);
     
     fftLinear = false;
-    timer = 0;
+    timer = 100;
     
-    blur.setup(w, h, 20, .2, 1);
+    osc_started = false;
+    
+    
 }
 
 void DisplayMode::setMode(Mode m){
@@ -69,7 +81,9 @@ void DisplayMode::draw(Analysis analysis){
             int scale_size = analysis.getScaleSize();
             
             ofPushMatrix();
+            
             drawOscillator(width, height, scale_size, scale, raw_scale);
+            drawPolar(width, height, scale_size, scale);
             ofPopMatrix();
             
         }
@@ -324,8 +338,8 @@ void DisplayMode::drawPolar(int w, int h, int dataSize, float* data){
 
         
         hue = (i%12)*(255.0/12);
-        sat = data[i]*255;
-        brightness = data[i]*255;
+        sat = 100+data[i]*155;
+        brightness = 100+data[i]*155;
         
         ofPath path;
         
@@ -445,42 +459,51 @@ void DisplayMode::drawFftPlot(int w, int h, int dataSize, float* data){
 
 //--------------------------------------------------------------
 void DisplayMode::drawOscillator(int w, int h, int dataSize, float* data, float* data2){
-    
-    timer += 1;
+    if(!osc_started){
+        osc_data1 = data;
+        osc_data2 = data2;
+    }
+    else{
+        for(int i=0; i<dataSize; i++){
+            osc_data1[i] = approxRollingAverage(osc_data1[i], data[i], 20);
+            osc_data2[i] = approxRollingAverage(osc_data2[i], data2[i], 5);
+        }
+    }
     float constraint = min(w, h);
     float maxR = (constraint*0.99)/2;
+    float minR = (constraint*0.05)/2;
 
     
 
     
-    float theta = (timer)/100;
+    float theta = (timer)/7;
     float hue, sat, brightness, radius;
     blur.begin();
-    ofClear(0, 0, 0, 2);
+    ofClear(0, 0, 0, 1);
     ofPushMatrix();
     ofTranslate(w/2, h/2);
     
     float sum = 0;
     for(int i=0; i<dataSize; i++){
-        sum += data2[i];
+        sum += osc_data1[i];
     }
     sum /= dataSize;
+    timer += sum;
     
     for(int i=0; i<dataSize; i++){
-        radius = (maxR)*data[i];
+        radius = minR+(maxR-minR)*osc_data1[i];
         
-        radius = min(maxR, radius*(1+sum));
+        radius = min(maxR, radius);
         float rnd = rand() % 50;
-        
-        if(rnd < 5) radius = maxR - radius;
-        hue = (i%12)*(255.0/12);
-        sat = ((200-dataSize)+(55.0*data[i]))+i;
-        brightness = (150-dataSize)+(105.0*data[i])+i;;
-        ofSetColor(0,0,0,150);
-        ofDrawCircle(radius*cos(sum*theta*data[i] + rnd), radius*sin(sum*theta*data[i]+ rnd), 1.4*35*data2[i]);
+        if(rnd < 10) radius = maxR - radius;
+        hue = (i%dataSize)*(255.0/dataSize);
+        sat = ((100)+(155.0*osc_data1[i]));
+        brightness = ((255)-(105.0*osc_data2[i]))*(sum*3);
+        ofSetColor(0,0,0,100);
+        ofDrawCircle(radius*cos(sum*theta*(1+osc_data1[i])), radius*sin(sum*theta*(1+osc_data2[i])), 35*osc_data2[i]*(1-sum));
         ofColor color = ofColor::fromHsb(hue, sat, brightness);
         ofSetColor(color);
-        ofDrawCircle(radius*cos(sum*theta*data[i] + rnd), radius*sin(sum*theta*data[i]+ rnd), 35*data2[i]);
+        ofDrawCircle(radius*cos((theta*(1+osc_data1[i]))/11), radius*sin((theta*(1+osc_data1[i]))/13), (minR/5)+40*osc_data2[i]*(1+sum));
     }
     
     ofPopMatrix();
@@ -499,7 +522,7 @@ void DisplayMode::drawOscillator(int w, int h, int dataSize, float* data, float*
 void DisplayMode::updateLayout(int w, int h){
     width = w;
     height = h;
-
+    blur.setup(w, h, 30, .2, 2);
     // Calculates new positions for graphs / controls when window is resized
     int topPadding = h*0.05;
     int lrPadding = w*0.05;

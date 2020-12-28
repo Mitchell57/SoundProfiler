@@ -5,7 +5,7 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    ofSetFrameRate(60);
+    ofSetFrameRate(120);
     ofBackground(40);
     
     // Boolean initialization
@@ -142,7 +142,7 @@ void ofApp::setup(){
     }));
     
     displayToggles->getActiveToggleIndex().addListener(this, &ofApp::setDisplayMode);
-    displayToggles->setActiveToggle(0);
+    displayToggles->setActiveToggle(3);
     
     inputToggles->getActiveToggleIndex().addListener(this, &ofApp::setInputMode);
     inputToggles->setActiveToggle(0);
