@@ -13,8 +13,8 @@
 // https://bit.ly/3aIsQRD
 float approxRollingAverage (float avg, float new_sample) {
 
-    avg -= avg / 2;
-    avg += new_sample / 2;
+    avg -= avg / 3;
+    avg += new_sample / 3;
 
     return avg;
 }
@@ -66,6 +66,16 @@ void Analysis::init(int bufSize){
     
     smooth_octave = new float[oct_size];
     smooth_scale = new float[scale_size];
+    
+    for(int i=0; i<oct_size; i++){
+        raw_octave[i] = 0.001;
+        smooth_octave[i] = 0.001;
+    }
+    
+    for(int i=0; i<scale_size; i++){
+        raw_scale[i] = 0.001;
+        smooth_scale[i] = 0.001;
+    }
 }
 
 

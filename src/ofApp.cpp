@@ -5,12 +5,12 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    ofSetFrameRate(120);
-    ofBackground(40);
+    ofSetFrameRate(60);
+    ofBackground(20);
     
     // Boolean initialization
     inputBool = true;
-    shouldFactorAgg = true;
+    shouldFactorAgg = false;
     shouldSmooth = true;
     loadPressed = false;
     viewMode = 0;
@@ -128,7 +128,7 @@ void ofApp::setup(){
     linearControls->setShowHeader(false);
     linearControls->loadTheme("default-theme.json");
     //linearControls->add(smoothToggle.set("Smooth", true));
-    linearControls->add(factorToggle.set("Factor Octaves", true));
+    linearControls->add(factorToggle.set("Factor Octaves", false));
     linearControls->minimize();
     
     // Minimize button

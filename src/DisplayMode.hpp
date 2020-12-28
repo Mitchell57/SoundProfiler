@@ -32,7 +32,7 @@ class DisplayMode {
         int singleXOffset, singleYOffset, multiXOffset, multiYOffset;
         int barWidth, margin, maxHeight, y_offset;
     
-        ofxBlur blur;
+        ofxBlur blur, blur2;
         ofTime time;
         float timer;
         
@@ -45,6 +45,11 @@ class DisplayMode {
         float* osc_data1;
         float* osc_data2;
         bool osc_started;
+        float smooth, sum;
+        float x, y, r;
+        float* xVals;
+        float* yVals;
+        float* rVals;
     
         std::vector<string> noteNames = {"A", "A#","B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"};
     

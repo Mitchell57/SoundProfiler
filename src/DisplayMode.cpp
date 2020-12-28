@@ -24,7 +24,10 @@ void DisplayMode::init(int w, int h){
     updateLayout(w, h);
     
     fftLinear = false;
-    timer = 100;
+    timer = 3.1423;
+    
+    sum = 0;
+    smooth = 0.25;
     
     osc_started = false;
     
@@ -82,8 +85,12 @@ void DisplayMode::draw(Analysis analysis){
             
             ofPushMatrix();
             
-            drawOscillator(width, height, scale_size, scale, raw_scale);
+            drawOscillator(width, height, scale_size, scale, scale);
+            blur2.begin();
+            ofClear(0, 0, 0, 10);
             drawPolar(width, height, scale_size, scale);
+            blur2.end();
+            blur2.draw();
             ofPopMatrix();
             
         }
@@ -285,86 +292,6 @@ void DisplayMode::drawLinScale(int w, int h, int dataSize, float* data){
     ofPopMatrix();
 }
 
-void DisplayMode::drawPolar(int w, int h, int dataSize, float* data){
-    if(dataSize <= 1) return;
-    
-    float constraint = min(width, height);
-    float rMin = (constraint*0.1)/2;
-    float rMax = (constraint*0.9)/2;
-    
-    float numOctaves = dataSize / 12;
-    float r_inc = rMax / numOctaves;
-
-
-    ofPushMatrix();
-    ofTranslate(width/2, height/2);
-    
-    float deg = 0;
-    float deg2;
-    float rSmall = 0;
-    float x1,y1,x2,y2,x3,y3,x4,y4;
-    float rData, rad1, rad2, hue, sat, brightness;
-    for(int i=0; i<dataSize; i++){
-        if(i%12 == 0){
-            rSmall += r_inc;
-            deg = 0;
-        }
-        
-        deg += 360/12;
-        deg2 = deg+(360/12);
-                
-        if(data[i] < 0.1 || data[i] > 1 || data[i] != data[i]){
-            rData = 0.1;
-        }
-        else{
-            rData = data[i]*r_inc;
-        }
-        
-        rad1 = ofDegToRad(deg);
-        rad2 = ofDegToRad(deg2);
-        
-        x1 = rSmall * cos(rad1);
-        y1 = rSmall * sin(rad1);
-        
-        x2 = (rSmall+rData) * cos(rad1);
-        y2 = (rSmall+rData) * sin(rad1);
-        
-        x4 = rSmall * cos(rad2);
-        y4 = rSmall * sin(rad2);
-        
-        x3 = (rSmall+rData) * cos(rad2);
-        y3 = (rSmall+rData) * sin(rad2);
-        
-
-        
-        hue = (i%12)*(255.0/12);
-        sat = 100+data[i]*155;
-        brightness = 100+data[i]*155;
-        
-        ofPath path;
-        
-        ofColor color = ofColor::fromHsb(hue, sat, brightness);
-        path.setFillColor(color);
-        
-        path.moveTo(x1,y1);
-        path.arc(0,0,rSmall, rSmall, deg, deg2);
-        path.lineTo(x3, y3);
-        path.arcNegative(0,0, (rSmall+rData), (rSmall+rData), deg2, deg);
-        path.lineTo(x1,y1);
-        
-        path.close();
-        path.setFilled(true);
-        //path.setStrokeHexColor(0);
-        path.setStrokeWidth(0);
-        path.draw();
-        
-        
-        
-        
-    }
-    
-    ofPopMatrix();
-}
 
 
 //--------------------------------------------------------------
@@ -413,6 +340,7 @@ void DisplayMode::drawFftPlot(int w, int h, int dataSize, float* data){
         path.setFilled(false);
         path.setStrokeColor(ofColor::white);
         path.setStrokeWidth(1);
+        path.setCircleResolution(20);
         path.draw();
         
         ofPopMatrix();
@@ -458,15 +386,113 @@ void DisplayMode::drawFftPlot(int w, int h, int dataSize, float* data){
 }
 
 //--------------------------------------------------------------
+void DisplayMode::drawPolar(int w, int h, int dataSize, float* data){
+    if(dataSize <= 1) return;
+    
+    float constraint = min(width, height);
+    float rMin = (constraint*0.1)/2;
+    float rMax = (constraint*0.9)/2;
+    
+    float numOctaves = dataSize / 12;
+    float r_inc = rMax / numOctaves;
+
+
+    ofPushMatrix();
+    ofTranslate(width/2, height/2);
+    
+    float deg = 0;
+    float deg2;
+    float rSmall = 0;
+    float x1,y1,x2,y2,x3,y3,x4,y4;
+    float rData, rad1, rad2, hue, sat, brightness;
+    for(int i=0; i<dataSize; i++){
+        if(i%12 == 0){
+            rSmall += r_inc;
+            deg = 0;
+        }
+        
+        deg += 360/12;
+        deg2 = deg+(360/12);
+                
+        if(data[i] > 1 || data[i] != data[i]){
+            rData = 0;
+        }
+        else{
+            rData = data[i]*r_inc;
+        
+        
+        rad1 = ofDegToRad(deg);
+        rad2 = ofDegToRad(deg2);
+        
+        x1 = rSmall * cos(rad1);
+        y1 = rSmall * sin(rad1);
+        
+        x2 = (rSmall+rData) * cos(rad1);
+        y2 = (rSmall+rData) * sin(rad1);
+        
+        x4 = rSmall * cos(rad2);
+        y4 = rSmall * sin(rad2);
+        
+        x3 = (rSmall+rData) * cos(rad2);
+        y3 = (rSmall+rData) * sin(rad2);
+        
+
+        
+        hue = (i%dataSize)*(255.0/dataSize);
+        sat = 100+data[i]*155;
+        brightness = 90+data[i]*165;
+        if(data[i] < 0.15) brightness = data[i]*255;
+        
+        ofPath path;
+        ofSetCurveResolution(100);
+        ofColor color = ofColor::fromHsb(hue, sat, brightness);
+        path.setFillColor(ofColor(color, brightness));
+        
+        path.moveTo(x1,y1);
+        path.arc(0,0,rSmall, rSmall, deg, deg2);
+        path.lineTo(x3, y3);
+        path.arcNegative(0,0, (rSmall+rData), (rSmall+rData), deg2, deg);
+        path.lineTo(x1,y1);
+        
+        path.close();
+        path.setFilled(true);
+        path.setStrokeHexColor(0);
+        path.setStrokeWidth(0);
+        path.draw();
+        }
+        
+        
+        
+    }
+    
+    ofPopMatrix();
+}
+
+
+//--------------------------------------------------------------
 void DisplayMode::drawOscillator(int w, int h, int dataSize, float* data, float* data2){
+    if(dataSize <= 1) return;
     if(!osc_started){
         osc_data1 = data;
         osc_data2 = data2;
+        
+        xVals = new float[dataSize];
+        yVals = new float[dataSize];
+        rVals = new float[dataSize];
+        
+        for(int i=0; i<dataSize; i++){
+            xVals[i] = 0.1;
+            yVals[i] = 0.1;
+            rVals[i] = 0.1;
+        }
     }
     else{
         for(int i=0; i<dataSize; i++){
-            osc_data1[i] = approxRollingAverage(osc_data1[i], data[i], 20);
-            osc_data2[i] = approxRollingAverage(osc_data2[i], data2[i], 5);
+            float val1 = approxRollingAverage(osc_data1[i], data[i], 20);
+            float val2 = approxRollingAverage(osc_data2[i], data2[i], 6);
+            
+            osc_data1[i] += (val1-osc_data1[i])*smooth;
+            osc_data2[i] += (val2-osc_data2[i])*smooth;
         }
     }
     float constraint = min(w, h);
@@ -479,31 +505,54 @@ void DisplayMode::drawOscillator(int w, int h, int dataSize, float* data, float*
     float theta = (timer)/7;
     float hue, sat, brightness, radius;
     blur.begin();
-    ofClear(0, 0, 0, 1);
+    ofClear(0, 0, 0, 3);
     ofPushMatrix();
     ofTranslate(w/2, h/2);
     
-    float sum = 0;
+    float newsum = 0;
     for(int i=0; i<dataSize; i++){
-        sum += osc_data1[i];
+        newsum += osc_data1[i];
     }
-    sum /= dataSize;
-    timer += sum;
+    newsum /= dataSize;
+    
+    sum -= sum/15;
+    sum += newsum/15;
+    
+    timer += sum/1.75;
     
     for(int i=0; i<dataSize; i++){
-        radius = minR+(maxR-minR)*osc_data1[i];
+        radius = minR+(maxR-minR)*(2*osc_data1[i]+3*sum);
         
-        radius = min(maxR, radius);
-        float rnd = rand() % 50;
-        if(rnd < 10) radius = maxR - radius;
+        
+        
         hue = (i%dataSize)*(255.0/dataSize);
         sat = ((100)+(155.0*osc_data1[i]));
-        brightness = ((255)-(105.0*osc_data2[i]))*(sum*3);
+        brightness = ((255)-(95.0*osc_data1[i]))*(sum*2.8);
         ofSetColor(0,0,0,100);
-        ofDrawCircle(radius*cos(sum*theta*(1+osc_data1[i])), radius*sin(sum*theta*(1+osc_data2[i])), 35*osc_data2[i]*(1-sum));
+        
+//        float alt_x = radius*cos(sum*theta*(1+osc_data1[i]));
+//        float alt_y = radius*sin(sum*theta*(1+osc_data1[i]));
+//        float alt_r = 35*osc_data1[i]*(1-sum);
+        //ofDrawCircle(alt_x, alt_y, alt_r);
         ofColor color = ofColor::fromHsb(hue, sat, brightness);
         ofSetColor(color);
-        ofDrawCircle(radius*cos((theta*(1+osc_data1[i]))/11), radius*sin((theta*(1+osc_data1[i]))/13), (minR/5)+40*osc_data2[i]*(1+sum));
+        
+        float n = 3;
+        
+        float x = radius*cos((i+theta+osc_data1[i])/2);
+        xVals[i] -= xVals[i]/n;
+        xVals[i] += x/n;
+        
+        
+        float y = radius*sin((i+theta+osc_data2[i])/3);
+        yVals[i] -= yVals[i]/n;
+        yVals[i] += y/n;
+        
+        float r = (radius/2)*(sum+osc_data1[i])/2;
+        rVals[i] -= rVals[i]/n;
+        rVals[i] += r/n;
+        
+        ofDrawCircle(xVals[i], yVals[i], rVals[i]);
     }
     
     ofPopMatrix();
@@ -523,6 +572,7 @@ void DisplayMode::updateLayout(int w, int h){
     width = w;
     height = h;
     blur.setup(w, h, 30, .2, 2);
+    blur2.setup(w, h, 25, .2, 2);
     // Calculates new positions for graphs / controls when window is resized
     int topPadding = h*0.05;
     int lrPadding = w*0.05;
