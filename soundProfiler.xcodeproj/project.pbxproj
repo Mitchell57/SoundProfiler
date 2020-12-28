@@ -26,6 +26,8 @@
 		25D4A76C57CA69E2B03691E2 /* Twang.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A55957DFFB42CE17B2BFEB6 /* Twang.cpp */; };
 		29938E05AF78B3DF7A591187 /* ofxFftw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5F353204A917F4B2BCEEABE6 /* ofxFftw.cpp */; };
 		2C2285ACBE1FEB2AA7DDA4DD /* BlowHole.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 252B83D9C2A399E088D042A3 /* BlowHole.cpp */; };
+		3059600F25996225006C9D2C /* DisplayMode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3059600D25996225006C9D2C /* DisplayMode.cpp */; };
+		30596013259966AA006C9D2C /* Analysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30596012259966AA006C9D2C /* Analysis.cpp */; };
 		31F923D4B3FD6705A43AE03D /* DelayA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7E7F625187F071D780C299 /* DelayA.cpp */; };
 		32A992C3246FC91087ABB316 /* PitShift.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A317D4418EC91C88E810D81 /* PitShift.cpp */; };
 		3322D5DB6568BC1D8CF5B9B1 /* Whistle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28BC2ADF86A95B621D977304 /* Whistle.cpp */; };
@@ -207,6 +209,10 @@
 		2C16E7913D6964A4E1438B20 /* TwoZero.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = TwoZero.h; path = ../../../addons/ofxStk/libs/STK/include/TwoZero.h; sourceTree = SOURCE_ROOT; };
 		2C65378F473DCFF80F18CBA5 /* ofxDOMBoxLayout.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxDOMBoxLayout.cpp; path = ../../../addons/ofxGuiExtended/src/view/ofxDOMBoxLayout.cpp; sourceTree = SOURCE_ROOT; };
 		2D0C0AA4436B2A16530BA991 /* fftw3.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = fftw3.h; path = ../../../addons/ofxFft/libs/fftw/include/fftw3.h; sourceTree = SOURCE_ROOT; };
+		3059600D25996225006C9D2C /* DisplayMode.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayMode.cpp; sourceTree = "<group>"; };
+		3059600E25996225006C9D2C /* DisplayMode.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = DisplayMode.hpp; sourceTree = "<group>"; };
+		3059601025996681006C9D2C /* Analysis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Analysis.h; sourceTree = "<group>"; };
+		30596012259966AA006C9D2C /* Analysis.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Analysis.cpp; sourceTree = "<group>"; };
 		30A83FBD25736E5500560B77 /* default-theme.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = "default-theme.json"; path = "bin/data/default-theme.json"; sourceTree = SOURCE_ROOT; };
 		3185D3F238C07BAF47D4EB96 /* Mandolin.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Mandolin.cpp; path = ../../../addons/ofxStk/libs/STK/src/Mandolin.cpp; sourceTree = SOURCE_ROOT; };
 		3214698AC2F90660A2970586 /* Thread.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Thread.cpp; path = ../../../addons/ofxStk/libs/STK/src/Thread.cpp; sourceTree = SOURCE_ROOT; };
@@ -1258,9 +1264,13 @@
 			isa = PBXGroup;
 			children = (
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
+				3059601025996681006C9D2C /* Analysis.h */,
+				30596012259966AA006C9D2C /* Analysis.cpp */,
+				3059600E25996225006C9D2C /* DisplayMode.hpp */,
+				3059600D25996225006C9D2C /* DisplayMode.cpp */,
+				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
 				E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */,
 				30A83FBD25736E5500560B77 /* default-theme.json */,
-				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -1519,6 +1529,7 @@
 				7D81BA8474F7DF288D6CBE86 /* FileWvIn.cpp in Sources */,
 				09A46E32A843DD6181B0C6EE /* FileWvOut.cpp in Sources */,
 				A035DD0B82558E5815847C31 /* Fir.cpp in Sources */,
+				30596013259966AA006C9D2C /* Analysis.cpp in Sources */,
 				CF1919286B1F57D87A0A2513 /* Flute.cpp in Sources */,
 				CD84B88AD956E62CF0D9010B /* FormSwep.cpp in Sources */,
 				04160A407B4A0EF2802CFD5D /* FreeVerb.cpp in Sources */,
@@ -1544,6 +1555,7 @@
 				3FDA16CCCA39D83A3A3CB7AA /* OnePole.cpp in Sources */,
 				7436702664021337D88098DF /* OneZero.cpp in Sources */,
 				362537B96282F3CB5A63650E /* PRCRev.cpp in Sources */,
+				3059600F25996225006C9D2C /* DisplayMode.cpp in Sources */,
 				CE122E8B5BBB8EC931E47A5B /* PercFlut.cpp in Sources */,
 				8957BB477B86536F017B1526 /* Phonemes.cpp in Sources */,
 				32A992C3246FC91087ABB316 /* PitShift.cpp in Sources */,

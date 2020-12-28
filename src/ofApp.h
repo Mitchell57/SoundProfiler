@@ -4,6 +4,8 @@
 #include "ofxFft.h"
 #include "ofxStk.h"
 #include "ofxGuiExtended.h"
+#include "Analysis.h"
+#include "DisplayMode.hpp"
 #include <mutex>          // std::mutex
 
 #define WIN_WIDTH 1000
@@ -35,8 +37,11 @@ class ofApp : public ofBaseApp{
     // audio
         void audioIn(ofSoundBuffer& buffer);
         void audioOut(ofSoundBuffer& buffer);
-        void analyzeAudio(std::vector<float> sample, int bufferSize);
+
         void soundstream_init();
+    
+    
+        Analysis analysis;
     
         int bufferSize;
         ofxFft* fft;
@@ -45,14 +50,12 @@ class ofApp : public ofBaseApp{
         bool shouldPlayAudio, shouldFactorAgg, shouldSmooth;
         bool inputBool, loadPressed, playPressed;
         
-        std::vector<int> fullBinList;
-        std::vector<float> freqlist;
-        float a4 = 440;
-        std::vector<float> chromaticScale = {440, 466.16, 493.88, 523.25, 554.37, 587.33, 622.25, 659.26, 698.46, 739.99, 783.99, 830.61};
         
     
     
     // Drawing
+        DisplayMode dm;
+    
         int barWidth, margin, maxHeight, y_offset;
         void drawSingleOctave(float width, float height);
         void drawMultiOctave(float width, float height);
@@ -60,25 +63,10 @@ class ofApp : public ofBaseApp{
         void clearGraphs();
     
         //Data
-        float* audioData;
-        float* buffer;
-        float* displayData;
-        float predictedNote, p_note;
-        
-        int wholeDataSize, oct_size, scale_size;
         std::mutex mtx;
+
     
-        typedef std::pair<int,int> notepair;
-        bool comparator ( const notepair& l, const notepair& r)
-        { return l.first > r.first; };
-    
-        std::vector<notepair> keyDetector;
-    
-        float* overtoneData;
-        float* overtoneBuff;
-        std::vector<int>* overtoneBinList;
-    
-        std::vector<string> noteNames = {"A", "A#","B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"};
+        
         std::vector<ofColor> colors = {ofColor::red, ofColor::orange, ofColor::yellow, ofColor::greenYellow, ofColor::green, ofColor::aquamarine, ofColor::cyan, ofColor::cadetBlue, ofColor::blueViolet, ofColor::lavender, ofColor::purple, ofColor::pink};
     
     
