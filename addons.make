@@ -1,3 +1,4 @@
+ofxBlur
 ofxFft
 ofxGuiExtended
 ofxStk

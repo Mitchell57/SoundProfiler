@@ -12,6 +12,11 @@ DisplayMode::DisplayMode(){}
 void DisplayMode::init(int w, int h){
     mode = LINEAR;
     updateLayout(w, h);
+    
+    fftLinear = false;
+    timer = 0;
+    
+    blur.setup(w, h, 20, .2, 1);
 }
 
 void DisplayMode::setMode(Mode m){
@@ -55,7 +60,16 @@ void DisplayMode::draw(Analysis analysis){
             
             ofPushMatrix();
             ofTranslate(singleXOffset, singleYOffset);
-            drawFftPlot(singleW, height*0.9, fft_size, raw_fft);
+            drawFftPlot(singleW, singleH, fft_size, raw_fft);
+            ofPopMatrix();
+        }
+        if(mode == OSC){
+            float* scale = analysis.getScale();
+            float* raw_scale = analysis.getRawScale();
+            int scale_size = analysis.getScaleSize();
+            
+            ofPushMatrix();
+            drawOscillator(width, height, scale_size, scale, raw_scale);
             ofPopMatrix();
             
         }
@@ -67,10 +81,7 @@ void DisplayMode::draw(Analysis analysis){
             drawLinOctave(singleW, singleH, 1, 0);
             ofPopMatrix();
             
-            ofPushMatrix();
-            ofTranslate(multiXOffset, multiYOffset);
-            drawLinScale(multiW, multiH, 1, 0);
-            ofPopMatrix();
+            
         }
         if(mode == POLAR){
             ofPushMatrix();
@@ -80,7 +91,7 @@ void DisplayMode::draw(Analysis analysis){
         if(mode == RAW){
             ofPushMatrix();
             ofTranslate(singleXOffset, singleYOffset);
-            drawFftPlot(singleW, height*0.9, 1, 0);
+            drawFftPlot(singleW, singleH, 1, 0);
             ofPopMatrix();
             
         }
@@ -329,8 +340,8 @@ void DisplayMode::drawPolar(int w, int h, int dataSize, float* data){
         
         path.close();
         path.setFilled(true);
-        path.setStrokeHexColor(0);
-        path.setStrokeWidth(1);
+        //path.setStrokeHexColor(0);
+        path.setStrokeWidth(0);
         path.draw();
         
         
@@ -355,51 +366,132 @@ void DisplayMode::drawFftPlot(int w, int h, int dataSize, float* data){
     outer_rect.width = w;
     outer_rect.height = h;
     ofDrawRectangle(outer_rect);
+    std::string label = "FFT Plot";
+    if(singleYOffset > 20) ofDrawBitmapString(label, 0, -8);
     ofPopStyle();
     
     if(dataSize <= 1) return;
-    
     dataSize *= 0.75;
-    // Initialize graph values
-    //    Data = Entire FFT Plot
-    //    Chart takes 95% of total width
-    //    Margins take up rest of total width
-    //    Max bar height is 95% of height
-
-    
-    float x_inc = (((float)w) * 0.95) / (float)dataSize;
-    margin = (((float)w) - x_inc*dataSize) / 2;
-    maxHeight = ((float)h)*0.95;
-    y_offset = (float)(h + maxHeight)/2;
-    bool labelsOn = (barWidth > 12);
-    
-    
     float x = 0;
     float y = 0;
     
+    float x_inc = (((float)w) * 0.99) / (float)dataSize;
+    margin = (((float)w) - x_inc*dataSize) / 2;
+    maxHeight = ((float)h)*0.95;
+    y_offset = (float)(h + maxHeight)/2;
     
-    ofPushMatrix();
-    ofTranslate(margin, y_offset); //Move to bottom-left corner for start
     ofSetColor(255);
     ofPath path;
     
-    path.moveTo(0, -data[0]*maxHeight);
-    
-    //loop through values
-    for(int i=0; i<dataSize; i++){
-        x += x_inc;
-        y = -data[i]*maxHeight;
+    if(fftLinear){
+        ofPushMatrix();
+        ofTranslate(0, y_offset); //Move to bottom-left corner for start
         
-        path.lineTo(x, y);
+        path.moveTo(0, -data[0]*maxHeight);
+        
+        //loop through values
+        for(int i=1; i<dataSize; i++){
+            x += x_inc;
+            y = -data[i]*maxHeight;
+            path.lineTo(x, y);
+        }
+        
+        path.setFilled(false);
+        path.setStrokeColor(ofColor::white);
+        path.setStrokeWidth(1);
+        path.draw();
+        
+        ofPopMatrix();
+    }
+    else{
+        ofPushMatrix();
+        
+        
+        path.moveTo(log2f(margin), -data[0]*maxHeight);
+        x = margin;
+        float max_y = 0;
+        //loop through values
+        for(int i=1; i<dataSize; i++){
+            x += x_inc;
+            y = -data[i]*maxHeight;
+            if(y > max_y) max_y = y;
+            path.lineTo(log2f(x), y);
+        }
+        
+        
+        
+        std::vector<ofPolyline> outline = path.getOutline();
+        ofRectangle bb = outline[0].getBoundingBox();
+        float pw = bb.getWidth();
+        float ph = bb.getHeight();
+        path.scale(((float)w)/pw, maxHeight / ph);
+        outline = path.getOutline();
+        bb = outline[0].getBoundingBox();
+        pw = bb.getWidth();
+        ph = bb.getHeight();
+        float px = bb.getX();
+        float py = bb.getY();
+        
+        ofTranslate(-(px), y_offset);
+        path.setFilled(false);
+        path.setStrokeColor(ofColor::white);
+        path.setStrokeWidth(1);
+        
+        path.draw();
+        
+        ofPopMatrix();
+    }
+}
+
+//--------------------------------------------------------------
+void DisplayMode::drawOscillator(int w, int h, int dataSize, float* data, float* data2){
+    
+    timer += 1;
+    float constraint = min(w, h);
+    float maxR = (constraint*0.99)/2;
+
+    
+
+    
+    float theta = (timer)/100;
+    float hue, sat, brightness, radius;
+    blur.begin();
+    ofClear(0, 0, 0, 2);
+    ofPushMatrix();
+    ofTranslate(w/2, h/2);
+    
+    float sum = 0;
+    for(int i=0; i<dataSize; i++){
+        sum += data2[i];
+    }
+    sum /= dataSize;
+    
+    for(int i=0; i<dataSize; i++){
+        radius = (maxR)*data[i];
+        
+        radius = min(maxR, radius*(1+sum));
+        float rnd = rand() % 50;
+        
+        if(rnd < 5) radius = maxR - radius;
+        hue = (i%12)*(255.0/12);
+        sat = ((200-dataSize)+(55.0*data[i]))+i;
+        brightness = (150-dataSize)+(105.0*data[i])+i;;
+        ofSetColor(0,0,0,150);
+        ofDrawCircle(radius*cos(sum*theta*data[i] + rnd), radius*sin(sum*theta*data[i]+ rnd), 1.4*35*data2[i]);
+        ofColor color = ofColor::fromHsb(hue, sat, brightness);
+        ofSetColor(color);
+        ofDrawCircle(radius*cos(sum*theta*data[i] + rnd), radius*sin(sum*theta*data[i]+ rnd), 35*data2[i]);
     }
     
-    
-    path.setFilled(false);
-    path.setStrokeColor(ofColor::white);
-    path.setStrokeWidth(1);
-    path.draw();
-    
     ofPopMatrix();
+    
+    
+    blur.end();
+    
+    
+    blur.draw();
+    
+    
 }
 
 
@@ -414,7 +506,7 @@ void DisplayMode::updateLayout(int w, int h){
     
     singleW = ((float)w*0.9);
     singleH =  ((float)h*0.425);
-    multiW = ((float)w*0.90);
+    multiW = ((float)w*0.9);
     multiH =  ((float)h*0.425);
     singleXOffset = lrPadding;
     singleYOffset = topPadding;

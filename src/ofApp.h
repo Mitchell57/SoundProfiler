@@ -66,8 +66,7 @@ class ofApp : public ofBaseApp{
 
         ofParameter<bool> inputToggle;
         ofParameter<bool> outputToggle;
-        ofParameter<bool> factorToggle;
-        ofParameter<bool> smoothToggle;
+        
         ofParameter<void> loadButton;
         ofParameter<void> playButton;
         ofParameter<void> resetButton;
@@ -91,9 +90,18 @@ class ofApp : public ofBaseApp{
     
         void setInputMode(int& index);
     
+        ofxGuiGroup *linearControls;
+        ofParameter<bool> factorToggle;
+        ofParameter<bool> smoothToggle;
     
+        ofxGuiGroup *rawControls;
+        ofxGuiGroup *linLogToggles;
+        ofParameterGroup linLogParameters;
+        ofParameter<bool> lin;
+        ofParameter<bool> log;
+        void setRawLinLog(int& index);
     
-        ofxGuiGroup *audioModes, *graphControls, *fileManager;
+        ofxGuiGroup *audioModes, *fileManager;
         void inputPressed(bool &inputToggle);
         void outputPressed(bool &outputToggle);
         void factorAggPressed(bool &factorToggle);

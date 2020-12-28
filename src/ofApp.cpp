@@ -79,7 +79,7 @@ void ofApp::setup(){
     displayParameters.add(disp0.set("Linear",false));
     displayParameters.add(disp1.set("Polar",false));
     displayParameters.add(disp2.set("Raw",false));
-    displayParameters.add(disp3.set("Oscilloscope",false));
+    displayParameters.add(disp3.set("Oscillator",false));
 
         
     displayToggles = all->addGroup(displayParameters);
@@ -87,8 +87,7 @@ void ofApp::setup(){
     displayToggles->loadTheme("default-theme.json");
     displayToggles->setConfig(ofJson({{"type", "radio"}}));
     
-    displayToggles->getActiveToggleIndex().addListener(this, &ofApp::setDisplayMode);
-    displayToggles->setActiveToggle(0);
+    
     
     // Input Mode (& file manager)
     inputParameters.setName("Input Source");
@@ -108,14 +107,29 @@ void ofApp::setup(){
     fileManager->add(playButton.set("Play"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
     fileManager->minimize();
     
-    inputToggles->getActiveToggleIndex().addListener(this, &ofApp::setInputMode);
-    inputToggles->setActiveToggle(0);
+    
+    rawControls = all->addGroup("Raw Controls");
+    rawControls->loadTheme("default-theme.json");
+    rawControls->setShowHeader(false);
+    
+    linLogParameters.setName("FFT X-Axis");
+    linLogParameters.add(lin.set("Linear", false));
+    linLogParameters.add(log.set("Logarithmic", false));
+    
+    linLogToggles = rawControls->addGroup(linLogParameters);
+    linLogToggles->setExclusiveToggles(true);
+    linLogToggles->loadTheme("default-theme.json");
+    linLogToggles->setConfig(ofJson({{"type", "radio"}}));
+    
+    rawControls->minimize();
     
     // Graph / Data Controls
-    graphControls = all->addGroup("Mode Controls");
-    graphControls->loadTheme("default-theme.json");
-    graphControls->add(smoothToggle.set("Smooth", true));
-    graphControls->add(factorToggle.set("Factor Octaves", true));
+    linearControls = all->addGroup("Mode Controls");
+    linearControls->setShowHeader(false);
+    linearControls->loadTheme("default-theme.json");
+    //linearControls->add(smoothToggle.set("Smooth", true));
+    linearControls->add(factorToggle.set("Factor Octaves", true));
+    linearControls->minimize();
     
     // Minimize button
     all->add(closeButton.set("Minimize All"), ofJson({
@@ -126,6 +140,15 @@ void ofApp::setup(){
         {"width", "100%"},
         {"border-radius", 2}
     }));
+    
+    displayToggles->getActiveToggleIndex().addListener(this, &ofApp::setDisplayMode);
+    displayToggles->setActiveToggle(0);
+    
+    inputToggles->getActiveToggleIndex().addListener(this, &ofApp::setInputMode);
+    inputToggles->setActiveToggle(0);
+    
+    linLogToggles->getActiveToggleIndex().addListener(this, &ofApp::setRawLinLog);
+    linLogToggles->setActiveToggle(0);
 
     
     windowResized(WIN_WIDTH, WIN_HEIGHT);
@@ -135,10 +158,26 @@ void ofApp::setup(){
 
 void ofApp::setDisplayMode(int& index){
     switch(index){
-            default: case 0: dm.setMode(DisplayMode::LINEAR); break;
-            case 1: dm.setMode(DisplayMode::POLAR); break;
-        case 2: dm.setMode(DisplayMode::RAW); break;
-            case 3: break;
+            default: case 0:
+                dm.setMode(DisplayMode::LINEAR);
+                linearControls->maximize();
+                rawControls->minimize();
+                break;
+            case 1:
+                dm.setMode(DisplayMode::POLAR);
+                linearControls->minimize();
+                rawControls->minimize();
+                break;
+            case 2:
+                dm.setMode(DisplayMode::RAW);
+                linearControls->minimize();
+                rawControls->maximize();
+                break;
+            case 3:
+                dm.setMode(DisplayMode::OSC);
+                linearControls->minimize();
+                rawControls->minimize();
+                break;
 
         }
 }
@@ -147,29 +186,30 @@ void ofApp::setInputMode(int& index){
     switch (index) {
         case 0:
             inputBool = true;
-            try{
-                fileManager->minimize();
-            }
-            catch(exception e){
-                cout << "oops" << endl;
-            }
+            fileManager->minimize();
             break;
         case 1:
             inputBool = false;
-            try{
-                fileManager->maximize();
-            }
-            catch(exception e){
-                cout << "oops" << endl;
-            }
+            fileManager->maximize();
             break;
             
         default:
             break;
     }
+}
 
-    
-
+void ofApp::setRawLinLog(int& index){
+    switch (index) {
+        case 0:
+            dm.fftLinear = true;
+            break;
+        case 1:
+            dm.fftLinear = false;
+            break;
+            
+        default:
+            break;
+    }
 }
 
 //--------------------------------------------------------------
@@ -231,49 +271,6 @@ void ofApp::playFile(){
     playPressed = false;
     
 }
-
-
-
-////--------------------------------------------------------------
-//void ofApp::inputPressed(bool &inputToggle){
-//
-//    // If input button is set to true and mode is not set to input
-//    //     Set mode to input
-//    //     Set output button to false
-//    //     Hide file manager
-//    //     Reset graphs
-//    if(!inputBool && inputToggle){
-//        inputBool = true;
-//        outputToggle.set(false);
-//        fileManager->minimize();
-//        clearGraphs();
-//    }
-//    else{
-//        outputToggle.set(true);
-//    }
-//
-//
-//}
-//
-////--------------------------------------------------------------
-//void ofApp::outputPressed(bool &outputToggle){
-//
-//    // If output button is set to true and mode is set to input
-//    //     Set mode to output
-//    //     Set input button to false
-//    //     Show file manager
-//    //     Reset graphs
-//    if(inputBool && outputToggle){
-//        inputBool = false;
-//        inputToggle.set(false);
-//        fileManager->maximize();
-//        clearGraphs();
-//    }
-//    else{
-//        inputToggle.set(true);
-//    }
-//
-//}
 
 //--------------------------------------------------------------
 void ofApp::factorAggPressed(bool &factorToggle){

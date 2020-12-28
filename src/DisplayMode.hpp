@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include "Analysis.h"
+#include "ofxBlur.h"
 
 class DisplayMode {
     
@@ -22,6 +23,8 @@ class DisplayMode {
         void draw(Analysis analysis);
         void updateLayout(int w, int h);
     
+        bool fftLinear;
+    
     private:
         Mode mode;
         int width, height;
@@ -29,10 +32,16 @@ class DisplayMode {
         int singleXOffset, singleYOffset, multiXOffset, multiYOffset;
         int barWidth, margin, maxHeight, y_offset;
     
+        ofxBlur blur;
+        ofTime time;
+        float timer;
+        
         void drawLinOctave(int w, int h, int dataSize, float* data);
         void drawLinScale(int w, int h, int dataSize, float* data);
         void drawPolar(int w, int h, int dataSize, float* data);
         void drawFftPlot(int w, int h, int dataSize, float* data);
+        
+        void drawOscillator(int w, int h, int dataSize, float* data, float* data2);
     
         std::vector<string> noteNames = {"A", "A#","B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"};
     
