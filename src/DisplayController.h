@@ -10,6 +10,7 @@
 #include "Display.h"
 #include "LinearDisplay.h"
 #include "RawDisplay.h"
+#include "OscDisplay.h"
 
 #ifndef DisplayController_h
 #define DisplayController_h

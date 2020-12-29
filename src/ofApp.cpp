@@ -14,7 +14,7 @@ void ofApp::setup(){
     
     // Initialize analysis + display classes
     analysis.init(bufferSize);
-    dm.init(WIN_WIDTH, WIN_HEIGHT);
+    //dm.init(WIN_WIDTH, WIN_HEIGHT);
     
     
     // Setup soundstream (default output / input channels)
@@ -55,22 +55,6 @@ void ofApp::setup(){
     all->loadTheme("default-theme.json");
     
     
-    
-
-
-    // display mode
-    //-------------------------------------------------------------------------------------
-//    displayParameters.setName("Display Mode");
-//    displayParameters.add(disp0.set("Linear",false));
-//    displayParameters.add(disp1.set("Raw",false));
-//    displayParameters.add(disp2.set("Oscillator",false));
-//
-//    displayToggles = all->addGroup(displayParameters);
-//    displayToggles->setExclusiveToggles(true);
-//    displayToggles->loadTheme("default-theme.json");
-//    displayToggles->setConfig(ofJson({{"type", "radio"}}));
-    
-    
     // input mode / file manager
     //-------------------------------------------------------------------------------------
     inputParameters.setName("Input Source");
@@ -102,38 +86,7 @@ void ofApp::setup(){
     playbackControls->add(resetButton.set("Reset"), ofJson({{"type", "fullsize"}, {"text-align", "center"}, {"width", "45%"}}));
     playbackControls->minimize();
     fileManager->minimize();
-    
-    
-//    // mode panel
-//    //-------------------------------------------------------------------------------------
-//    modeControls = all->addGroup("Mode Controls");
-//    modeControls->loadTheme("default-theme.json");
-//
-//    // linear controls
-//    //-------------------------------------------------------------------------------------
-//    linearControls = modeControls->addGroup("Mode Controls");
-//    linearControls->setShowHeader(false);
-//    linearControls->loadTheme("default-theme.json");
-//    linearControls->add(factorToggle.set("Factor Octaves", false));
-//    linearControls->minimize();
-//
-//
-//    // raw controls
-//    //-------------------------------------------------------------------------------------
-//    rawControls = modeControls->addGroup("Raw Controls");
-//    rawControls->loadTheme("default-theme.json");
-//    rawControls->setShowHeader(false);
-//
-//    linLogParameters.setName("FFT X-Axis");
-//    linLogParameters.add(lin.set("Linear", false));
-//    linLogParameters.add(log.set("Logarithmic", false));
-//
-//    linLogToggles = rawControls->addGroup(linLogParameters);
-//    linLogToggles->setExclusiveToggles(true);
-//    linLogToggles->loadTheme("default-theme.json");
-//    linLogToggles->setConfig(ofJson({{"type", "radio"}}));
-//
-//    rawControls->minimize();
+
 //
 //
 //    // osc controls
@@ -157,10 +110,6 @@ void ofApp::setup(){
     // listeners
     //-------------------------------------------------------------------------------------
     
-//    // display radio
-//    displayToggles->getActiveToggleIndex().addListener(this, &ofApp::setDisplayMode);
-//    displayToggles->setActiveToggle(2);
-    
     // input radio
     inputToggles->getActiveToggleIndex().addListener(this, &ofApp::setInputMode);
     inputToggles->setActiveToggle(0);
@@ -170,26 +119,8 @@ void ofApp::setup(){
     playButton.addListener(this, &ofApp::playFile);
     resetButton.addListener(this, &ofApp::restartFile);
     
-    
-//    // linear buttons
-//    factorToggle.addListener(this, &ofApp::factorAggPressed);
-//    factorToggle.set(false);
-//
-//
-//    // linlog radio
-//    linLogToggles->getActiveToggleIndex().addListener(this, &ofApp::setRawLinLog);
-//    linLogToggles->setActiveToggle(0);
-    
-    
-//    // osc sliders
-//    colorShift.addListener(this, &ofApp::colorShiftChanged);
-//    colorWidth.addListener(this, &ofApp::colorWidthChanged);
-//    smooth.addListener(this, &ofApp::smoothChanged);
-//
     // minimize button
     minimizeButton.addListener(this, &ofApp::minimizePressed);
-    
-    
     
 
     // Call resize to update control panel width and adjust drawing boxes
@@ -202,29 +133,6 @@ void ofApp::setup(){
 // listeners
 //-------------------------------------------------------------------------------------
 
-//--------------------------------------------------------------
-// Update display mode and show appropriate control elements
-void ofApp::setDisplayMode(int& index){
-    linearControls->minimize();
-    rawControls->minimize();
-    oscControls->minimize();
-    
-    switch(index){
-            default: case 0:
-                dm.setMode(utils::LINEAR);
-                linearControls->maximize();
-                break;
-            case 1:
-                dm.setMode(utils::RAW);
-                rawControls->maximize();
-                break;
-            case 2:
-                dm.setMode(utils::OSC);
-                factorToggle.set(false);
-                oscControls->maximize();
-                break;
-        }
-}
 
 //--------------------------------------------------------------
 // Update input source and show/hide file manager
@@ -243,40 +151,6 @@ void ofApp::setInputMode(int& index){
         default:
             break;
     }
-}
-
-//--------------------------------------------------------------
-// Toggle linear or logarithmic x-axis scale in fft output
-void ofApp::setRawLinLog(int& index){
-    switch (index) {
-        case 0:
-            dm.fftLinear = true;
-            break;
-        case 1:
-            dm.fftLinear = false;
-            break;
-            
-        default:
-            break;
-    }
-}
-
-//--------------------------------------------------------------
-// Adjust hue shift of osc
-void ofApp::colorShiftChanged(int& val){
-    dm.setColorShift(val);
-}
-
-//--------------------------------------------------------------
-// Adjust hue width of osc
-void ofApp::colorWidthChanged(int& val){
-    dm.setColorWidth(val);
-}
-
-//--------------------------------------------------------------
-// Adjust smoothing constant of osc
-void ofApp::smoothChanged(float &val){
-    dm.setSmooth(val);
 }
 
 
@@ -357,11 +231,6 @@ void ofApp::restartFile(){
     
 }
 
-//--------------------------------------------------------------
-// Toggle overtone factorization
-void ofApp::factorAggPressed(bool &factorToggle){
-    analysis.setAddOvertone(factorToggle);
-}
 
 //--------------------------------------------------------------
 // Collapse main panels

@@ -29,6 +29,7 @@
 		30596019259B30FF006C9D2C /* LinearDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30596018259B30FF006C9D2C /* LinearDisplay.cpp */; };
 		30DA4581259B4A09003F53A3 /* DisplayController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30DA457F259B4A09003F53A3 /* DisplayController.cpp */; };
 		30DA4584259B864F003F53A3 /* RawDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30DA4583259B864F003F53A3 /* RawDisplay.cpp */; };
+		30DA4587259B8F5B003F53A3 /* OscDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30DA4586259B8F5B003F53A3 /* OscDisplay.cpp */; };
 		31F923D4B3FD6705A43AE03D /* DelayA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7E7F625187F071D780C299 /* DelayA.cpp */; };
 		32A992C3246FC91087ABB316 /* PitShift.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A317D4418EC91C88E810D81 /* PitShift.cpp */; };
 		3322D5DB6568BC1D8CF5B9B1 /* Whistle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28BC2ADF86A95B621D977304 /* Whistle.cpp */; };
@@ -50,7 +51,6 @@
 		47741AD4D543009E4DF29CEA /* ofxProcessFFT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 971B530AB93ACC5065D9489E /* ofxProcessFFT.cpp */; };
 		478F4069D96FD13217F41740 /* ModalBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 069F86F0B39E4C47A71497E5 /* ModalBar.cpp */; };
 		48C4C7AD31777F29550F2BDC /* BlowBotl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A7AE7862E3F45D41AD34126 /* BlowBotl.cpp */; };
-		4A32E71FCF317404179A4774 /* DisplayMode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 23B27CAA67FD770D1DABB24D /* DisplayMode.cpp */; };
 		4BA5F5EFB9CC0C942D5AB9DB /* LentPitShift.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7432DF857D626AC939D6845B /* LentPitShift.cpp */; };
 		4EA4D975B78D41287C17E8B0 /* ofxDOMFlexBoxLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C6B470081D3D460F656E837 /* ofxDOMFlexBoxLayout.cpp */; };
 		4F32833692A8CC891641830F /* Blit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72E91875829CE53A8BBAE2B1 /* Blit.cpp */; };
@@ -198,7 +198,6 @@
 		213B40B085C2FDC6D03B33B1 /* ofxGuiExtended.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxGuiExtended.cpp; path = ../../../addons/ofxGuiExtended/src/ofxGuiExtended.cpp; sourceTree = SOURCE_ROOT; };
 		2180383C3D64ED5699FD4D99 /* Phonemes.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Phonemes.cpp; path = ../../../addons/ofxStk/libs/STK/src/Phonemes.cpp; sourceTree = SOURCE_ROOT; };
 		2333F33018FC9FEF0A7F8C15 /* ofxGuiToggle.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxGuiToggle.cpp; path = ../../../addons/ofxGuiExtended/src/controls/ofxGuiToggle.cpp; sourceTree = SOURCE_ROOT; };
-		23B27CAA67FD770D1DABB24D /* DisplayMode.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DisplayMode.cpp; path = src/DisplayMode.cpp; sourceTree = SOURCE_ROOT; };
 		23FFAD77781347E663E168D2 /* Saxofony.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Saxofony.h; path = ../../../addons/ofxStk/libs/STK/include/Saxofony.h; sourceTree = SOURCE_ROOT; };
 		2466432D90456E45C592AC41 /* Iir.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Iir.h; path = ../../../addons/ofxStk/libs/STK/include/Iir.h; sourceTree = SOURCE_ROOT; };
 		24B6D58DF32D4618751ADA91 /* BandedWG.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = BandedWG.h; path = ../../../addons/ofxStk/libs/STK/include/BandedWG.h; sourceTree = SOURCE_ROOT; };
@@ -223,6 +222,8 @@
 		30DA4580259B4A09003F53A3 /* DisplayController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayController.h; sourceTree = "<group>"; };
 		30DA4582259B858A003F53A3 /* RawDisplay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RawDisplay.h; sourceTree = "<group>"; };
 		30DA4583259B864F003F53A3 /* RawDisplay.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RawDisplay.cpp; sourceTree = "<group>"; };
+		30DA4585259B8DDE003F53A3 /* OscDisplay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OscDisplay.h; sourceTree = "<group>"; };
+		30DA4586259B8F5B003F53A3 /* OscDisplay.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OscDisplay.cpp; sourceTree = "<group>"; };
 		3185D3F238C07BAF47D4EB96 /* Mandolin.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Mandolin.cpp; path = ../../../addons/ofxStk/libs/STK/src/Mandolin.cpp; sourceTree = SOURCE_ROOT; };
 		3214698AC2F90660A2970586 /* Thread.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Thread.cpp; path = ../../../addons/ofxStk/libs/STK/src/Thread.cpp; sourceTree = SOURCE_ROOT; };
 		32721A87B1AC4282AB3E854D /* InetWvOut.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = InetWvOut.h; path = ../../../addons/ofxStk/libs/STK/include/InetWvOut.h; sourceTree = SOURCE_ROOT; };
@@ -385,7 +386,6 @@
 		CAB67BC7A1CC020FDAC5381B /* ofxEasyFft.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxEasyFft.h; path = ../../../addons/ofxFft/src/ofxEasyFft.h; sourceTree = SOURCE_ROOT; };
 		CC047B89129A20BC967DB0FF /* LentPitShift.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LentPitShift.h; path = ../../../addons/ofxStk/libs/STK/include/LentPitShift.h; sourceTree = SOURCE_ROOT; };
 		CE67198F2891A8FFEA3686E6 /* ofxFftBasic.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxFftBasic.cpp; path = ../../../addons/ofxFft/src/ofxFftBasic.cpp; sourceTree = SOURCE_ROOT; };
-		CED5449BAD908DDC8ECEBCCE /* DisplayMode.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = DisplayMode.hpp; path = src/DisplayMode.hpp; sourceTree = SOURCE_ROOT; };
 		CF46351566E64E5DC3015DFF /* Guitar.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Guitar.cpp; path = ../../../addons/ofxStk/libs/STK/src/Guitar.cpp; sourceTree = SOURCE_ROOT; };
 		CF7E7F625187F071D780C299 /* DelayA.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DelayA.cpp; path = ../../../addons/ofxStk/libs/STK/src/DelayA.cpp; sourceTree = SOURCE_ROOT; };
 		D06E40FCE573DE51B85A01E6 /* ofxBlur.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxBlur.h; path = ../../../addons/ofxBlur/src/ofxBlur.h; sourceTree = SOURCE_ROOT; };
@@ -1302,13 +1302,13 @@
 				3AEBB1D028DE52FAF89FABDB /* Analysis.cpp */,
 				30596017259B2BAF006C9D2C /* Display.h */,
 				30DA4583259B864F003F53A3 /* RawDisplay.cpp */,
+				30DA4585259B8DDE003F53A3 /* OscDisplay.h */,
+				30DA4586259B8F5B003F53A3 /* OscDisplay.cpp */,
 				30DA4582259B858A003F53A3 /* RawDisplay.h */,
 				3059601A259B3110006C9D2C /* LinearDisplay.h */,
 				30596018259B30FF006C9D2C /* LinearDisplay.cpp */,
 				30DA457F259B4A09003F53A3 /* DisplayController.cpp */,
 				30DA4580259B4A09003F53A3 /* DisplayController.h */,
-				CED5449BAD908DDC8ECEBCCE /* DisplayMode.hpp */,
-				23B27CAA67FD770D1DABB24D /* DisplayMode.cpp */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -1505,7 +1505,6 @@
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
 				AD556C84D08665F2766CF67E /* Analysis.cpp in Sources */,
-				4A32E71FCF317404179A4774 /* DisplayMode.cpp in Sources */,
 				CDB1F22153713F7E7AE9647D /* ofxBlur.cpp in Sources */,
 				0686C38EE993C67B96002FA1 /* kiss_fft.c in Sources */,
 				6DB9E3911BA6216FE1F0E91C /* kiss_fftr.c in Sources */,
@@ -1528,6 +1527,7 @@
 				8DE52B72CB62786CAB8233F7 /* ofxGuiButton.cpp in Sources */,
 				4524F366BF3EEC2EFC12B68F /* ofxGuiFpsPlotter.cpp in Sources */,
 				F2DE26B77052C57086C4C69B /* ofxGuiFunctionPlotter.cpp in Sources */,
+				30DA4587259B8F5B003F53A3 /* OscDisplay.cpp in Sources */,
 				7CEBB18388F905779AB54F80 /* ofxGuiGraphics.cpp in Sources */,
 				F632072F6E6313CD75B4B70F /* ofxGuiInputField.cpp in Sources */,
 				7A22364A34D38C91D859D354 /* ofxGuiLabel.cpp in Sources */,

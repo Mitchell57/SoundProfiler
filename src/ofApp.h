@@ -55,8 +55,6 @@ class ofApp : public ofBaseApp{
         //--------------------------------------------------------------------------------
         // drawing
         //--------------------------------------------------------------------------------
-        DisplayMode dm;
-        void clearGraphs();
         void updateLayout(int w, int h);
         int controlWidth;
     
@@ -77,16 +75,7 @@ class ofApp : public ofBaseApp{
         void minimizePressed();
     
     
-        //--------------------------------------------------------------------------------
-        //   display mode
-        //--------------------------------------------------------------------------------
-        ofxGuiGroup *displayToggles;
-        ofParameterGroup displayParameters;
-        ofParameter<bool> disp0;
-        ofParameter<bool> disp1;
-        ofParameter<bool> disp2;
 
-        void setDisplayMode(int& index);
     
     
         //--------------------------------------------------------------------------------
@@ -118,35 +107,5 @@ class ofApp : public ofBaseApp{
         void restartFile();
         
         
-        //--------------------------------------------------------------------------------
-        //   linear
-        //--------------------------------------------------------------------------------
-        ofxGuiGroup *linearControls;
-        ofParameter<bool> factorToggle;
-    
-        void factorAggPressed(bool &factorToggle);
-    
-    
-        //--------------------------------------------------------------------------------
-        //   raw
-        //--------------------------------------------------------------------------------
-        ofxGuiGroup *rawControls;
-        ofxGuiGroup *linLogToggles;
-        ofParameterGroup linLogParameters;
-        ofParameter<bool> lin;
-        ofParameter<bool> log;
-    
-        void setRawLinLog(int& index);
-    
-    
-        //--------------------------------------------------------------------------------
-        //   osc
-        //--------------------------------------------------------------------------------
-        ofxGuiGroup *oscControls;
-        ofParameter<int> colorWidth, colorShift;
-        ofParameter<float> smooth;
-        void colorWidthChanged(int& val);
-        void colorShiftChanged(int& val);
-        void smoothChanged(float& val);
         
 };

@@ -25,9 +25,14 @@ void DisplayController::setup(Analysis* a, int w, int h, ofxGuiGroup* all){
     rd->setup();
     modes.push_back(rd);
     
+    OscDisplay* od = new OscDisplay();
+    od->setup();
+    modes.push_back(od);
+    
     modeSelector.setName("Display Mode");
     modeSelector.add(disp0.set(ld->name,true));
     modeSelector.add(disp1.set(rd->name,false));
+    modeSelector.add(disp2.set(od->name,false));
 
     
     modeSelectorGroup = all->addGroup(modeSelector);
@@ -72,7 +77,8 @@ void DisplayController::setDisplayMode(int& index){
             modeControls[1]->maximize();
                 break;
             case 2:
-                
+            current_mode = 2;
+            modeControls[2]->maximize();
                 break;
         }
 }
