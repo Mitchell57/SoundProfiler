@@ -29,7 +29,7 @@ void Analysis::init(int bufSize){
     fft = ofxFft::create(bufferSize, OF_FFT_WINDOW_BARTLETT);
     
     
-    addOvertone = true;
+    addOvertone = false;
     
     // Data array initialization
     // Builds list of frequencies

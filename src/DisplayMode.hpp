@@ -47,8 +47,7 @@ class DisplayMode {
         void drawFftPlot(int w, int h, int dataSize, float* data);
     
         // Graph(Linear, Raw) variables
-        int singleW, singleH, multiW, multiH;
-        int singleXOffset, singleYOffset, multiXOffset, multiYOffset;
+        float halfW, halfH, xOffset, yOffset;
         int barWidth, margin, maxHeight, y_offset;
         std::vector<string> noteNames = {"A", "A#","B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"};
     

@@ -48,8 +48,8 @@ class ofApp : public ofBaseApp{
         int bufferSize;
         stk::FileLoop file;
         ofSoundStream soundStream;
-        bool shouldPlayAudio, shouldFactorAgg, shouldSmooth;
-        bool inputBool, loadPressed, playPressed;
+        bool shouldPlayAudio{}, shouldFactorAgg{};
+        
         
         
     
@@ -105,16 +105,20 @@ class ofApp : public ofBaseApp{
         //   file manager
         //--------------------------------------------------------------------------------
         ofxGuiGroup *fileManager;
+        ofxGuiGroup *playbackControls;
         ofParameter<void> loadButton;
         ofParameter<void> playButton;
         ofParameter<void> resetButton;
         ofParameter<string> filePath;
     
+        bool inputBool{true}, fileLoaded{};
+        bool loadPressed{}, playPressed{}, resetPressed{};
+    
         void loadFile();
         void playFile();
         void restartFile();
-    
-    
+        
+        
         //--------------------------------------------------------------------------------
         //   linear
         //--------------------------------------------------------------------------------

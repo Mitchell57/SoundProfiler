@@ -50,13 +50,13 @@ void DisplayMode::draw(Analysis analysis){
             float* scale = analysis.getScale();
             
             ofPushMatrix();
-            ofTranslate(singleXOffset,singleYOffset);
-            drawLinOctave(singleW, singleH, octSize, octave);
+            ofTranslate(xOffset,yOffset);
+            drawLinOctave(halfW, halfW, octSize, octave);
             ofPopMatrix();
             
             ofPushMatrix();
-            ofTranslate(multiXOffset, multiYOffset);
-            drawLinScale(multiW, multiH, scaleSize, scale);
+            ofTranslate(xOffset, halfH+(2*yOffset));
+            drawLinScale(halfW, halfH, scaleSize, scale);
             ofPopMatrix();
         }
         if(mode == RAW){
@@ -64,8 +64,8 @@ void DisplayMode::draw(Analysis analysis){
             int fft_size = analysis.getFftSize();
             
             ofPushMatrix();
-            ofTranslate(singleXOffset, singleYOffset);
-            drawFftPlot(singleW, singleH, fft_size, raw_fft);
+            ofTranslate(xOffset, yOffset);
+            drawFftPlot(halfW, halfH, fft_size, raw_fft);
             ofPopMatrix();
         }
         if(mode == OSC){
@@ -92,12 +92,13 @@ void DisplayMode::draw(Analysis analysis){
     else{
         if(mode == LINEAR){
             ofPushMatrix();
-            ofTranslate(singleXOffset,singleYOffset);
-            drawLinOctave(singleW, singleH, 1, 0);
+            ofTranslate(xOffset,yOffset);
+            drawLinOctave(halfW, halfW, 1, 0);
             ofPopMatrix();
+            
             ofPushMatrix();
-            ofTranslate(multiXOffset, multiYOffset);
-            drawLinScale(multiW, multiH, 1, 0);
+            ofTranslate(xOffset, halfH+(2*yOffset));
+            drawLinScale(halfW, halfH, 1, 0);
             ofPopMatrix();
         }
         if(mode == POLAR){
@@ -107,8 +108,8 @@ void DisplayMode::draw(Analysis analysis){
         }
         if(mode == RAW){
             ofPushMatrix();
-            ofTranslate(singleXOffset, singleYOffset);
-            drawFftPlot(singleW, singleH, 1, 0);
+            ofTranslate(xOffset, yOffset);
+            drawFftPlot(halfW, halfH, 1, 0);
             ofPopMatrix();
             
         }
@@ -131,7 +132,7 @@ void DisplayMode::drawLinOctave(int w, int h, int dataSize, float* data){
     outer_rect.height = h;
     ofDrawRectangle(outer_rect);
     std::string label = "Summed Octave";
-    if(singleYOffset > 20) ofDrawBitmapString(label, 0, -8);
+    if(yOffset > 20) ofDrawBitmapString(label, 0, -8);
     ofPopStyle();
     
     if(dataSize <= 1) return;
@@ -226,7 +227,7 @@ void DisplayMode::drawLinScale(int w, int h, int dataSize, float* data){
     outer_rect.height = h;
     ofDrawRectangle(outer_rect);
     std::string label = "Full Scale";
-    if(singleYOffset > 20) ofDrawBitmapString(label, 0, -8);
+    if(yOffset > 20) ofDrawBitmapString(label, 0, -8);
     ofPopStyle();
     
     if(dataSize <= 1) return;
@@ -306,7 +307,7 @@ void DisplayMode::drawFftPlot(int w, int h, int dataSize, float* data){
     outer_rect.height = h;
     ofDrawRectangle(outer_rect);
     std::string label = "FFT Plot";
-    if(singleYOffset > 20) ofDrawBitmapString(label, 0, -8);
+    if(yOffset > 20) ofDrawBitmapString(label, 0, -8);
     ofPopStyle();
     
     if(dataSize <= 1) return;
@@ -560,18 +561,12 @@ void DisplayMode::updateLayout(int w, int h){
     height = h;
     blur.setup(w, h, 30, .2, 2);
     blur2.setup(w, h, 25, .2, 2);
-    // Calculates new positions for graphs / controls when window is resized
-    int topPadding = h*0.05;
-    int lrPadding = w*0.05;
     
-    singleW = ((float)w*0.9);
-    singleH =  ((float)h*0.425);
-    multiW = ((float)w*0.9);
-    multiH =  ((float)h*0.425);
-    singleXOffset = lrPadding;
-    singleYOffset = topPadding;
-    multiXOffset = lrPadding;
-    multiYOffset = singleH+(2*topPadding);
+    halfW = ((float)w*0.9);
+    halfH =  ((float)h*0.425);
+
+    xOffset = h*0.05;
+    yOffset = w*0.05;
 }
 
 

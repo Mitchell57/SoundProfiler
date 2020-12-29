@@ -8,18 +8,9 @@ void ofApp::setup(){
     ofSetFrameRate(60);
     ofBackground(20);
     
-    
-    // Boolean initialization
-    inputBool = true;
-    shouldFactorAgg = false;
-    shouldSmooth = true;
-    loadPressed = false;
-    
-    
     // Buffer Size determines # of FFT Bins
     // Ideally we want to make it as large as possible before it lags
     bufferSize = 2048;
-    
     
     // Initialize analysis + display classes
     analysis.init(bufferSize);
@@ -33,6 +24,7 @@ void ofApp::setup(){
         // 4096 samples per buffer
         // 4 num buffers (latency)
     stk::Stk::setSampleRate(44100.0);
+    
     ofSoundStreamSettings settings;
     settings.setOutListener(this);
     settings.setInListener(this);
@@ -40,6 +32,7 @@ void ofApp::setup(){
     settings.numInputChannels = 1;
     settings.numBuffers = 9;
     settings.bufferSize = bufferSize;
+    
     soundStream.setup(settings);
     
     //-------------------------------------------------------------------------------------
@@ -91,7 +84,20 @@ void ofApp::setup(){
     fileManager->setShowHeader(false);
     fileManager->add(filePath.set("Path/To/WavFile"));
     fileManager->add(loadButton.set("Choose File"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
-    fileManager->add(playButton.set("Play"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
+    
+    playbackControls = fileManager->addGroup("Playback",ofJson({
+        {"flex-direction", "row"},
+        {"flex", 0},
+        {"justify-content", "center"},
+        {"margin", 2},
+        {"padding", 2},
+        {"flex-wrap", "wrap"},
+        {"show-header", false},
+    }));
+    playbackControls->loadTheme("default-theme.json");
+    playbackControls->add(playButton.set("Play"), ofJson({{"type", "fullsize"}, {"text-align", "center"}, {"width", "45%"}}));
+    playbackControls->add(resetButton.set("Reset"), ofJson({{"type", "fullsize"}, {"text-align", "center"}, {"width", "45%"}}));
+    playbackControls->minimize();
     fileManager->minimize();
     
     
@@ -157,10 +163,12 @@ void ofApp::setup(){
     // file buttons
     loadButton.addListener(this, &ofApp::loadFile);
     playButton.addListener(this, &ofApp::playFile);
+    resetButton.addListener(this, &ofApp::restartFile);
     
     
     // linear buttons
     factorToggle.addListener(this, &ofApp::factorAggPressed);
+    factorToggle.set(false);
     
     
     // linlog radio
@@ -221,6 +229,7 @@ void ofApp::setInputMode(int& index){
         case 1:
             inputBool = false;
             fileManager->maximize();
+            if(fileLoaded) playbackControls->maximize();
             break;
             
         default:
@@ -274,8 +283,13 @@ void ofApp::loadFile(){
         
         // Opens system dialog asking for a file
         // Checks to make sure it's .wav then loads
+        
         ofFileDialogResult result = ofSystemLoadDialog("Load file");
+        
         if(result.bSuccess) {
+            filePath.set("path/to/file.wav");
+            fileLoaded = false;
+            playbackControls->minimize();
             string path = result.getPath();
             string name = result.getName();
             cout << path << endl;
@@ -283,16 +297,17 @@ void ofApp::loadFile(){
             if(0 == path.compare (path.length() - 3, 3, "wav")){
                 try{
                     file.openFile(ofToDataPath(path,true));
+                    filePath.set(name);
+                    fileLoaded = true;
+                    playbackControls->maximize();
                 }
                 catch(...){
                     ofSystemAlertDialog("Invalid File: Must load .wav file");
                 }
-                filePath.set(name);
             }
             else
             {
                 ofSystemAlertDialog("Invalid File: Must load .wav file");
-                filePath.set("Invalid File Type");
             }
         }
     }
@@ -316,6 +331,21 @@ void ofApp::playFile(){
     }
     
     playPressed = false;
+    
+}
+
+//--------------------------------------------------------------
+// Toggle whether a file should be playing or not
+void ofApp::restartFile(){
+    
+    // Listener fires twice when pressed (click & release I think)
+    // So this check makes sure it only prompts once
+    if(!resetPressed){
+        resetPressed = true;
+        file.reset();
+    }
+    
+    resetPressed = false;
     
 }
 
