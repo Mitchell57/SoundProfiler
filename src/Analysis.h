@@ -15,13 +15,13 @@ class Analysis
     public:
         Analysis();
         void init(int bufSize);
-        
+    
+        // per-frame operations
         void analyzeFrame(std::vector<float> sample, int bufferSize);
         bool smoothFrame();
     
+        // getters
         bool isFrameReady();
-    
-        void setAddOvertone(bool b);
     
         float* getRawOctave();
         float* getOctave();
@@ -33,6 +33,9 @@ class Analysis
     
         float* getFft();
         int getFftSize();
+    
+        // setters
+        void setAddOvertone(bool b);
         
         
     private:
@@ -40,16 +43,11 @@ class Analysis
     
         bool frameReady, addOvertone;
         
-        int bufferSize;
-    
-        int fft_size;
+        int bufferSize, fft_size , oct_size, scale_size;
+        
         float* raw_fft;
-    
-        int oct_size;
         float* raw_octave;
         float* smooth_octave;
-    
-        int scale_size;
         float* raw_scale;
         float* smooth_scale;
 
@@ -62,9 +60,5 @@ class Analysis
         std::vector<float> chromaticScale = {440, 466.16, 493.88, 523.25, 554.37, 587.33, 622.25, 659.26, 698.46, 739.99, 783.99, 830.61};
     
 };
-
-
-
-
 
 #endif /* Analysis_h */

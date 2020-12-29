@@ -15,8 +15,10 @@
 class ofApp : public ofBaseApp{
 
 	public:
-		
-    // openFrameworks builtins
+            
+        //--------------------------------------------------------------------------------
+        // builtins
+        //--------------------------------------------------------------------------------
         void setup();
 		void update();
         void exit();
@@ -33,13 +35,13 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
         
-    
-    // audio
+        
+        //--------------------------------------------------------------------------------
+        // audio
+        //--------------------------------------------------------------------------------
         void audioIn(ofSoundBuffer& buffer);
         void audioOut(ofSoundBuffer& buffer);
-
         void soundstream_init();
-    
     
         Analysis analysis;
     
@@ -52,68 +54,96 @@ class ofApp : public ofBaseApp{
         
     
     
-    // Drawing
+        //--------------------------------------------------------------------------------
+        // drawing
+        //--------------------------------------------------------------------------------
         DisplayMode dm;
         void clearGraphs();
+        void updateLayout(int w, int h);
+        int controlWidth;
     
-
     
+        //--------------------------------------------------------------------------------
+        // GUI
+        //--------------------------------------------------------------------------------
     
-    // GUI
+        //--------------------------------------------------------------------------------
+        //   general
+        //--------------------------------------------------------------------------------
         ofxGuiGroup* all;
         ofxGui gui;
-        ofParameterGroup modeGroup;
-
-        ofParameter<bool> inputToggle;
-        ofParameter<bool> outputToggle;
-        
-        ofParameter<void> loadButton;
-        ofParameter<void> playButton;
-        ofParameter<void> resetButton;
-        ofParameter<void> closeButton;
-        ofParameter<string> filePath;
+        ofxGuiGroup* modeControls;
+        ofParameter<void> minimizeButton;
     
-        // Display Mode Controles
+        void minimizePressed();
+    
+    
+        //--------------------------------------------------------------------------------
+        //   display mode
+        //--------------------------------------------------------------------------------
         ofxGuiGroup *displayToggles;
         ofParameterGroup displayParameters;
         ofParameter<bool> disp0;
         ofParameter<bool> disp1;
         ofParameter<bool> disp2;
-        ofParameter<bool> disp3;
-    
+
         void setDisplayMode(int& index);
     
+    
+        //--------------------------------------------------------------------------------
+        //   input mode
+        //--------------------------------------------------------------------------------
         ofxGuiGroup *inputToggles;
         ofParameterGroup inputParameters;
         ofParameter<bool> input0;
         ofParameter<bool> input1;
-    
+
         void setInputMode(int& index);
     
+    
+        //--------------------------------------------------------------------------------
+        //   file manager
+        //--------------------------------------------------------------------------------
+        ofxGuiGroup *fileManager;
+        ofParameter<void> loadButton;
+        ofParameter<void> playButton;
+        ofParameter<void> resetButton;
+        ofParameter<string> filePath;
+    
+        void loadFile();
+        void playFile();
+        void restartFile();
+    
+    
+        //--------------------------------------------------------------------------------
+        //   linear
+        //--------------------------------------------------------------------------------
         ofxGuiGroup *linearControls;
         ofParameter<bool> factorToggle;
-        ofParameter<bool> smoothToggle;
     
+        void factorAggPressed(bool &factorToggle);
+    
+    
+        //--------------------------------------------------------------------------------
+        //   raw
+        //--------------------------------------------------------------------------------
         ofxGuiGroup *rawControls;
         ofxGuiGroup *linLogToggles;
         ofParameterGroup linLogParameters;
         ofParameter<bool> lin;
         ofParameter<bool> log;
+    
         void setRawLinLog(int& index);
     
-        ofxGuiGroup *audioModes, *fileManager;
-        void inputPressed(bool &inputToggle);
-        void outputPressed(bool &outputToggle);
-        void factorAggPressed(bool &factorToggle);
-        void smoothPressed(bool &smoothToggle);
-        void closeMenu();
-        void loadFile();
-        void playFile();
-        void updateLayout(int w, int h);
     
-    
-    
-    
-        int viewMode;
-        int width, height, controlWidth;
+        //--------------------------------------------------------------------------------
+        //   osc
+        //--------------------------------------------------------------------------------
+        ofxGuiGroup *oscControls;
+        ofParameter<int> colorWidth, colorShift;
+        ofParameter<float> smooth;
+        void colorWidthChanged(int& val);
+        void colorShiftChanged(int& val);
+        void smoothChanged(float& val);
+        
 };

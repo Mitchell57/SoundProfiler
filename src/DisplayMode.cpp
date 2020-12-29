@@ -24,32 +24,29 @@ void DisplayMode::init(int w, int h){
     updateLayout(w, h);
     
     fftLinear = false;
-    timer = 3.1423;
+    timer = 0;
     
     sum = 0;
     smooth = 0.25;
+    colorWidth = 120;
+    colorShift = 0;
     
     osc_started = false;
     
     
 }
 
-void DisplayMode::setMode(Mode m){
-    mode = m;
-}
-
-DisplayMode::Mode DisplayMode::getMode(){
-    return mode;
-}
-
+//--------------------------------------------------------------------------------------
+// main draw (per-frame entry point)
+//--------------------------------------------------------------------------------------
 void DisplayMode::draw(Analysis analysis){
-    // Draw graphs
+
     if(analysis.isFrameReady()){
-        int scaleSize = analysis.getScaleSize();
-        
         if(mode == LINEAR){
             int octSize = analysis.getOctaveSize();
             float* octave = analysis.getOctave();
+            
+            int scaleSize = analysis.getScaleSize();
             float* scale = analysis.getScale();
             
             ofPushMatrix();
@@ -60,13 +57,6 @@ void DisplayMode::draw(Analysis analysis){
             ofPushMatrix();
             ofTranslate(multiXOffset, multiYOffset);
             drawLinScale(multiW, multiH, scaleSize, scale);
-            ofPopMatrix();
-        }
-        if(mode == POLAR){
-            float* raw_scale = analysis.getRawScale();
-            
-            ofPushMatrix();
-            drawPolar(width, height, scaleSize, raw_scale);
             ofPopMatrix();
         }
         if(mode == RAW){
@@ -84,25 +74,31 @@ void DisplayMode::draw(Analysis analysis){
             int scale_size = analysis.getScaleSize();
             
             ofPushMatrix();
-            
+    
             drawOscillator(width, height, scale_size, scale, scale);
+            
             blur2.begin();
             ofClear(0, 0, 0, 10);
             drawPolar(width, height, scale_size, scale);
             blur2.end();
             blur2.draw();
+            
             ofPopMatrix();
             
         }
     }
+    
+    // Frame not available, draw empty boxes instead
     else{
         if(mode == LINEAR){
             ofPushMatrix();
             ofTranslate(singleXOffset,singleYOffset);
             drawLinOctave(singleW, singleH, 1, 0);
             ofPopMatrix();
-            
-            
+            ofPushMatrix();
+            ofTranslate(multiXOffset, multiYOffset);
+            drawLinScale(multiW, multiH, 1, 0);
+            ofPopMatrix();
         }
         if(mode == POLAR){
             ofPushMatrix();
@@ -119,7 +115,9 @@ void DisplayMode::draw(Analysis analysis){
     }
 }
 
-//--------------------------------------------------------------
+//--------------------------------------------------------------------------------------
+// linear summed-octave
+//--------------------------------------------------------------------------------------
 void DisplayMode::drawLinOctave(int w, int h, int dataSize, float* data){
     
     // Draw border
@@ -211,7 +209,10 @@ void DisplayMode::drawLinOctave(int w, int h, int dataSize, float* data){
     ofPopMatrix();
 }
 
-//--------------------------------------------------------------
+
+//--------------------------------------------------------------------------------------
+// linear full-scale
+//--------------------------------------------------------------------------------------
 void DisplayMode::drawLinScale(int w, int h, int dataSize, float* data){
     
     // Draw border
@@ -282,11 +283,6 @@ void DisplayMode::drawLinScale(int w, int h, int dataSize, float* data){
         
         // increment x position, note, and octave (if necessary)
         x += barWidth+margin;
-//        noteNum++;
-//        if(noteNum > 11){
-//            noteNum = 0;
-//            octaveNum++;
-//        }
     }
     
     ofPopMatrix();
@@ -294,7 +290,9 @@ void DisplayMode::drawLinScale(int w, int h, int dataSize, float* data){
 
 
 
-//--------------------------------------------------------------
+//--------------------------------------------------------------------------------------
+// fft plot
+//--------------------------------------------------------------------------------------
 void DisplayMode::drawFftPlot(int w, int h, int dataSize, float* data){
     
     // Draw border
@@ -360,8 +358,6 @@ void DisplayMode::drawFftPlot(int w, int h, int dataSize, float* data){
             path.lineTo(log2f(x), y);
         }
         
-        
-        
         std::vector<ofPolyline> outline = path.getOutline();
         ofRectangle bb = outline[0].getBoundingBox();
         float pw = bb.getWidth();
@@ -385,7 +381,10 @@ void DisplayMode::drawFftPlot(int w, int h, int dataSize, float* data){
     }
 }
 
-//--------------------------------------------------------------
+
+//--------------------------------------------------------------------------------------
+// polar
+//--------------------------------------------------------------------------------------
 void DisplayMode::drawPolar(int w, int h, int dataSize, float* data){
     if(dataSize <= 1) return;
     
@@ -438,11 +437,16 @@ void DisplayMode::drawPolar(int w, int h, int dataSize, float* data){
         
 
         
-        hue = (i%dataSize)*(255.0/dataSize);
+        //hue = (i%dataSize)*(255.0/dataSize);
+        hue = (colorShift+(((float)i/dataSize)*colorWidth));
+        hue = ((int)hue)%255;
+
         sat = 100+data[i]*155;
         brightness = 90+data[i]*165;
+        float alpha = min((float)255.0, (40+280*data[i]));
         if(data[i] < 0.15) brightness = data[i]*255;
         
+            
         ofPath path;
         ofSetCurveResolution(100);
         ofColor color = ofColor::fromHsb(hue, sat, brightness);
@@ -460,16 +464,14 @@ void DisplayMode::drawPolar(int w, int h, int dataSize, float* data){
         path.setStrokeWidth(0);
         path.draw();
         }
-        
-        
-        
     }
-    
     ofPopMatrix();
 }
 
 
-//--------------------------------------------------------------
+//--------------------------------------------------------------------------------------
+// oscillator
+//--------------------------------------------------------------------------------------
 void DisplayMode::drawOscillator(int w, int h, int dataSize, float* data, float* data2){
     if(dataSize <= 1) return;
     if(!osc_started){
@@ -485,6 +487,7 @@ void DisplayMode::drawOscillator(int w, int h, int dataSize, float* data, float*
             yVals[i] = 0.1;
             rVals[i] = 0.1;
         }
+        osc_started = true;
     }
     else{
         for(int i=0; i<dataSize; i++){
@@ -496,12 +499,9 @@ void DisplayMode::drawOscillator(int w, int h, int dataSize, float* data, float*
         }
     }
     float constraint = min(w, h);
-    float maxR = (constraint*0.99)/2;
+    float maxR = (constraint*0.9)/2;
     float minR = (constraint*0.05)/2;
 
-    
-
-    
     float theta = (timer)/7;
     float hue, sat, brightness, radius;
     blur.begin();
@@ -521,19 +521,13 @@ void DisplayMode::drawOscillator(int w, int h, int dataSize, float* data, float*
     timer += sum/1.75;
     
     for(int i=0; i<dataSize; i++){
-        radius = minR+(maxR-minR)*(2*osc_data1[i]+3*sum);
+        radius = minR+(maxR-minR)*(osc_data1[i]+3*sum)/2;
         
-        
-        
-        hue = (i%dataSize)*(255.0/dataSize);
+        hue = (colorShift+(((float)i/dataSize)*colorWidth));
+        hue = ((int)hue)%255;
         sat = ((100)+(155.0*osc_data1[i]));
         brightness = ((255)-(95.0*osc_data1[i]))*(sum*2.8);
-        ofSetColor(0,0,0,100);
         
-//        float alt_x = radius*cos(sum*theta*(1+osc_data1[i]));
-//        float alt_y = radius*sin(sum*theta*(1+osc_data1[i]));
-//        float alt_r = 35*osc_data1[i]*(1-sum);
-        //ofDrawCircle(alt_x, alt_y, alt_r);
         ofColor color = ofColor::fromHsb(hue, sat, brightness);
         ofSetColor(color);
         
@@ -542,7 +536,6 @@ void DisplayMode::drawOscillator(int w, int h, int dataSize, float* data, float*
         float x = radius*cos((i+theta+osc_data1[i])/2);
         xVals[i] -= xVals[i]/n;
         xVals[i] += x/n;
-        
         
         float y = radius*sin((i+theta+osc_data2[i])/3);
         yVals[i] -= yVals[i]/n;
@@ -556,14 +549,8 @@ void DisplayMode::drawOscillator(int w, int h, int dataSize, float* data, float*
     }
     
     ofPopMatrix();
-    
-    
     blur.end();
-    
-    
     blur.draw();
-    
-    
 }
 
 
@@ -587,4 +574,17 @@ void DisplayMode::updateLayout(int w, int h){
     multiYOffset = singleH+(2*topPadding);
 }
 
+
+//--------------------------------------------------------------------------------
+//   getters & setters
+//--------------------------------------------------------------------------------
+void DisplayMode::setColorWidth(int val){ colorWidth = val; }
+
+void DisplayMode::setColorShift(int val){ colorShift = val; }
+
+void DisplayMode::setSmooth(float val){ smooth = val; }
+
+void DisplayMode::setMode(Mode m){ mode = m; }
+
+DisplayMode::Mode DisplayMode::getMode(){ return mode; }
 

@@ -8,12 +8,12 @@ void ofApp::setup(){
     ofSetFrameRate(60);
     ofBackground(20);
     
+    
     // Boolean initialization
     inputBool = true;
     shouldFactorAgg = false;
     shouldSmooth = true;
     loadPressed = false;
-    viewMode = 0;
     
     
     // Buffer Size determines # of FFT Bins
@@ -21,19 +21,17 @@ void ofApp::setup(){
     bufferSize = 2048;
     
     
-
+    // Initialize analysis + display classes
     analysis.init(bufferSize);
     dm.init(WIN_WIDTH, WIN_HEIGHT);
     
     
-    
     // Setup soundstream (default output / input channels)
-    // 2 output channels,
-    // 1 input channel
-    // 44100 samples per second
-    // 4096 samples per buffer
-    // 4 num buffers (latency)
-    
+        // 2 output channels,
+        // 1 input channel
+        // 44100 samples per second
+        // 4096 samples per buffer
+        // 4 num buffers (latency)
     stk::Stk::setSampleRate(44100.0);
     ofSoundStreamSettings settings;
     settings.setOutListener(this);
@@ -44,21 +42,13 @@ void ofApp::setup(){
     settings.bufferSize = bufferSize;
     soundStream.setup(settings);
     
-    
+    //-------------------------------------------------------------------------------------
     // GUI Initialization
-    //--------------------------------------------------------------
+    //-------------------------------------------------------------------------------------
     
-    // Button Listeners
-    factorToggle.addListener(this, &ofApp::factorAggPressed);
-    smoothToggle.addListener(this, &ofApp::smoothPressed);
-    loadButton.addListener(this, &ofApp::loadFile);
-    playButton.addListener(this, &ofApp::playFile);
-
-    closeButton.addListener(this, &ofApp::closeMenu);
-    
-    // Main panel
+    // main panel
+    //-------------------------------------------------------------------------------------
     gui.setupFlexBoxLayout();
-    
     all = gui.addGroup("Sonic Profiler", ofJson({
         {"flex-direction", "column"},
         {"flex", 1},
@@ -71,16 +61,13 @@ void ofApp::setup(){
     }));
     all->loadTheme("default-theme.json");
     
-    
-    
 
-    // Display Mode
+    // display mode
+    //-------------------------------------------------------------------------------------
     displayParameters.setName("Display Mode");
     displayParameters.add(disp0.set("Linear",false));
-    displayParameters.add(disp1.set("Polar",false));
-    displayParameters.add(disp2.set("Raw",false));
-    displayParameters.add(disp3.set("Oscillator",false));
-
+    displayParameters.add(disp1.set("Raw",false));
+    displayParameters.add(disp2.set("Oscillator",false));
         
     displayToggles = all->addGroup(displayParameters);
     displayToggles->setExclusiveToggles(true);
@@ -88,8 +75,8 @@ void ofApp::setup(){
     displayToggles->setConfig(ofJson({{"type", "radio"}}));
     
     
-    
-    // Input Mode (& file manager)
+    // input mode / file manager
+    //-------------------------------------------------------------------------------------
     inputParameters.setName("Input Source");
     inputParameters.add(input0.set("Microphone", false));
     inputParameters.add(input1.set("Play File", false));
@@ -99,7 +86,7 @@ void ofApp::setup(){
     inputToggles->loadTheme("default-theme.json");
     inputToggles->setConfig(ofJson({{"type", "radio"}}));
     
-    fileManager = all->addGroup("File Manager");
+    fileManager = inputToggles->addGroup("File Manager");
     fileManager->loadTheme("default-theme.json");
     fileManager->setShowHeader(false);
     fileManager->add(filePath.set("Path/To/WavFile"));
@@ -108,7 +95,23 @@ void ofApp::setup(){
     fileManager->minimize();
     
     
-    rawControls = all->addGroup("Raw Controls");
+    // mode panel
+    //-------------------------------------------------------------------------------------
+    modeControls = all->addGroup("Mode Controls");
+    modeControls->loadTheme("default-theme.json");
+    
+    // linear controls
+    //-------------------------------------------------------------------------------------
+    linearControls = modeControls->addGroup("Mode Controls");
+    linearControls->setShowHeader(false);
+    linearControls->loadTheme("default-theme.json");
+    linearControls->add(factorToggle.set("Factor Octaves", false));
+    linearControls->minimize();
+    
+    
+    // raw controls
+    //-------------------------------------------------------------------------------------
+    rawControls = modeControls->addGroup("Raw Controls");
     rawControls->loadTheme("default-theme.json");
     rawControls->setShowHeader(false);
     
@@ -123,65 +126,92 @@ void ofApp::setup(){
     
     rawControls->minimize();
     
-    // Graph / Data Controls
-    linearControls = all->addGroup("Mode Controls");
-    linearControls->setShowHeader(false);
-    linearControls->loadTheme("default-theme.json");
-    //linearControls->add(smoothToggle.set("Smooth", true));
-    linearControls->add(factorToggle.set("Factor Octaves", false));
-    linearControls->minimize();
     
-    // Minimize button
-    all->add(closeButton.set("Minimize All"), ofJson({
-        {"type", "fullsize"},
-        {"text-align", "center"},
-        {"align-self", "flex-start"},
-        {"margin", 5},
-        {"width", "100%"},
-        {"border-radius", 2}
-    }));
+    // osc controls
+    //-------------------------------------------------------------------------------------
+    oscControls = modeControls->addGroup("Mode Controls");
+    oscControls->setShowHeader(false);
+    oscControls->loadTheme("default-theme.json");
     
+    oscControls->add(colorWidth.set("Color Width", 120, 0, 255));
+    oscControls->add(colorShift.set("Color Shift", 0, 0, 255));
+    oscControls->add(smooth.set("Smooth", 0.25, 0., 1.));
+    oscControls->add(factorToggle.set("Factor Octaves", false));
+    
+    
+    // misc
+    //-------------------------------------------------------------------------------------
+    all->add(minimizeButton.set("Collapse All"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
+    
+    // listeners
+    //-------------------------------------------------------------------------------------
+    
+    // display radio
     displayToggles->getActiveToggleIndex().addListener(this, &ofApp::setDisplayMode);
-    displayToggles->setActiveToggle(3);
+    displayToggles->setActiveToggle(2);
     
+    // input radio
     inputToggles->getActiveToggleIndex().addListener(this, &ofApp::setInputMode);
     inputToggles->setActiveToggle(0);
     
+    // file buttons
+    loadButton.addListener(this, &ofApp::loadFile);
+    playButton.addListener(this, &ofApp::playFile);
+    
+    
+    // linear buttons
+    factorToggle.addListener(this, &ofApp::factorAggPressed);
+    
+    
+    // linlog radio
     linLogToggles->getActiveToggleIndex().addListener(this, &ofApp::setRawLinLog);
     linLogToggles->setActiveToggle(0);
-
     
+    
+    // osc sliders
+    colorShift.addListener(this, &ofApp::colorShiftChanged);
+    colorWidth.addListener(this, &ofApp::colorWidthChanged);
+    smooth.addListener(this, &ofApp::smoothChanged);
+    
+    // minimize button
+    minimizeButton.addListener(this, &ofApp::minimizePressed);
+
+    // Call resize to update control panel width and adjust drawing boxes
     windowResized(WIN_WIDTH, WIN_HEIGHT);
 
 }
 
 
+//-------------------------------------------------------------------------------------
+// listeners
+//-------------------------------------------------------------------------------------
+
+//--------------------------------------------------------------
+// Update display mode and show appropriate control elements
 void ofApp::setDisplayMode(int& index){
+    linearControls->minimize();
+    rawControls->minimize();
+    oscControls->minimize();
+    
     switch(index){
             default: case 0:
                 dm.setMode(DisplayMode::LINEAR);
                 linearControls->maximize();
-                rawControls->minimize();
                 break;
             case 1:
-                dm.setMode(DisplayMode::POLAR);
-                linearControls->minimize();
-                rawControls->minimize();
-                break;
-            case 2:
                 dm.setMode(DisplayMode::RAW);
-                linearControls->minimize();
                 rawControls->maximize();
                 break;
-            case 3:
+            case 2:
                 dm.setMode(DisplayMode::OSC);
-                linearControls->minimize();
-                rawControls->minimize();
+                factorToggle.set(false);
+                oscControls->maximize();
                 break;
-
         }
 }
 
+//--------------------------------------------------------------
+// Update input source and show/hide file manager
 void ofApp::setInputMode(int& index){
     switch (index) {
         case 0:
@@ -198,6 +228,8 @@ void ofApp::setInputMode(int& index){
     }
 }
 
+//--------------------------------------------------------------
+// Toggle linear or logarithmic x-axis scale in fft output
 void ofApp::setRawLinLog(int& index){
     switch (index) {
         case 0:
@@ -213,15 +245,29 @@ void ofApp::setRawLinLog(int& index){
 }
 
 //--------------------------------------------------------------
-void ofApp::closeMenu(){
-    all->minimizeAll();
+// Adjust hue shift of osc
+void ofApp::colorShiftChanged(int& val){
+    dm.setColorShift(val);
+}
+
+//--------------------------------------------------------------
+// Adjust hue width of osc
+void ofApp::colorWidthChanged(int& val){
+    dm.setColorWidth(val);
+}
+
+//--------------------------------------------------------------
+// Adjust smoothing constant of osc
+void ofApp::smoothChanged(float &val){
+    dm.setSmooth(val);
 }
 
 
 //--------------------------------------------------------------
+// Open system dialog and allow user to choose .wav file
 void ofApp::loadFile(){
     
-    // Listener fires twice when pressed (click & release I think)
+    // Listener fires twice when pressed (click & release)
     // So this check makes sure it only prompts once
     if(!loadPressed){
         loadPressed = true;
@@ -239,22 +285,23 @@ void ofApp::loadFile(){
                     file.openFile(ofToDataPath(path,true));
                 }
                 catch(...){
-                    cout << "oops" << endl;
+                    ofSystemAlertDialog("Invalid File: Must load .wav file");
                 }
                 filePath.set(name);
             }
-            else{
-                ofSystemAlertDialog("Error: Must load .wav file");
+            else
+            {
+                ofSystemAlertDialog("Invalid File: Must load .wav file");
                 filePath.set("Invalid File Type");
             }
         }
     }
     
     loadPressed = false;
-    
 }
 
 //--------------------------------------------------------------
+// Toggle whether a file should be playing or not
 void ofApp::playFile(){
     
     // Listener fires twice when pressed (click & release I think)
@@ -273,19 +320,29 @@ void ofApp::playFile(){
 }
 
 //--------------------------------------------------------------
+// Toggle overtone factorization
 void ofApp::factorAggPressed(bool &factorToggle){
     analysis.setAddOvertone(factorToggle);
 }
 
 //--------------------------------------------------------------
-void ofApp::smoothPressed(bool &smoothToggle){
-    shouldSmooth = smoothToggle;
+// Collapse main panels
+void ofApp::minimizePressed(){
+    displayToggles->minimize();
+    inputToggles->minimize();
+    modeControls->minimize();
 }
 
+
+//-------------------------------------------------------------------------------------
+// audio
+//-------------------------------------------------------------------------------------
+
 //--------------------------------------------------------------
+// Retrieves and formats current frame of audio input then sends to analysis
 void ofApp::audioIn(ofSoundBuffer& buffer) {
-    if(inputBool){
-        
+    if(inputBool)
+    {
         // Grab input buffer, size, and number of channels
         auto& input = buffer.getBuffer();
         auto bufferSize = buffer.getNumFrames();
@@ -309,14 +366,14 @@ void ofApp::audioIn(ofSoundBuffer& buffer) {
         
         // Send buffer to analysis
         analysis.analyzeFrame(input, bufferSize);
-        
     }
 }
 
 //--------------------------------------------------------------
+// Retrieves and formats current frame of audio output then sends to analysis
 void ofApp::audioOut(ofSoundBuffer& buffer){
-    
-    if( !inputBool ){
+    if(!inputBool )
+    {
         // Grab output buffer and size
         auto& output = buffer.getBuffer();
         auto bufferSize = buffer.getNumFrames();
@@ -346,26 +403,9 @@ void ofApp::audioOut(ofSoundBuffer& buffer){
 }
 
 
-//--------------------------------------------------------------
-void ofApp::clearGraphs(){
-
-   
-
-}
-
-//--------------------------------------------------------------
-void ofApp::update(){
-    // audio listeners run in a separate thread
-    //   so we must ensure control before making changes to
-    //   a shared variable
-    
-
-}
-
-//--------------------------------------------------------------
-void ofApp::exit(){
-    // I feel like I should be using this but whenever I add stuff it breaks
-}
+//-------------------------------------------------------------------------------------
+// builtins
+//-------------------------------------------------------------------------------------
 
 //--------------------------------------------------------------
 void ofApp::draw(){
@@ -378,18 +418,27 @@ void ofApp::draw(){
 }
 
 
-
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    if (key == ' ') {
-        shouldPlayAudio = !shouldPlayAudio;
-    }
-    if (key == 'm'){
-        inputBool = !inputBool;
-    }
+    // TODO: Add keyboard shortcuts
 }
 
 
+//--------------------------------------------------------------
+void ofApp::windowResized(int w, int h){
+    controlWidth = all->getWidth();
+    dm.updateLayout(w - controlWidth, h);
+}
+
+//--------------------------------------------------------------
+void ofApp::update(){
+    // does nothing at the moment
+}
+
+//--------------------------------------------------------------
+void ofApp::exit(){
+    // I feel like I should be using this but whenever I add stuff it breaks
+}
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
@@ -425,14 +474,6 @@ void ofApp::mouseEntered(int x, int y){
 void ofApp::mouseExited(int x, int y){
 
 }
-
-//--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-    controlWidth = all->getWidth();
-    dm.updateLayout(w - controlWidth, h);
-}
-
-
 
 //--------------------------------------------------------------
 void ofApp::gotMessage(ofMessage msg){

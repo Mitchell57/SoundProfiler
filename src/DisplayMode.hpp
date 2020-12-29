@@ -17,31 +17,49 @@ class DisplayMode {
     public:
         DisplayMode();
         void init(int w, int h);
+    
+        // Mode selection
         enum Mode{LINEAR, POLAR, RAW, OSC};
         void setMode(Mode m);
         Mode getMode();
+    
+        // General control
         void draw(Analysis analysis);
         void updateLayout(int w, int h);
     
+        // Raw Variables
         bool fftLinear;
     
+        // Osc Variables
+        void setColorWidth(int val);
+        void setColorShift(int val);
+        void setSmooth(float val);
+
     private:
+        // General variables
         Mode mode;
         int width, height;
+    
+    
+        // Graph drawers
+        void drawLinOctave(int w, int h, int dataSize, float* data);
+        void drawLinScale(int w, int h, int dataSize, float* data);
+        void drawFftPlot(int w, int h, int dataSize, float* data);
+    
+        // Graph(Linear, Raw) variables
         int singleW, singleH, multiW, multiH;
         int singleXOffset, singleYOffset, multiXOffset, multiYOffset;
         int barWidth, margin, maxHeight, y_offset;
+        std::vector<string> noteNames = {"A", "A#","B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"};
     
-        ofxBlur blur, blur2;
-        ofTime time;
-        float timer;
-        
-        void drawLinOctave(int w, int h, int dataSize, float* data);
-        void drawLinScale(int w, int h, int dataSize, float* data);
+    
+        // Visual drawers
         void drawPolar(int w, int h, int dataSize, float* data);
-        void drawFftPlot(int w, int h, int dataSize, float* data);
-        
         void drawOscillator(int w, int h, int dataSize, float* data, float* data2);
+    
+        // Visual(Osc, Polar) variables
+        ofxBlur blur, blur2;
+        float timer;
         float* osc_data1;
         float* osc_data2;
         bool osc_started;
@@ -50,18 +68,7 @@ class DisplayMode {
         float* xVals;
         float* yVals;
         float* rVals;
-    
-        std::vector<string> noteNames = {"A", "A#","B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"};
-    
-        
-    
+        int colorWidth, colorShift;
 };
-
-
-
-
-
-
-
 
 #endif /* displayModes_hpp */
