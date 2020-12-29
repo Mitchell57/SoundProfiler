@@ -18,7 +18,6 @@ public:
     virtual void setDimensions(int w, int h) = 0;
     
     ofParameterGroup parameters;
-    ofxGuiGroup *group;
     std::vector<utils::soundType> dataRequest;
     
 protected:
