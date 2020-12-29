@@ -17,17 +17,17 @@ void DisplayController::setup(Analysis* a, int w, int h, ofxGuiGroup* all){
     
     current_mode = 0;
     
-    LinearDisplay* ld1 = new LinearDisplay();
-    ld1->setup();
-    modes.push_back(ld1);
+    LinearDisplay* ld = new LinearDisplay();
+    ld->setup();
+    modes.push_back(ld);
     
-    LinearDisplay* ld2 = new LinearDisplay();
-    ld2->setup();
-    modes.push_back(ld2);
+    RawDisplay* rd = new RawDisplay();
+    rd->setup();
+    modes.push_back(rd);
     
     modeSelector.setName("Display Mode");
-    modeSelector.add(disp0.set(ld1->name,true));
-    modeSelector.add(disp1.set(ld2->name,false));
+    modeSelector.add(disp0.set(ld->name,true));
+    modeSelector.add(disp1.set(rd->name,false));
 
     
     modeSelectorGroup = all->addGroup(modeSelector);

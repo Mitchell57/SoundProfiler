@@ -4,11 +4,11 @@
 //
 //  Created by Mitch on 12/29/20.
 //
-#include "Display.h"
-#include "ofxGuiExtended.h"
-
 #ifndef LinearDisplay_h
 #define LinearDisplay_h
+
+#include "Display.h"
+#include "ofxGuiExtended.h"
 
 class LinearDisplay : public Display {
     

@@ -9,6 +9,7 @@
 #include "ofxGuiExtended.h"
 #include "Display.h"
 #include "LinearDisplay.h"
+#include "RawDisplay.h"
 
 #ifndef DisplayController_h
 #define DisplayController_h
