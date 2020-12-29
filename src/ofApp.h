@@ -6,7 +6,7 @@
 #include "ofxGuiExtended.h"
 #include "Analysis.h"
 #include "DisplayMode.hpp"
-#include <mutex>          // std::mutex
+#include "utils.h"
 
 #define WIN_WIDTH 1000
 #define WIN_HEIGHT 800

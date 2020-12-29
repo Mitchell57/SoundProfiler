@@ -11,6 +11,8 @@
 #include <stdio.h>
 #include "Analysis.h"
 #include "ofxBlur.h"
+#include "utils.h"
+
 
 class DisplayMode {
     
@@ -19,9 +21,9 @@ class DisplayMode {
         void init(int w, int h);
     
         // Mode selection
-        enum Mode{LINEAR, POLAR, RAW, OSC};
-        void setMode(Mode m);
-        Mode getMode();
+        
+        void setMode(utils::Mode m);
+        utils::Mode getMode();
     
         // General control
         void draw(Analysis analysis);
@@ -37,7 +39,7 @@ class DisplayMode {
 
     private:
         // General variables
-        Mode mode;
+        utils::Mode mode;
         int width, height;
     
     

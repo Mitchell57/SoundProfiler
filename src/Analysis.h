@@ -5,6 +5,7 @@
 //  Created by Mitch on 12/27/20.
 //
 #include "ofxFft.h"
+#include "utils.h"
 
 
 #ifndef Analysis_h
@@ -33,6 +34,8 @@ class Analysis
     
         float* getFft();
         int getFftSize();
+    
+        float* getData(utils::soundType type);
     
         // setters
         void setAddOvertone(bool b);

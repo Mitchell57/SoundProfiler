@@ -203,15 +203,15 @@ void ofApp::setDisplayMode(int& index){
     
     switch(index){
             default: case 0:
-                dm.setMode(DisplayMode::LINEAR);
+                dm.setMode(utils::LINEAR);
                 linearControls->maximize();
                 break;
             case 1:
-                dm.setMode(DisplayMode::RAW);
+                dm.setMode(utils::RAW);
                 rawControls->maximize();
                 break;
             case 2:
-                dm.setMode(DisplayMode::OSC);
+                dm.setMode(utils::OSC);
                 factorToggle.set(false);
                 oscControls->maximize();
                 break;

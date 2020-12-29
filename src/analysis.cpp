@@ -9,15 +9,7 @@
 // Helper Functions
 
 
-// Approximate Rolling Average from:
-// https://bit.ly/3aIsQRD
-float approxRollingAverage (float avg, float new_sample) {
 
-    avg -= avg / 3;
-    avg += new_sample / 3;
-
-    return avg;
-}
 
 
 Analysis::Analysis(){}
@@ -174,7 +166,7 @@ bool Analysis::smoothFrame(){
     //   - rolling average to make it less 'jumpy'
     for(int i=0; i<oct_size; i++){
         //raw_octave[i] = ofClamp(raw_octave[i], 0, 1); // clamp new data
-        smooth_octave[i] = approxRollingAverage(smooth_octave[i], raw_octave[i]);
+        smooth_octave[i] = utils::approxRollingAverage(smooth_octave[i], raw_octave[i], 3);
         if(smooth_octave[i] < 0.3) smooth_octave[i] *= smooth_octave[i];
     }
     
@@ -194,7 +186,7 @@ bool Analysis::smoothFrame(){
             }
         }
         
-        smooth_scale[i] = approxRollingAverage(smooth_scale[i], newVal);
+        smooth_scale[i] = utils::approxRollingAverage(smooth_scale[i], newVal, 3);
     }
     
     return true;
@@ -234,4 +226,28 @@ int Analysis::getScaleSize(){ return scale_size; }
 
 //--------------------------------------------------------------
 void Analysis::setAddOvertone(bool b){ addOvertone = b; }
+
+
+//--------------------------------------------------------------
+float* Analysis::getData(utils::soundType st){
+    switch (st) {
+        default: case utils::RAW_FULL:
+            return raw_fft;
+            break;
+        case utils::RAW_OCTAVE:
+            return raw_octave;
+            break;
+        case utils::RAW_SCALE:
+            return raw_scale;
+            break;
+        case utils::SMOOTH_SCALE:
+            return smooth_scale;
+            break;
+        case utils::SMOOTH_OCTAVE:
+            return smooth_octave;
+            break;
+            
+        
+    }
+}
 

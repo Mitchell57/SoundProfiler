@@ -20,7 +20,7 @@ float approxRollingAverage (float avg, float new_sample, float n) {
 DisplayMode::DisplayMode(){}
 
 void DisplayMode::init(int w, int h){
-    mode = LINEAR;
+    mode = utils::LINEAR;
     updateLayout(w, h);
     
     fftLinear = false;
@@ -42,7 +42,7 @@ void DisplayMode::init(int w, int h){
 void DisplayMode::draw(Analysis analysis){
 
     if(analysis.isFrameReady()){
-        if(mode == LINEAR){
+        if(mode == utils::LINEAR){
             int octSize = analysis.getOctaveSize();
             float* octave = analysis.getOctave();
             
@@ -51,7 +51,7 @@ void DisplayMode::draw(Analysis analysis){
             
             ofPushMatrix();
             ofTranslate(xOffset,yOffset);
-            drawLinOctave(halfW, halfW, octSize, octave);
+            drawLinOctave(halfW, halfH, octSize, octave);
             ofPopMatrix();
             
             ofPushMatrix();
@@ -59,7 +59,7 @@ void DisplayMode::draw(Analysis analysis){
             drawLinScale(halfW, halfH, scaleSize, scale);
             ofPopMatrix();
         }
-        if(mode == RAW){
+        if(mode == utils::RAW){
             float* raw_fft = analysis.getFft();
             int fft_size = analysis.getFftSize();
             
@@ -68,7 +68,7 @@ void DisplayMode::draw(Analysis analysis){
             drawFftPlot(halfW, halfH, fft_size, raw_fft);
             ofPopMatrix();
         }
-        if(mode == OSC){
+        if(mode == utils::OSC){
             float* scale = analysis.getScale();
             float* raw_scale = analysis.getRawScale();
             int scale_size = analysis.getScaleSize();
@@ -90,10 +90,10 @@ void DisplayMode::draw(Analysis analysis){
     
     // Frame not available, draw empty boxes instead
     else{
-        if(mode == LINEAR){
+        if(mode == utils::LINEAR){
             ofPushMatrix();
             ofTranslate(xOffset,yOffset);
-            drawLinOctave(halfW, halfW, 1, 0);
+            drawLinOctave(halfW, halfH, 1, 0);
             ofPopMatrix();
             
             ofPushMatrix();
@@ -101,12 +101,12 @@ void DisplayMode::draw(Analysis analysis){
             drawLinScale(halfW, halfH, 1, 0);
             ofPopMatrix();
         }
-        if(mode == POLAR){
+        if(mode == utils::POLAR){
             ofPushMatrix();
             drawPolar(width, height, 1, 0);
             ofPopMatrix();
         }
-        if(mode == RAW){
+        if(mode == utils::RAW){
             ofPushMatrix();
             ofTranslate(xOffset, yOffset);
             drawFftPlot(halfW, halfH, 1, 0);
@@ -579,7 +579,7 @@ void DisplayMode::setColorShift(int val){ colorShift = val; }
 
 void DisplayMode::setSmooth(float val){ smooth = val; }
 
-void DisplayMode::setMode(Mode m){ mode = m; }
+void DisplayMode::setMode(utils::Mode m){ mode = m; }
 
-DisplayMode::Mode DisplayMode::getMode(){ return mode; }
+utils::Mode DisplayMode::getMode(){ return mode; }
 
