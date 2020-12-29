@@ -55,20 +55,20 @@ void ofApp::setup(){
     all->loadTheme("default-theme.json");
     
     
-    dc.setup(&analysis, ofGetWidth(), ofGetHeight());
-    all->addGroup(dc.parameters);
+    
+
 
     // display mode
     //-------------------------------------------------------------------------------------
-    displayParameters.setName("Display Mode");
-    displayParameters.add(disp0.set("Linear",false));
-    displayParameters.add(disp1.set("Raw",false));
-    displayParameters.add(disp2.set("Oscillator",false));
-        
-    displayToggles = all->addGroup(displayParameters);
-    displayToggles->setExclusiveToggles(true);
-    displayToggles->loadTheme("default-theme.json");
-    displayToggles->setConfig(ofJson({{"type", "radio"}}));
+//    displayParameters.setName("Display Mode");
+//    displayParameters.add(disp0.set("Linear",false));
+//    displayParameters.add(disp1.set("Raw",false));
+//    displayParameters.add(disp2.set("Oscillator",false));
+//
+//    displayToggles = all->addGroup(displayParameters);
+//    displayToggles->setExclusiveToggles(true);
+//    displayToggles->loadTheme("default-theme.json");
+//    displayToggles->setConfig(ofJson({{"type", "radio"}}));
     
     
     // input mode / file manager
@@ -104,60 +104,62 @@ void ofApp::setup(){
     fileManager->minimize();
     
     
-    // mode panel
-    //-------------------------------------------------------------------------------------
-    modeControls = all->addGroup("Mode Controls");
-    modeControls->loadTheme("default-theme.json");
-    
-    // linear controls
-    //-------------------------------------------------------------------------------------
-    linearControls = modeControls->addGroup("Mode Controls");
-    linearControls->setShowHeader(false);
-    linearControls->loadTheme("default-theme.json");
-    linearControls->add(factorToggle.set("Factor Octaves", false));
-    linearControls->minimize();
-    
-    
-    // raw controls
-    //-------------------------------------------------------------------------------------
-    rawControls = modeControls->addGroup("Raw Controls");
-    rawControls->loadTheme("default-theme.json");
-    rawControls->setShowHeader(false);
-    
-    linLogParameters.setName("FFT X-Axis");
-    linLogParameters.add(lin.set("Linear", false));
-    linLogParameters.add(log.set("Logarithmic", false));
-    
-    linLogToggles = rawControls->addGroup(linLogParameters);
-    linLogToggles->setExclusiveToggles(true);
-    linLogToggles->loadTheme("default-theme.json");
-    linLogToggles->setConfig(ofJson({{"type", "radio"}}));
-    
-    rawControls->minimize();
-    
-    
-    // osc controls
-    //-------------------------------------------------------------------------------------
-    oscControls = modeControls->addGroup("Mode Controls");
-    oscControls->setShowHeader(false);
-    oscControls->loadTheme("default-theme.json");
-    
-    oscControls->add(colorWidth.set("Color Width", 120, 0, 255));
-    oscControls->add(colorShift.set("Color Shift", 0, 0, 255));
-    oscControls->add(smooth.set("Smooth", 0.25, 0., 1.));
-    oscControls->add(factorToggle.set("Factor Octaves", false));
+//    // mode panel
+//    //-------------------------------------------------------------------------------------
+//    modeControls = all->addGroup("Mode Controls");
+//    modeControls->loadTheme("default-theme.json");
+//
+//    // linear controls
+//    //-------------------------------------------------------------------------------------
+//    linearControls = modeControls->addGroup("Mode Controls");
+//    linearControls->setShowHeader(false);
+//    linearControls->loadTheme("default-theme.json");
+//    linearControls->add(factorToggle.set("Factor Octaves", false));
+//    linearControls->minimize();
+//
+//
+//    // raw controls
+//    //-------------------------------------------------------------------------------------
+//    rawControls = modeControls->addGroup("Raw Controls");
+//    rawControls->loadTheme("default-theme.json");
+//    rawControls->setShowHeader(false);
+//
+//    linLogParameters.setName("FFT X-Axis");
+//    linLogParameters.add(lin.set("Linear", false));
+//    linLogParameters.add(log.set("Logarithmic", false));
+//
+//    linLogToggles = rawControls->addGroup(linLogParameters);
+//    linLogToggles->setExclusiveToggles(true);
+//    linLogToggles->loadTheme("default-theme.json");
+//    linLogToggles->setConfig(ofJson({{"type", "radio"}}));
+//
+//    rawControls->minimize();
+//
+//
+//    // osc controls
+//    //-------------------------------------------------------------------------------------
+//    oscControls = modeControls->addGroup("Mode Controls");
+//    oscControls->setShowHeader(false);
+//    oscControls->loadTheme("default-theme.json");
+//
+//    oscControls->add(colorWidth.set("Color Width", 120, 0, 255));
+//    oscControls->add(colorShift.set("Color Shift", 0, 0, 255));
+//    oscControls->add(smooth.set("Smooth", 0.25, 0., 1.));
+//    oscControls->add(factorToggle.set("Factor Octaves", false));
     
     
     // misc
     //-------------------------------------------------------------------------------------
+    dc.setup(&analysis, ofGetWidth(), ofGetHeight(), all);
+    
     all->add(minimizeButton.set("Collapse All"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
     
     // listeners
     //-------------------------------------------------------------------------------------
     
-    // display radio
-    displayToggles->getActiveToggleIndex().addListener(this, &ofApp::setDisplayMode);
-    displayToggles->setActiveToggle(2);
+//    // display radio
+//    displayToggles->getActiveToggleIndex().addListener(this, &ofApp::setDisplayMode);
+//    displayToggles->setActiveToggle(2);
     
     // input radio
     inputToggles->getActiveToggleIndex().addListener(this, &ofApp::setInputMode);
@@ -169,23 +171,26 @@ void ofApp::setup(){
     resetButton.addListener(this, &ofApp::restartFile);
     
     
-    // linear buttons
-    factorToggle.addListener(this, &ofApp::factorAggPressed);
-    factorToggle.set(false);
+//    // linear buttons
+//    factorToggle.addListener(this, &ofApp::factorAggPressed);
+//    factorToggle.set(false);
+//
+//
+//    // linlog radio
+//    linLogToggles->getActiveToggleIndex().addListener(this, &ofApp::setRawLinLog);
+//    linLogToggles->setActiveToggle(0);
     
     
-    // linlog radio
-    linLogToggles->getActiveToggleIndex().addListener(this, &ofApp::setRawLinLog);
-    linLogToggles->setActiveToggle(0);
-    
-    
-    // osc sliders
-    colorShift.addListener(this, &ofApp::colorShiftChanged);
-    colorWidth.addListener(this, &ofApp::colorWidthChanged);
-    smooth.addListener(this, &ofApp::smoothChanged);
-    
+//    // osc sliders
+//    colorShift.addListener(this, &ofApp::colorShiftChanged);
+//    colorWidth.addListener(this, &ofApp::colorWidthChanged);
+//    smooth.addListener(this, &ofApp::smoothChanged);
+//
     // minimize button
     minimizeButton.addListener(this, &ofApp::minimizePressed);
+    
+    
+    
 
     // Call resize to update control panel width and adjust drawing boxes
     windowResized(WIN_WIDTH, WIN_HEIGHT);
@@ -361,9 +366,8 @@ void ofApp::factorAggPressed(bool &factorToggle){
 //--------------------------------------------------------------
 // Collapse main panels
 void ofApp::minimizePressed(){
-    displayToggles->minimize();
+    dc.minimize();
     inputToggles->minimize();
-    modeControls->minimize();
 }
 
 

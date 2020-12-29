@@ -12,31 +12,81 @@
 
 DisplayController::DisplayController(){}
 
-void DisplayController::setup(Analysis* a, int w, int h){
+void DisplayController::setup(Analysis* a, int w, int h, ofxGuiGroup* all){
     analysis = a;
     
     current_mode = 0;
     
-    LinearDisplay* ld = new LinearDisplay();
-    modes.push_back(ld);
+    LinearDisplay* ld1 = new LinearDisplay();
+    ld1->setup();
+    modes.push_back(ld1);
     
-    parameters.setName("Mode Controls");
+    LinearDisplay* ld2 = new LinearDisplay();
+    ld2->setup();
+    modes.push_back(ld2);
+    
+    modeSelector.setName("Display Mode");
+    modeSelector.add(disp0.set(ld1->name,true));
+    modeSelector.add(disp1.set(ld2->name,false));
+
+    
+    modeSelectorGroup = all->addGroup(modeSelector);
+    modeSelectorGroup->setExclusiveToggles(true);
+    modeSelectorGroup->loadTheme("default-theme.json");
+    modeSelectorGroup->setConfig(ofJson({{"type", "radio"}}));
+    
+    modeControlGroup = all->addGroup("Mode Controls");
+
     for(int i=0; i<modes.size(); i++){
-        modes[i]->setup();
+        
         modes[i]->setDimensions(10, 10); // STUB
-        parameters.add(modes[i]->parameters);
+
+        modeControls.push_back(modeControlGroup->addGroup(modes[i]->parameters));
+        modeControls[i]->setShowHeader(false);
     }
+        
+    
+    
+    
     // set up modes
     // build selector list
     //
+    modeSelectorGroup->getActiveToggleIndex().addListener(this, &DisplayController::setDisplayMode);
+    modeSelectorGroup->setActiveToggle(0);
+
+    
+    
     ready = true;
     
 }
+
+void DisplayController::setDisplayMode(int& index){
+    modeControlGroup->minimizeAll();
+    switch(index){
+            default: case 0:
+            current_mode = 0;
+            modeControls[0]->maximize();
+                break;
+            case 1:
+            current_mode = 1;
+            modeControls[1]->maximize();
+                break;
+            case 2:
+                
+                break;
+        }
+}
+
 
 void DisplayController::draw(){
     if(modes[current_mode] != NULL){
         modes[current_mode]->draw();
     }
+}
+
+void DisplayController::minimize(){
+    modeSelectorGroup->minimize();
+    modeControlGroup->minimize();
 }
 
 void DisplayController::update(){

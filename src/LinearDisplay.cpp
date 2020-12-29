@@ -19,10 +19,11 @@
 
 
 LinearDisplay::LinearDisplay(){
+    name = "Linear";
 }
 
 void LinearDisplay::setup(){
-    name = "Linear";
+    
     
     parameters.setName("Linear Controls");
     parameters.add(overtoneToggle.set("Factor Overtones", false));

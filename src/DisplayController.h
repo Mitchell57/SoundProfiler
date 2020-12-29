@@ -19,18 +19,19 @@ public:
     DisplayController();
     
     // setup
-    void setup(Analysis* a, int w, int h);
+    void setup(Analysis* a, int w, int h, ofxGuiGroup* all);
     
     // general control
     void draw();
     void update();
     void updateLayout(int w, int h);
+    void minimize();
     
     // mode selection
     void setMode(int index);
     int getMode();
     
-    ofParameterGroup parameters;
+    ofParameterGroup modeSelector;
     
     ofxGuiGroup *modeSelectorGroup; // add mode buttons
     
@@ -39,6 +40,11 @@ public:
     
 protected:
     std::vector<Display*> modes;
+    std::vector<ofxGuiGroup*> modeControls;
+    
+    ofParameter<bool> disp0, disp1, disp2;
+    
+    void setDisplayMode(int& index);
     
     
     bool ready{};

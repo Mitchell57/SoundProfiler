@@ -16,12 +16,14 @@ public:
     virtual void update(std::vector<utils::soundData> newData) = 0;
     virtual void setup() = 0;
     virtual void setDimensions(int w, int h) = 0;
+    std::string name;
+    
     
     ofParameterGroup parameters;
     std::vector<utils::soundType> dataRequest;
     
 protected:
-    std::string name;
+    
     int width, height;
     
 };
