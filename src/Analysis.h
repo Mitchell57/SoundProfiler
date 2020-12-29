@@ -36,6 +36,7 @@ class Analysis
         int getFftSize();
     
         float* getData(utils::soundType type);
+        int getSize(utils::soundType type);
     
         // setters
         void setAddOvertone(bool b);
@@ -53,6 +54,7 @@ class Analysis
         float* smooth_octave;
         float* raw_scale;
         float* smooth_scale;
+        float* smooth_scale_ot;
 
     
         std::vector<int> fullBinList;

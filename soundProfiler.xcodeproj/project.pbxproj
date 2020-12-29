@@ -27,6 +27,7 @@
 		29938E05AF78B3DF7A591187 /* ofxFftw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5F353204A917F4B2BCEEABE6 /* ofxFftw.cpp */; };
 		2C2285ACBE1FEB2AA7DDA4DD /* BlowHole.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 252B83D9C2A399E088D042A3 /* BlowHole.cpp */; };
 		30596019259B30FF006C9D2C /* LinearDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30596018259B30FF006C9D2C /* LinearDisplay.cpp */; };
+		30DA4581259B4A09003F53A3 /* DisplayController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30DA457F259B4A09003F53A3 /* DisplayController.cpp */; };
 		31F923D4B3FD6705A43AE03D /* DelayA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7E7F625187F071D780C299 /* DelayA.cpp */; };
 		32A992C3246FC91087ABB316 /* PitShift.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A317D4418EC91C88E810D81 /* PitShift.cpp */; };
 		3322D5DB6568BC1D8CF5B9B1 /* Whistle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28BC2ADF86A95B621D977304 /* Whistle.cpp */; };
@@ -217,6 +218,8 @@
 		30596017259B2BAF006C9D2C /* Display.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Display.h; sourceTree = "<group>"; };
 		30596018259B30FF006C9D2C /* LinearDisplay.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LinearDisplay.cpp; sourceTree = "<group>"; };
 		3059601A259B3110006C9D2C /* LinearDisplay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LinearDisplay.h; sourceTree = "<group>"; };
+		30DA457F259B4A09003F53A3 /* DisplayController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayController.cpp; sourceTree = "<group>"; };
+		30DA4580259B4A09003F53A3 /* DisplayController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayController.h; sourceTree = "<group>"; };
 		3185D3F238C07BAF47D4EB96 /* Mandolin.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Mandolin.cpp; path = ../../../addons/ofxStk/libs/STK/src/Mandolin.cpp; sourceTree = SOURCE_ROOT; };
 		3214698AC2F90660A2970586 /* Thread.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Thread.cpp; path = ../../../addons/ofxStk/libs/STK/src/Thread.cpp; sourceTree = SOURCE_ROOT; };
 		32721A87B1AC4282AB3E854D /* InetWvOut.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = InetWvOut.h; path = ../../../addons/ofxStk/libs/STK/include/InetWvOut.h; sourceTree = SOURCE_ROOT; };
@@ -1295,8 +1298,10 @@
 				05033CE3FA2B7668E6FC165F /* Analysis.h */,
 				3AEBB1D028DE52FAF89FABDB /* Analysis.cpp */,
 				30596017259B2BAF006C9D2C /* Display.h */,
-				30596018259B30FF006C9D2C /* LinearDisplay.cpp */,
 				3059601A259B3110006C9D2C /* LinearDisplay.h */,
+				30596018259B30FF006C9D2C /* LinearDisplay.cpp */,
+				30DA457F259B4A09003F53A3 /* DisplayController.cpp */,
+				30DA4580259B4A09003F53A3 /* DisplayController.h */,
 				CED5449BAD908DDC8ECEBCCE /* DisplayMode.hpp */,
 				23B27CAA67FD770D1DABB24D /* DisplayMode.cpp */,
 			);
@@ -1579,6 +1584,7 @@
 				478F4069D96FD13217F41740 /* ModalBar.cpp in Sources */,
 				F24B877337AA108C8B45E1D6 /* Modulate.cpp in Sources */,
 				82DE74255C2CB21362150429 /* Moog.cpp in Sources */,
+				30DA4581259B4A09003F53A3 /* DisplayController.cpp in Sources */,
 				9F35B370F713B939728B4D8C /* Mutex.cpp in Sources */,
 				CD7A1AFE2DF5E4C496E71256 /* NRev.cpp in Sources */,
 				441155A03A343C37BCDE6F91 /* Noise.cpp in Sources */,

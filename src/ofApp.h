@@ -7,6 +7,7 @@
 #include "Analysis.h"
 #include "DisplayMode.hpp"
 #include "utils.h"
+#include "DisplayController.h"
 
 #define WIN_WIDTH 1000
 #define WIN_HEIGHT 800
@@ -62,6 +63,7 @@ class ofApp : public ofBaseApp{
         void updateLayout(int w, int h);
         int controlWidth;
     
+        DisplayController dc;
     
         //--------------------------------------------------------------------------------
         // GUI

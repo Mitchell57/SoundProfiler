@@ -13,7 +13,7 @@
 class Display{
 public:
     virtual void draw() = 0;
-    virtual void update() = 0;
+    virtual void update(std::vector<utils::soundData> newData) = 0;
     virtual void setup() = 0;
     virtual void setDimensions(int w, int h) = 0;
     

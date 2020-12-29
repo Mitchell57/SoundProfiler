@@ -15,13 +15,21 @@ class LinearDisplay : public Display {
 public:
     LinearDisplay();
     
+    
     void setup();
     void draw();
-    void update();
+    void update(std::vector<utils::soundData> newData);
     void setDimensions(int w, int h);
     
 protected:
-    ofParameter<bool> factorToggle;
+    void drawLinOctave(int w, int h);
+    void drawLinScale(int w, int h);
+    
+    std::vector<float> octave;
+    std::vector<float> scale;
+    
+    ofParameter<bool> overtoneToggle;
+    ofParameter<bool> colorToggle;
     
     float halfW, halfH, xOffset, yOffset;
     int barWidth, margin, maxHeight, y_offset;

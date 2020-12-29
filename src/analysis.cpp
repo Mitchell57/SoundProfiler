@@ -56,6 +56,7 @@ void Analysis::init(int bufSize){
     
     smooth_octave = new float[oct_size];
     smooth_scale = new float[scale_size];
+    smooth_scale_ot = new float[scale_size];
     
     for(int i=0; i<oct_size; i++){
         raw_octave[i] = 0.001;
@@ -65,6 +66,7 @@ void Analysis::init(int bufSize){
     for(int i=0; i<scale_size; i++){
         raw_scale[i] = 0.001;
         smooth_scale[i] = 0.001;
+        smooth_scale_ot[i] = 0.001;
     }
 }
 
@@ -173,20 +175,19 @@ bool Analysis::smoothFrame(){
     float newVal, overtone;
     for(int i=0; i<scale_size; i++){
         newVal = raw_scale[i];
-        if(addOvertone){
-            overtone = 0;
-            int count = 0;
-            for(int j=i+12; j<scale_size; j+=12){
-                overtone += raw_scale[j];
-                count += 1;
-            }
-            if(count > 0) {
-                overtone /= count;
-                newVal = (raw_scale[i]+overtone)/2;
-            }
+        overtone = 0;
+        int count = 0;
+        for(int j=i+12; j<scale_size; j+=12){
+            overtone += raw_scale[j];
+            count += 1;
+        }
+        if(count > 0) {
+            overtone /= count;
+            newVal = (raw_scale[i]+overtone)/2;
         }
         
-        smooth_scale[i] = utils::approxRollingAverage(smooth_scale[i], newVal, 3);
+        smooth_scale_ot[i] = utils::approxRollingAverage(smooth_scale[i], newVal, 3);
+        smooth_scale[i] = utils::approxRollingAverage(smooth_scale[i], raw_scale[i], 3);
     }
     
     return true;
@@ -246,8 +247,25 @@ float* Analysis::getData(utils::soundType st){
         case utils::SMOOTH_OCTAVE:
             return smooth_octave;
             break;
-            
-        
+        case utils::SMOOTH_SCALE_OT:
+            return smooth_scale_ot;
+            break;
     }
 }
 
+int Analysis::getSize(utils::soundType st){
+    switch (st) {
+        default: case utils::RAW_FULL:
+            return fft_size;
+            break;
+        case utils::SMOOTH_OCTAVE:
+        case utils::RAW_OCTAVE:
+            return oct_size;
+            break;
+        case utils::RAW_SCALE:
+        case utils::SMOOTH_SCALE:
+        case utils::SMOOTH_SCALE_OT:
+            return scale_size;
+            break;
+    }
+}

@@ -54,6 +54,9 @@ void ofApp::setup(){
     }));
     all->loadTheme("default-theme.json");
     
+    
+    dc.setup(&analysis, ofGetWidth(), ofGetHeight());
+    all->addGroup(dc.parameters);
 
     // display mode
     //-------------------------------------------------------------------------------------
@@ -442,7 +445,7 @@ void ofApp::draw(){
     ofPushMatrix();
     ofTranslate(controlWidth, 0);
     
-    dm.draw(analysis);
+    dc.draw();
     
     ofPopMatrix();
 }
@@ -457,12 +460,12 @@ void ofApp::keyPressed(int key){
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
     controlWidth = all->getWidth();
-    dm.updateLayout(w - controlWidth, h);
+    dc.updateLayout(w - controlWidth, h);
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    // does nothing at the moment
+    dc.update();
 }
 
 //--------------------------------------------------------------

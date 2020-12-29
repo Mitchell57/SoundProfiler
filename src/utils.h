@@ -7,6 +7,7 @@
 
 #ifndef utils_h
 #define utils_h
+#include <vector>
 
 namespace utils {
 
@@ -22,7 +23,12 @@ namespace utils {
 
     enum Mode{ LINEAR, POLAR, RAW, OSC };
 
-    enum soundType{ RAW_FULL, RAW_OCTAVE, SMOOTH_OCTAVE, RAW_SCALE, SMOOTH_SCALE };
+    enum soundType{ RAW_FULL, RAW_OCTAVE, SMOOTH_OCTAVE, RAW_SCALE, SMOOTH_SCALE, SMOOTH_SCALE_OT };
+
+    struct soundData {
+        soundType label;
+        std::vector<float> data;
+    };
 
 }
 
