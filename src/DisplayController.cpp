@@ -5,10 +5,7 @@
 //  Created by Mitch on 12/29/20.
 //
 
-#include <stdio.h>
 #include "DisplayController.h"
-
-
 
 DisplayController::DisplayController(){}
 
@@ -30,7 +27,7 @@ void DisplayController::setup(Analysis* a, int w, int h, ofxGuiGroup* all){
     modes.push_back(od);
     
     modeSelector.setName("Display Mode");
-    modeSelector.add(disp0.set(ld->name,true));
+    modeSelector.add(disp0.set(ld->name,false));
     modeSelector.add(disp1.set(rd->name,false));
     modeSelector.add(disp2.set(od->name,false));
 
@@ -45,9 +42,12 @@ void DisplayController::setup(Analysis* a, int w, int h, ofxGuiGroup* all){
     for(int i=0; i<modes.size(); i++){
         
         modes[i]->setDimensions(10, 10); // STUB
-
-        modeControls.push_back(modeControlGroup->addGroup(modes[i]->parameters));
-        modeControls[i]->setShowHeader(false);
+        
+        ofxGuiGroup* modeGroup = modeControlGroup->addGroup("Parameters");
+        modeGroup->setShowHeader(false);
+        modes[i]->buildGui(modeGroup);
+        if(i != 0) modeGroup->minimize();
+        modeControls.push_back(modeGroup);
     }
         
     
@@ -95,21 +95,26 @@ void DisplayController::minimize(){
     modeControlGroup->minimize();
 }
 
+void DisplayController::maximize(){
+    modeSelectorGroup->maximize();
+    modeControlGroup->maximize();
+}
+
 void DisplayController::update(){
-    if(modes[current_mode] != NULL){
+    int n = current_mode;
+    if(modes[n] != NULL){
         std::vector<utils::soundData> ret;
         for(utils::soundType req : modes[current_mode]->dataRequest){
             utils::soundData container;
             container.label = req;
-            float* inData = analysis->getData(req);
+            std::vector<float> inData = analysis->getData(req);
             int inSize = analysis->getSize(req);
-            std::vector<float> inVec = {inData, inData+inSize};
-            container.data = inVec;
+            container.data = inData;
             
             ret.push_back(container);
         }
         
-        modes[current_mode]->update(ret);
+        modes[n]->update(ret);
     }
 }
 
@@ -121,31 +126,17 @@ void DisplayController::updateLayout(int w, int h){
         mode->setDimensions(w, h);
     }
 }
-void DisplayController::setMode(int index){
-    // STUB
+void DisplayController::incMode(){
+    int n = (current_mode+1) % modes.size();
+    modeSelectorGroup->setActiveToggle(n);
 }
+
+
 int DisplayController::getMode(){
-    return 0; // STUB
+    return current_mode;
 }
 
+void DisplayController::setMode(int index){
+    modeSelectorGroup->setActiveToggle(index);
+}
 
-//    // general control
-
-//
-//    // mode selection
-    
-//
-//    ofParameterGroup parameters;
-//
-//    ofxGuiGroup *modeSelectorGroup; // add mode buttons
-//
-//    ofxGuiGroup *modeControlGroup; // add all mode-specific parameters, only show current mode
-//
-//
-//protected:
-//    std::vector<Display> modes;
-//
-//    int width, height;
-//    int current_mode;
-//    Analysis* analysis;
-//}

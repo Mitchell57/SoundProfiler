@@ -49,24 +49,21 @@ void Analysis::init(int bufSize){
     
     
     fft_size = fft->getBinSize();
-    raw_fft = new float[fft_size];
-    
-    raw_octave = new float[oct_size];
-    raw_scale = new float[scale_size];
-    
-    smooth_octave = new float[oct_size];
-    smooth_scale = new float[scale_size];
-    smooth_scale_ot = new float[scale_size];
+    raw_fft.resize(fft_size);
+    in_fft.resize(fft_size);
     
     for(int i=0; i<oct_size; i++){
-        raw_octave[i] = 0.001;
-        smooth_octave[i] = 0.001;
+        raw_octave.push_back(0.001);
+        smooth_octave.push_back(0.001);
+        
+        in_octave.push_back(0.001);
     }
     
     for(int i=0; i<scale_size; i++){
-        raw_scale[i] = 0.001;
-        smooth_scale[i] = 0.001;
-        smooth_scale_ot[i] = 0.001;
+        raw_scale.push_back(0.001);
+        smooth_scale.push_back(0.001);
+        smooth_scale_ot.push_back(0.001);
+        
     }
 }
 
@@ -94,7 +91,7 @@ void Analysis::analyzeFrame(std::vector<float> sample, int bufferSize)
     fft->setSignal(normalizedOut);
     
     // Retrieve analyzed frame
-    raw_fft = fft->getAmplitude();
+    raw_fft = {fft->getAmplitude(), fft->getAmplitude()+fft_size};
     
     float fft_max = 0;
     for(int i=0; i<fft_size; i++){
@@ -136,14 +133,22 @@ void Analysis::analyzeFrame(std::vector<float> sample, int bufferSize)
         if(raw_octave[i] > octave_max) octave_max = raw_octave[i];
     }
     
-    for(int i=0; i<oct_size; i++){
-        raw_octave[i] /= octave_max;
+    if(octave_max != 0){
+        for(int i=0; i<oct_size; i++){
+            raw_octave[i] /= octave_max;
+        }
     }
     
-    for(int i=0; i<scale_size; i++){
-        raw_scale[i] /= scale_max;
+    if(scale_max != 0){
+        for(int i=0; i<scale_size; i++){
+            raw_scale[i] /= scale_max;
+        }
     }
-    
+    if(fft_max != 0){
+        for(int i=0; i<fft_size; i++){
+            raw_fft[i] /= fft_max;
+        }
+    }
     frameReady = smoothFrame();
     
 }
@@ -157,12 +162,26 @@ bool Analysis::smoothFrame(){
     if(raw_scale[0] != raw_scale[0]){
         // NaN. skip frame
         
+        // Gradual fade out for smoothed data sources
+        for(float val : smooth_scale){
+            val = utils::approxRollingAverage(val, 0, 30);
+        }
+        
+        for(float val : smooth_scale_ot){
+            val = utils::approxRollingAverage(val, 0, 30);
+        }
+        
+        for(float val : smooth_octave){
+            val = utils::approxRollingAverage(val, 0, 30);
+        }
+        
         // Clear graphs if NaN and on output mode (usually means file not playing)
         return false;
         // Sometimes buffer will be NaN during input lag
         // So if we reset the graph each time (on input mode) it would be jumpy
         // Haven't observed the same issue on output
     }
+    
     
     // At the moment, smoothing consists of:
     //   - rolling average to make it less 'jumpy'
@@ -201,36 +220,11 @@ bool Analysis::smoothFrame(){
 //--------------------------------------------------------------
 bool Analysis::isFrameReady(){ return frameReady; }
 
-//--------------------------------------------------------------
-float* Analysis::getRawOctave(){ return raw_octave; }
 
-//--------------------------------------------------------------
-float* Analysis::getRawScale(){ return raw_scale; }
-
-//--------------------------------------------------------------
-float* Analysis::getOctave(){ return smooth_octave; }
-
-//--------------------------------------------------------------
-float* Analysis::getScale(){ return smooth_scale; }
-
-//--------------------------------------------------------------
-float* Analysis::getFft(){ return raw_fft; }
-
-//--------------------------------------------------------------
-int Analysis::getFftSize(){ return fft_size; }
-
-//--------------------------------------------------------------
-int Analysis::getOctaveSize(){ return oct_size; }
-
-//--------------------------------------------------------------
-int Analysis::getScaleSize(){ return scale_size; }
-
-//--------------------------------------------------------------
-void Analysis::setAddOvertone(bool b){ addOvertone = b; }
 
 
 //--------------------------------------------------------------
-float* Analysis::getData(utils::soundType st){
+std::vector<float> Analysis::getData(utils::soundType st){
     switch (st) {
         default: case utils::RAW_FULL:
             return raw_fft;

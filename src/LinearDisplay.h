@@ -8,7 +8,6 @@
 #define LinearDisplay_h
 
 #include "Display.h"
-#include "ofxGuiExtended.h"
 
 class LinearDisplay : public Display {
     
@@ -20,6 +19,7 @@ public:
     void draw();
     void update(std::vector<utils::soundData> newData);
     void setDimensions(int w, int h);
+    void buildGui(ofxGuiGroup* parent);
     
 protected:
     void drawLinOctave(int w, int h);

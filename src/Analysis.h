@@ -4,12 +4,14 @@
 //
 //  Created by Mitch on 12/27/20.
 //
-#include "ofxFft.h"
-#include "utils.h"
+
 
 
 #ifndef Analysis_h
 #define Analysis_h
+
+#include "ofxFft.h"
+#include "utils.h"
 
 class Analysis
 {
@@ -24,18 +26,7 @@ class Analysis
         // getters
         bool isFrameReady();
     
-        float* getRawOctave();
-        float* getOctave();
-        int getOctaveSize();
-    
-        float* getRawScale();
-        float* getScale();
-        int getScaleSize();
-    
-        float* getFft();
-        int getFftSize();
-    
-        float* getData(utils::soundType type);
+        std::vector<float> getData(utils::soundType type);
         int getSize(utils::soundType type);
     
         // setters
@@ -49,13 +40,18 @@ class Analysis
         
         int bufferSize, fft_size , oct_size, scale_size;
         
-        float* raw_fft;
-        float* raw_octave;
-        float* smooth_octave;
-        float* raw_scale;
-        float* smooth_scale;
-        float* smooth_scale_ot;
+        std::vector<float> raw_fft;
+        std::vector<float> raw_octave;
+        std::vector<float> raw_scale;
+        
+        std::vector<float> smooth_octave;
+        std::vector<float> smooth_scale;
+        std::vector<float> smooth_scale_ot;
 
+        std::vector<float> in_fft;
+        std::vector<float> in_octave;
+        std::vector<float> in_scale;
+    
     
         std::vector<int> fullBinList;
         std::vector<float> freqlist;

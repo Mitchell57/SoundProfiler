@@ -9,9 +9,7 @@
 #define OscDisplay_h
 
 #include "Display.h"
-#include "ofxGuiExtended.h"
 #include "ofxBlur.h"
-#include "utils.h"
 
 class OscDisplay : public Display {
     
@@ -23,6 +21,7 @@ public:
     void draw();
     void update(std::vector<utils::soundData> newData);
     void setDimensions(int w, int h);
+    void buildGui(ofxGuiGroup *parent);
     
 protected:
 
@@ -32,22 +31,27 @@ protected:
     ofParameter<int> colorWidth;
     ofParameter<int> colorShift;
     ofParameter<float> smooth;
+    ofParameter<float> speed;
+    
+    ofParameter<int> oscColorShift;
+    
+    ofxGuiGroup* globalGroup;
+    ofxGuiGroup* polarGroup;
+    ofxGuiGroup* oscGroup;
     
     // Visual drawers
     void drawPolar(int w, int h);
-    void drawOscillator(int w, int h);
+    void drawOscillator(float w, float h);
 
     // Visual(Osc, Polar) variables
     ofxBlur blur, blur2;
     float timer;
-    float* osc_data1;
-    float* osc_data2;
-    bool osc_started;
     float sum;
     float x, y, r;
-    float* xVals;
-    float* yVals;
-    float* rVals;
+    int dataSize;
+    std::vector<float> xVals;
+    std::vector<float> yVals;
+    std::vector<float> rVals;
     
 };
 

@@ -23,13 +23,11 @@
 		1E8A4D9D2831059ADAC237E1 /* Layout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03641A2ED721246DEBE48BB6 /* Layout.cpp */; };
 		217ADBDDDCB351E6515377D3 /* InetWvOut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97E3EEAF10C222EDBDC0CBCF /* InetWvOut.cpp */; };
 		22E5A94F5A8674BEDFC910AE /* Sphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A8D4D036B34CF6C3DB03575 /* Sphere.cpp */; };
+		242306C38E8D1FE59ACAECD9 /* LinearDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FABAE67DB49DEC6861065EFC /* LinearDisplay.cpp */; };
 		25D4A76C57CA69E2B03691E2 /* Twang.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A55957DFFB42CE17B2BFEB6 /* Twang.cpp */; };
 		29938E05AF78B3DF7A591187 /* ofxFftw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5F353204A917F4B2BCEEABE6 /* ofxFftw.cpp */; };
 		2C2285ACBE1FEB2AA7DDA4DD /* BlowHole.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 252B83D9C2A399E088D042A3 /* BlowHole.cpp */; };
-		30596019259B30FF006C9D2C /* LinearDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30596018259B30FF006C9D2C /* LinearDisplay.cpp */; };
-		30DA4581259B4A09003F53A3 /* DisplayController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30DA457F259B4A09003F53A3 /* DisplayController.cpp */; };
-		30DA4584259B864F003F53A3 /* RawDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30DA4583259B864F003F53A3 /* RawDisplay.cpp */; };
-		30DA4587259B8F5B003F53A3 /* OscDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 30DA4586259B8F5B003F53A3 /* OscDisplay.cpp */; };
+		307B65C1259C6C90002F0483 /* Analysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 307B65C0259C6C90002F0483 /* Analysis.cpp */; };
 		31F923D4B3FD6705A43AE03D /* DelayA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7E7F625187F071D780C299 /* DelayA.cpp */; };
 		32A992C3246FC91087ABB316 /* PitShift.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A317D4418EC91C88E810D81 /* PitShift.cpp */; };
 		3322D5DB6568BC1D8CF5B9B1 /* Whistle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 28BC2ADF86A95B621D977304 /* Whistle.cpp */; };
@@ -80,6 +78,7 @@
 		82DE74255C2CB21362150429 /* Moog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3FED27273172C5AD1006D2D7 /* Moog.cpp */; };
 		83443D00C5F3E0ADB39006BF /* Delay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 42AEC5414130D82F2740FE15 /* Delay.cpp */; };
 		87557380B783CE85138776EE /* Drummer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3F5383ABD00D7D620254264 /* Drummer.cpp */; };
+		8802BBDAD4FEDA44538F4F26 /* OscDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F60DEB5825C1B7DF70BE4B30 /* OscDisplay.cpp */; };
 		8829FA035C433B3475ABC0B2 /* Wurley.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B927DC41F09888C148248CC0 /* Wurley.cpp */; };
 		8957BB477B86536F017B1526 /* Phonemes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2180383C3D64ED5699FD4D99 /* Phonemes.cpp */; };
 		8B4AED05BB94F9E609C1402C /* Sitar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C7580B5DC9657A31F1707A69 /* Sitar.cpp */; };
@@ -100,12 +99,13 @@
 		A354270CC01A88F94FBE9439 /* Clarinet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B1B3F1FBD6A4FD8207616C5 /* Clarinet.cpp */; };
 		A91501F0DD91D455BB3FCAA0 /* Brass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81EB70E34712D94E01EEF305 /* Brass.cpp */; };
 		ABCB74EFE0407A73EE922F82 /* HevyMetl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F0AB5BD8FAA67DFFF18CAF7C /* HevyMetl.cpp */; };
-		AD556C84D08665F2766CF67E /* Analysis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBB1D028DE52FAF89FABDB /* Analysis.cpp */; };
 		AD7FC9BE971ED40304CDE7F1 /* TwoZero.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 149454BEA941AA9DF80B1456 /* TwoZero.cpp */; };
+		AE3E5252F53A000AA81DB70A /* DisplayController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 68504DCBAD98F04CBBFC011F /* DisplayController.cpp */; };
 		B0B8304374505C2F9D430A55 /* TcpServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1731837E1AFFE4D66A315EFB /* TcpServer.cpp */; };
 		B8823F321ADF4562F80BFF99 /* Saxofony.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B4B83AA2446BCACACF9A4F4D /* Saxofony.cpp */; };
 		C1B91F2FDAC60326332C5F8F /* Bowed.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BD89B1CC0DD3339EF717827 /* Bowed.cpp */; };
 		C3E0EF3F80F01F133D216446 /* BlitSquare.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8D4720D5E8D958A7B7728141 /* BlitSquare.cpp */; };
+		C46586FBB81615056081C67F /* RawDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB3126534C080A5A09E1F35D /* RawDisplay.cpp */; };
 		C688DEE8EC1EFF0A266883D3 /* Document.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB1ADF157B95D309C00861D2 /* Document.cpp */; };
 		C7C21364C1A53E74EF67AD11 /* RtWvOut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CE5D0D21ACB8C83B738DE4C /* RtWvOut.cpp */; };
 		C89872D9B7CA1D257C3346E1 /* Iir.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C47234BC0EA28FBC96FE5832 /* Iir.cpp */; };
@@ -159,7 +159,7 @@
 		01F34ABDE09DDFBAE2B7B25B /* Voicer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Voicer.h; path = ../../../addons/ofxStk/libs/STK/include/Voicer.h; sourceTree = SOURCE_ROOT; };
 		029CFB707802E69EF9843380 /* ReedTable.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ReedTable.h; path = ../../../addons/ofxStk/libs/STK/include/ReedTable.h; sourceTree = SOURCE_ROOT; };
 		03641A2ED721246DEBE48BB6 /* Layout.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Layout.cpp; path = ../../../addons/ofxGuiExtended/src/DOM/Layout.cpp; sourceTree = SOURCE_ROOT; };
-		05033CE3FA2B7668E6FC165F /* Analysis.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Analysis.h; path = src/Analysis.h; sourceTree = SOURCE_ROOT; };
+		05033CE3FA2B7668E6FC165F /* Analysis.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; name = Analysis.h; path = src/Analysis.h; sourceTree = SOURCE_ROOT; };
 		05CFAF326D17C36BA129F27B /* ofxGuiMenu.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxGuiMenu.cpp; path = ../../../addons/ofxGuiExtended/src/containers/ofxGuiMenu.cpp; sourceTree = SOURCE_ROOT; };
 		069F86F0B39E4C47A71497E5 /* ModalBar.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ModalBar.cpp; path = ../../../addons/ofxStk/libs/STK/src/ModalBar.cpp; sourceTree = SOURCE_ROOT; };
 		06B3623EC49744C8EB089711 /* Granulate.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Granulate.h; path = ../../../addons/ofxStk/libs/STK/include/Granulate.h; sourceTree = SOURCE_ROOT; };
@@ -185,6 +185,7 @@
 		1461052F486001A40EDFB264 /* Messager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Messager.h; path = ../../../addons/ofxStk/libs/STK/include/Messager.h; sourceTree = SOURCE_ROOT; };
 		149454BEA941AA9DF80B1456 /* TwoZero.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = TwoZero.cpp; path = ../../../addons/ofxStk/libs/STK/src/TwoZero.cpp; sourceTree = SOURCE_ROOT; };
 		16164C667C5E34D21437C58C /* ofxDOM.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxDOM.h; path = ../../../addons/ofxGuiExtended/src/DOM/ofxDOM.h; sourceTree = SOURCE_ROOT; };
+		170CF451E387BD4F62EDD82E /* RawDisplay.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = RawDisplay.h; path = src/RawDisplay.h; sourceTree = SOURCE_ROOT; };
 		1731837E1AFFE4D66A315EFB /* TcpServer.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = TcpServer.cpp; path = ../../../addons/ofxStk/libs/STK/src/TcpServer.cpp; sourceTree = SOURCE_ROOT; };
 		1919EEE1B1715CB5CE70978D /* FormSwep.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = FormSwep.cpp; path = ../../../addons/ofxStk/libs/STK/src/FormSwep.cpp; sourceTree = SOURCE_ROOT; };
 		19EE80119674857FAB42C842 /* ofxGuiElement.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxGuiElement.h; path = ../../../addons/ofxGuiExtended/src/ofxGuiElement.h; sourceTree = SOURCE_ROOT; };
@@ -214,16 +215,7 @@
 		2C16E7913D6964A4E1438B20 /* TwoZero.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = TwoZero.h; path = ../../../addons/ofxStk/libs/STK/include/TwoZero.h; sourceTree = SOURCE_ROOT; };
 		2C65378F473DCFF80F18CBA5 /* ofxDOMBoxLayout.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxDOMBoxLayout.cpp; path = ../../../addons/ofxGuiExtended/src/view/ofxDOMBoxLayout.cpp; sourceTree = SOURCE_ROOT; };
 		2D0C0AA4436B2A16530BA991 /* fftw3.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = fftw3.h; path = ../../../addons/ofxFft/libs/fftw/include/fftw3.h; sourceTree = SOURCE_ROOT; };
-		30596015259B2843006C9D2C /* utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
-		30596017259B2BAF006C9D2C /* Display.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Display.h; sourceTree = "<group>"; };
-		30596018259B30FF006C9D2C /* LinearDisplay.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LinearDisplay.cpp; sourceTree = "<group>"; };
-		3059601A259B3110006C9D2C /* LinearDisplay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LinearDisplay.h; sourceTree = "<group>"; };
-		30DA457F259B4A09003F53A3 /* DisplayController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayController.cpp; sourceTree = "<group>"; };
-		30DA4580259B4A09003F53A3 /* DisplayController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayController.h; sourceTree = "<group>"; };
-		30DA4582259B858A003F53A3 /* RawDisplay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RawDisplay.h; sourceTree = "<group>"; };
-		30DA4583259B864F003F53A3 /* RawDisplay.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RawDisplay.cpp; sourceTree = "<group>"; };
-		30DA4585259B8DDE003F53A3 /* OscDisplay.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OscDisplay.h; sourceTree = "<group>"; };
-		30DA4586259B8F5B003F53A3 /* OscDisplay.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OscDisplay.cpp; sourceTree = "<group>"; };
+		307B65C0259C6C90002F0483 /* Analysis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Analysis.cpp; sourceTree = "<group>"; };
 		3185D3F238C07BAF47D4EB96 /* Mandolin.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Mandolin.cpp; path = ../../../addons/ofxStk/libs/STK/src/Mandolin.cpp; sourceTree = SOURCE_ROOT; };
 		3214698AC2F90660A2970586 /* Thread.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Thread.cpp; path = ../../../addons/ofxStk/libs/STK/src/Thread.cpp; sourceTree = SOURCE_ROOT; };
 		32721A87B1AC4282AB3E854D /* InetWvOut.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = InetWvOut.h; path = ../../../addons/ofxStk/libs/STK/include/InetWvOut.h; sourceTree = SOURCE_ROOT; };
@@ -233,11 +225,11 @@
 		35DDC9D7877887B9D23690A4 /* EventTarget.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = EventTarget.h; path = ../../../addons/ofxGuiExtended/src/DOM/EventTarget.h; sourceTree = SOURCE_ROOT; };
 		36F6E3347C261D592D466E35 /* Resonate.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Resonate.cpp; path = ../../../addons/ofxStk/libs/STK/src/Resonate.cpp; sourceTree = SOURCE_ROOT; };
 		37CCCCAFCF47D72BEC3912F3 /* Whistle.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Whistle.h; path = ../../../addons/ofxStk/libs/STK/include/Whistle.h; sourceTree = SOURCE_ROOT; };
-		3AEBB1D028DE52FAF89FABDB /* Analysis.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Analysis.cpp; path = src/Analysis.cpp; sourceTree = SOURCE_ROOT; };
 		3B36E5F2A876CBACF2103EDB /* FileRead.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = FileRead.h; path = ../../../addons/ofxStk/libs/STK/include/FileRead.h; sourceTree = SOURCE_ROOT; };
 		3CBBF694C461A82A575E5F4C /* ofxGuiDefaultConfig.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxGuiDefaultConfig.h; path = ../../../addons/ofxGuiExtended/src/view/ofxGuiDefaultConfig.h; sourceTree = SOURCE_ROOT; };
 		3CDB98FDF8C3BFD666AD3B72 /* ofxGuiButton.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxGuiButton.cpp; path = ../../../addons/ofxGuiExtended/src/controls/ofxGuiButton.cpp; sourceTree = SOURCE_ROOT; };
 		3FED27273172C5AD1006D2D7 /* Moog.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Moog.cpp; path = ../../../addons/ofxStk/libs/STK/src/Moog.cpp; sourceTree = SOURCE_ROOT; };
+		404B33CE51279823D9C8D149 /* LinearDisplay.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LinearDisplay.h; path = src/LinearDisplay.h; sourceTree = SOURCE_ROOT; };
 		406F8DCDEFA4B57B0365390D /* Modulate.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Modulate.cpp; path = ../../../addons/ofxStk/libs/STK/src/Modulate.cpp; sourceTree = SOURCE_ROOT; };
 		425DCB3F4148B933415AB04A /* RtMidi.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = RtMidi.h; path = ../../../addons/ofxStk/libs/STK/include/RtMidi.h; sourceTree = SOURCE_ROOT; };
 		42AEC5414130D82F2740FE15 /* Delay.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Delay.cpp; path = ../../../addons/ofxStk/libs/STK/src/Delay.cpp; sourceTree = SOURCE_ROOT; };
@@ -271,6 +263,7 @@
 		672C70F0889F6A7375A370DC /* MidiFileIn.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = MidiFileIn.cpp; path = ../../../addons/ofxStk/libs/STK/src/MidiFileIn.cpp; sourceTree = SOURCE_ROOT; };
 		67BFC7F21E824F5A7FAC65E0 /* ofxEasyFft.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxEasyFft.cpp; path = ../../../addons/ofxFft/src/ofxEasyFft.cpp; sourceTree = SOURCE_ROOT; };
 		6823550DD93ADF22EE7746FA /* BlitSquare.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = BlitSquare.h; path = ../../../addons/ofxStk/libs/STK/include/BlitSquare.h; sourceTree = SOURCE_ROOT; };
+		68504DCBAD98F04CBBFC011F /* DisplayController.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DisplayController.cpp; path = src/DisplayController.cpp; sourceTree = SOURCE_ROOT; };
 		68A736255108DF03AFC4BB3E /* ofxGuiRangeSlider.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxGuiRangeSlider.cpp; path = ../../../addons/ofxGuiExtended/src/controls/ofxGuiRangeSlider.cpp; sourceTree = SOURCE_ROOT; };
 		6A2ECA212273BEFE401DCAB3 /* ofxGuiRangeSlider.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxGuiRangeSlider.h; path = ../../../addons/ofxGuiExtended/src/controls/ofxGuiRangeSlider.h; sourceTree = SOURCE_ROOT; };
 		6ADDE1301DB5AECBEF5B21E5 /* Exceptions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Exceptions.cpp; path = ../../../addons/ofxGuiExtended/src/DOM/Exceptions.cpp; sourceTree = SOURCE_ROOT; };
@@ -298,6 +291,7 @@
 		7A8D4D036B34CF6C3DB03575 /* Sphere.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Sphere.cpp; path = ../../../addons/ofxStk/libs/STK/src/Sphere.cpp; sourceTree = SOURCE_ROOT; };
 		7B1B3F1FBD6A4FD8207616C5 /* Clarinet.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Clarinet.cpp; path = ../../../addons/ofxStk/libs/STK/src/Clarinet.cpp; sourceTree = SOURCE_ROOT; };
 		7BFF2C53AABB4991A1FDDAEB /* InetWvIn.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = InetWvIn.cpp; path = ../../../addons/ofxStk/libs/STK/src/InetWvIn.cpp; sourceTree = SOURCE_ROOT; };
+		7C39EAC4AD92BF1D4365B8BC /* utils.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = utils.h; path = src/utils.h; sourceTree = SOURCE_ROOT; };
 		7C70A381C58D8342ACF4ACD6 /* Granulate.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Granulate.cpp; path = ../../../addons/ofxStk/libs/STK/src/Granulate.cpp; sourceTree = SOURCE_ROOT; };
 		7D3BE1A2ADAFC399E7B20A91 /* ofxFftBasic.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxFftBasic.h; path = ../../../addons/ofxFft/src/ofxFftBasic.h; sourceTree = SOURCE_ROOT; };
 		7D88CEB0FFAB57D43C36DD30 /* DelayA.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = DelayA.h; path = ../../../addons/ofxStk/libs/STK/include/DelayA.h; sourceTree = SOURCE_ROOT; };
@@ -350,6 +344,7 @@
 		A9C8BF2BE3BABAB47EC44463 /* Mutex.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Mutex.h; path = ../../../addons/ofxStk/libs/STK/include/Mutex.h; sourceTree = SOURCE_ROOT; };
 		AB1ADF157B95D309C00861D2 /* Document.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Document.cpp; path = ../../../addons/ofxGuiExtended/src/DOM/Document.cpp; sourceTree = SOURCE_ROOT; };
 		AB20081389761BCC9187B5A7 /* Twang.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Twang.h; path = ../../../addons/ofxStk/libs/STK/include/Twang.h; sourceTree = SOURCE_ROOT; };
+		AB9F8A28FD18A6B94D447A1D /* Display.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Display.h; path = src/Display.h; sourceTree = SOURCE_ROOT; };
 		AC75B75C3D02FD0D6D20A399 /* WvIn.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = WvIn.h; path = ../../../addons/ofxStk/libs/STK/include/WvIn.h; sourceTree = SOURCE_ROOT; };
 		AE603E0BACE98CB9A24BAE62 /* ofxGuiInputField.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxGuiInputField.h; path = ../../../addons/ofxGuiExtended/src/controls/ofxGuiInputField.h; sourceTree = SOURCE_ROOT; };
 		AF4459E5651911F48C16CDE5 /* Vector3D.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Vector3D.h; path = ../../../addons/ofxStk/libs/STK/include/Vector3D.h; sourceTree = SOURCE_ROOT; };
@@ -385,6 +380,7 @@
 		CA5E3F253E83EA27E447A2A8 /* ofxGuiElement.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxGuiElement.cpp; path = ../../../addons/ofxGuiExtended/src/ofxGuiElement.cpp; sourceTree = SOURCE_ROOT; };
 		CAB67BC7A1CC020FDAC5381B /* ofxEasyFft.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxEasyFft.h; path = ../../../addons/ofxFft/src/ofxEasyFft.h; sourceTree = SOURCE_ROOT; };
 		CC047B89129A20BC967DB0FF /* LentPitShift.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = LentPitShift.h; path = ../../../addons/ofxStk/libs/STK/include/LentPitShift.h; sourceTree = SOURCE_ROOT; };
+		CDFDCB3FCB69BBB5E7F44215 /* DisplayController.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = DisplayController.h; path = src/DisplayController.h; sourceTree = SOURCE_ROOT; };
 		CE67198F2891A8FFEA3686E6 /* ofxFftBasic.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxFftBasic.cpp; path = ../../../addons/ofxFft/src/ofxFftBasic.cpp; sourceTree = SOURCE_ROOT; };
 		CF46351566E64E5DC3015DFF /* Guitar.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Guitar.cpp; path = ../../../addons/ofxStk/libs/STK/src/Guitar.cpp; sourceTree = SOURCE_ROOT; };
 		CF7E7F625187F071D780C299 /* DelayA.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = DelayA.cpp; path = ../../../addons/ofxStk/libs/STK/src/DelayA.cpp; sourceTree = SOURCE_ROOT; };
@@ -599,6 +595,7 @@
 		E97CDAF9136AAC1AE6F9A62F /* StifKarp.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = StifKarp.h; path = ../../../addons/ofxStk/libs/STK/include/StifKarp.h; sourceTree = SOURCE_ROOT; };
 		E97FA420B7F07E1F8349B259 /* Events.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Events.h; path = ../../../addons/ofxGuiExtended/src/DOM/Events.h; sourceTree = SOURCE_ROOT; };
 		E98EAA801ED4C312AFBFE56A /* ofxGuiFpsPlotter.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxGuiFpsPlotter.h; path = ../../../addons/ofxGuiExtended/src/controls/ofxGuiFpsPlotter.h; sourceTree = SOURCE_ROOT; };
+		EB3126534C080A5A09E1F35D /* RawDisplay.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = RawDisplay.cpp; path = src/RawDisplay.cpp; sourceTree = SOURCE_ROOT; };
 		EB848DCFB02E1ACA0FE256D0 /* Skini.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Skini.h; path = ../../../addons/ofxStk/libs/STK/include/Skini.h; sourceTree = SOURCE_ROOT; };
 		EE747AAE9A8BB65EBB66757D /* BiQuad.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = BiQuad.cpp; path = ../../../addons/ofxStk/libs/STK/src/BiQuad.cpp; sourceTree = SOURCE_ROOT; };
 		EF91EC44EF89675BEE338FD4 /* IDGenerator.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = IDGenerator.h; path = ../../../addons/ofxGuiExtended/src/util/IDGenerator.h; sourceTree = SOURCE_ROOT; };
@@ -609,14 +606,17 @@
 		F1F9484B16B97959AA4F7640 /* Simple.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Simple.cpp; path = ../../../addons/ofxStk/libs/STK/src/Simple.cpp; sourceTree = SOURCE_ROOT; };
 		F5137A86DBA2FE4032052D30 /* TapDelay.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = TapDelay.cpp; path = ../../../addons/ofxStk/libs/STK/src/TapDelay.cpp; sourceTree = SOURCE_ROOT; };
 		F525AD536A712B31E6E802BE /* Fir.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = Fir.cpp; path = ../../../addons/ofxStk/libs/STK/src/Fir.cpp; sourceTree = SOURCE_ROOT; };
+		F60DEB5825C1B7DF70BE4B30 /* OscDisplay.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = OscDisplay.cpp; path = src/OscDisplay.cpp; sourceTree = SOURCE_ROOT; };
 		F6D7BAB1E6F21D1BF7F843CE /* Types.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Types.h; path = ../../../addons/ofxGuiExtended/src/DOM/Types.h; sourceTree = SOURCE_ROOT; };
 		F9E4BC31293B5855C601FB91 /* ofxGuiLabel.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ofxGuiLabel.cpp; path = ../../../addons/ofxGuiExtended/src/controls/ofxGuiLabel.cpp; sourceTree = SOURCE_ROOT; };
 		FA2D677A6EFF993302049105 /* ofxDOMLayoutHelper.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ofxDOMLayoutHelper.h; path = ../../../addons/ofxGuiExtended/src/view/ofxDOMLayoutHelper.h; sourceTree = SOURCE_ROOT; };
 		FA71C4B3F6D31FC3D44A2DF0 /* ModalBar.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = ModalBar.h; path = ../../../addons/ofxStk/libs/STK/include/ModalBar.h; sourceTree = SOURCE_ROOT; };
+		FABAE67DB49DEC6861065EFC /* LinearDisplay.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = LinearDisplay.cpp; path = src/LinearDisplay.cpp; sourceTree = SOURCE_ROOT; };
 		FB4BBE0A7C13D6EE3EBD4938 /* BandedWG.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = BandedWG.cpp; path = ../../../addons/ofxStk/libs/STK/src/BandedWG.cpp; sourceTree = SOURCE_ROOT; };
 		FBAFD8F2A29FE9041D2EBADA /* TapDelay.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = TapDelay.h; path = ../../../addons/ofxStk/libs/STK/include/TapDelay.h; sourceTree = SOURCE_ROOT; };
 		FCBAE8C2819BF51E60DC747C /* Exceptions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Exceptions.h; path = ../../../addons/ofxGuiExtended/src/DOM/Exceptions.h; sourceTree = SOURCE_ROOT; };
 		FD73B0A0B251231ED0BE9AB9 /* PercFlut.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = PercFlut.cpp; path = ../../../addons/ofxStk/libs/STK/src/PercFlut.cpp; sourceTree = SOURCE_ROOT; };
+		FD83EBFC03458056EA421568 /* OscDisplay.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = OscDisplay.h; path = src/OscDisplay.h; sourceTree = SOURCE_ROOT; };
 		FF6725DDE1565D12CF840B96 /* Document.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Document.h; path = ../../../addons/ofxGuiExtended/src/DOM/Document.h; sourceTree = SOURCE_ROOT; };
 		FFAEEF208F9CFAEF12E84B00 /* Mesh2D.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = Mesh2D.h; path = ../../../addons/ofxStk/libs/STK/include/Mesh2D.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -1296,19 +1296,19 @@
 			children = (
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				E4B69E1F0A3A1BDC003C02F2 /* ofApp.h */,
-				30596015259B2843006C9D2C /* utils.h */,
 				E4B69E1E0A3A1BDC003C02F2 /* ofApp.cpp */,
+				7C39EAC4AD92BF1D4365B8BC /* utils.h */,
+				AB9F8A28FD18A6B94D447A1D /* Display.h */,
+				404B33CE51279823D9C8D149 /* LinearDisplay.h */,
+				FABAE67DB49DEC6861065EFC /* LinearDisplay.cpp */,
+				170CF451E387BD4F62EDD82E /* RawDisplay.h */,
+				EB3126534C080A5A09E1F35D /* RawDisplay.cpp */,
+				FD83EBFC03458056EA421568 /* OscDisplay.h */,
+				F60DEB5825C1B7DF70BE4B30 /* OscDisplay.cpp */,
+				CDFDCB3FCB69BBB5E7F44215 /* DisplayController.h */,
+				68504DCBAD98F04CBBFC011F /* DisplayController.cpp */,
 				05033CE3FA2B7668E6FC165F /* Analysis.h */,
-				3AEBB1D028DE52FAF89FABDB /* Analysis.cpp */,
-				30596017259B2BAF006C9D2C /* Display.h */,
-				30DA4583259B864F003F53A3 /* RawDisplay.cpp */,
-				30DA4585259B8DDE003F53A3 /* OscDisplay.h */,
-				30DA4586259B8F5B003F53A3 /* OscDisplay.cpp */,
-				30DA4582259B858A003F53A3 /* RawDisplay.h */,
-				3059601A259B3110006C9D2C /* LinearDisplay.h */,
-				30596018259B30FF006C9D2C /* LinearDisplay.cpp */,
-				30DA457F259B4A09003F53A3 /* DisplayController.cpp */,
-				30DA4580259B4A09003F53A3 /* DisplayController.h */,
+				307B65C0259C6C90002F0483 /* Analysis.cpp */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -1432,18 +1432,17 @@
 		E4B69B4C0A3A1720003C02F2 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1230;
+				LastUpgradeCheck = 0600;
 			};
 			buildConfigurationList = E4B69B4D0A3A1720003C02F2 /* Build configuration list for PBXProject "SoundProfiler" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = en;
+			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				de,
-				fr,
-				ja,
-				Base,
-				en,
+				English,
+				Japanese,
+				French,
+				German,
 			);
 			mainGroup = E4B69B4A0A3A1720003C02F2;
 			productRefGroup = E4B69B4A0A3A1720003C02F2;
@@ -1504,7 +1503,10 @@
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
-				AD556C84D08665F2766CF67E /* Analysis.cpp in Sources */,
+				242306C38E8D1FE59ACAECD9 /* LinearDisplay.cpp in Sources */,
+				AE3E5252F53A000AA81DB70A /* DisplayController.cpp in Sources */,
+				8802BBDAD4FEDA44538F4F26 /* OscDisplay.cpp in Sources */,
+				C46586FBB81615056081C67F /* RawDisplay.cpp in Sources */,
 				CDB1F22153713F7E7AE9647D /* ofxBlur.cpp in Sources */,
 				0686C38EE993C67B96002FA1 /* kiss_fft.c in Sources */,
 				6DB9E3911BA6216FE1F0E91C /* kiss_fftr.c in Sources */,
@@ -1527,12 +1529,12 @@
 				8DE52B72CB62786CAB8233F7 /* ofxGuiButton.cpp in Sources */,
 				4524F366BF3EEC2EFC12B68F /* ofxGuiFpsPlotter.cpp in Sources */,
 				F2DE26B77052C57086C4C69B /* ofxGuiFunctionPlotter.cpp in Sources */,
-				30DA4587259B8F5B003F53A3 /* OscDisplay.cpp in Sources */,
 				7CEBB18388F905779AB54F80 /* ofxGuiGraphics.cpp in Sources */,
 				F632072F6E6313CD75B4B70F /* ofxGuiInputField.cpp in Sources */,
 				7A22364A34D38C91D859D354 /* ofxGuiLabel.cpp in Sources */,
 				35535925AAEE52A64874B881 /* ofxGuiRangeSlider.cpp in Sources */,
 				7AB003C531E50666511A7982 /* ofxGuiSlider.cpp in Sources */,
+				307B65C1259C6C90002F0483 /* Analysis.cpp in Sources */,
 				5DF76B748ED2393A56E6914F /* ofxGuiToggle.cpp in Sources */,
 				03CD6A4243F666D36FA8F868 /* ofxGuiValuePlotter.cpp in Sources */,
 				96D881793A465B099189E933 /* ofxGuiZoomableGraphics.cpp in Sources */,
@@ -1577,7 +1579,6 @@
 				FAD83B040BDBF2097CAC16AE /* Guitar.cpp in Sources */,
 				ABCB74EFE0407A73EE922F82 /* HevyMetl.cpp in Sources */,
 				C89872D9B7CA1D257C3346E1 /* Iir.cpp in Sources */,
-				30DA4584259B864F003F53A3 /* RawDisplay.cpp in Sources */,
 				9380D1E0D428D3D19EBB0FA6 /* InetWvIn.cpp in Sources */,
 				217ADBDDDCB351E6515377D3 /* InetWvOut.cpp in Sources */,
 				37ECC7537D4C740A6B8C8B81 /* JCRev.cpp in Sources */,
@@ -1590,12 +1591,10 @@
 				478F4069D96FD13217F41740 /* ModalBar.cpp in Sources */,
 				F24B877337AA108C8B45E1D6 /* Modulate.cpp in Sources */,
 				82DE74255C2CB21362150429 /* Moog.cpp in Sources */,
-				30DA4581259B4A09003F53A3 /* DisplayController.cpp in Sources */,
 				9F35B370F713B939728B4D8C /* Mutex.cpp in Sources */,
 				CD7A1AFE2DF5E4C496E71256 /* NRev.cpp in Sources */,
 				441155A03A343C37BCDE6F91 /* Noise.cpp in Sources */,
 				3FDA16CCCA39D83A3A3CB7AA /* OnePole.cpp in Sources */,
-				30596019259B30FF006C9D2C /* LinearDisplay.cpp in Sources */,
 				7436702664021337D88098DF /* OneZero.cpp in Sources */,
 				362537B96282F3CB5A63650E /* PRCRev.cpp in Sources */,
 				CE122E8B5BBB8EC931E47A5B /* PercFlut.cpp in Sources */,
@@ -1644,46 +1643,21 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E4EB6923138AFD0F00A09F29 /* Project.xcconfig */;
 			buildSettings = {
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/bin/";
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_AUTO_VECTORIZATION = YES;
 				GCC_ENABLE_SSE3_EXTENSIONS = YES;
 				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = "DISTRIBUTION=1";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_UNROLL_LOOPS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
 				GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO = NO;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
-				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				HEADER_SEARCH_PATHS = (
@@ -1723,13 +1697,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E4EB6923138AFD0F00A09F29 /* Project.xcconfig */;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = NONE;
+				GCC_NO_COMMON_BLOCKS = YES;
 				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = "APPSTORE=1";
 				HEADER_SEARCH_PATHS = (
 					"$(OF_CORE_HEADERS)",
@@ -1759,12 +1732,12 @@
 				INFOPLIST_FILE = "openFrameworks-Info.plist";
 				INSTALL_PATH = /Applications;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LINK_WITH_STANDARD_LIBRARIES = YES;
 				OTHER_LDFLAGS = (
 					"$(OF_CORE_LIBS)",
 					"$(OF_CORE_FRAMEWORKS)",
 					"$(LIB_OF)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "cc.openFrameworks.${EXECUTABLE_NAME}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 				baseConfigurationReference = E4EB6923138AFD0F00A09F29;
@@ -1775,45 +1748,19 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E4EB6923138AFD0F00A09F29 /* Project.xcconfig */;
 			buildSettings = {
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/bin/";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = YES;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
 				GCC_AUTO_VECTORIZATION = YES;
 				GCC_ENABLE_SSE3_EXTENSIONS = YES;
 				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
 				GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO = NO;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
-				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				HEADER_SEARCH_PATHS = (
@@ -1854,45 +1801,20 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E4EB6923138AFD0F00A09F29 /* Project.xcconfig */;
 			buildSettings = {
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/bin/";
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_AUTO_VECTORIZATION = YES;
 				GCC_ENABLE_SSE3_EXTENSIONS = YES;
 				GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_UNROLL_LOOPS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
 				GCC_WARN_ABOUT_INVALID_OFFSETOF_MACRO = NO;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = NO;
-				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VALUE = NO;
 				GCC_WARN_UNUSED_VARIABLE = NO;
 				HEADER_SEARCH_PATHS = (
@@ -1932,14 +1854,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E4EB6923138AFD0F00A09F29 /* Project.xcconfig */;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = NONE;
+				GCC_NO_COMMON_BLOCKS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(OF_CORE_HEADERS)",
 					src,
@@ -1968,12 +1889,12 @@
 				INFOPLIST_FILE = "openFrameworks-Info.plist";
 				INSTALL_PATH = /Applications;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LINK_WITH_STANDARD_LIBRARIES = YES;
 				OTHER_LDFLAGS = (
 					"$(OF_CORE_LIBS)",
 					"$(OF_CORE_FRAMEWORKS)",
 					"$(LIB_OF_DEBUG)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "cc.openFrameworks.${EXECUTABLE_NAME}";
 				PRODUCT_NAME = "$(TARGET_NAME)Debug";
 				WRAPPER_EXTENSION = app;
 			};
@@ -1983,13 +1904,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E4EB6923138AFD0F00A09F29 /* Project.xcconfig */;
 			buildSettings = {
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = NONE;
+				GCC_NO_COMMON_BLOCKS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(OF_CORE_HEADERS)",
 					src,
@@ -2018,12 +1938,12 @@
 				INFOPLIST_FILE = "openFrameworks-Info.plist";
 				INSTALL_PATH = /Applications;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LINK_WITH_STANDARD_LIBRARIES = YES;
 				OTHER_LDFLAGS = (
 					"$(OF_CORE_LIBS)",
 					"$(OF_CORE_FRAMEWORKS)",
 					"$(LIB_OF)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "cc.openFrameworks.${EXECUTABLE_NAME}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 				baseConfigurationReference = E4EB6923138AFD0F00A09F29;

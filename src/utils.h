@@ -13,10 +13,10 @@ namespace utils {
 
     // Approximate Rolling Average from:
     // https://bit.ly/3aIsQRD
-    float approxRollingAverage (float avg, float new_sample, float n) {
+    static float approxRollingAverage(float avg, float new_sample, float n) {
 
-        avg -= avg / 3;
-        avg += new_sample / 3;
+        avg -= avg / n;
+        avg += new_sample / n;
 
         return avg;
     }
@@ -29,6 +29,16 @@ namespace utils {
         soundType label;
         std::vector<float> data;
     };
+
+    static void scalePath(ofPath* path, float width, float height){
+        std::vector<ofPolyline> outline = path->getOutline();
+        ofRectangle bb = outline[0].getBoundingBox();
+        
+        float p_width = bb.getWidth();
+        float p_height = bb.getHeight();
+        
+        path->scale(width/p_width, height/p_height);
+    }
 
 }
 

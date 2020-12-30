@@ -13,35 +13,39 @@ OscDisplay::OscDisplay(){
 }
 
 void OscDisplay::setup(){
-    
-    
-    parameters.setName("Oscillator Controls");
-    parameters.add(colorWidth.set("Color Width", 120, 0, 255));
-    parameters.add(colorShift.set("Color Shift", 0, 0, 255));
-    parameters.add(smooth.set("Smooth", 0.25, 0., 1.));
-
-    
     dataRequest = {utils::SMOOTH_SCALE, utils::RAW_SCALE };
     
-    osc_data1 = new float[scale.size()];
-    osc_data2 = new float[scale.size()];
-    xVals = new float[scale.size()];
-    yVals = new float[scale.size()];
-    rVals = new float[scale.size()];
+    timer = 0;
+    dataSize = 1;
     
-    for(int i=0; i<scale.size(); i++){
-        osc_data1[i] = 0.1;
-        osc_data2[i] = 0.1;
-        xVals[i] = 0.1;
-        yVals[i] = 0.1;
-        rVals[i] = 0.1;
-    }
+    
+    blur.setup(600,600, 30, .2, 2);
+    blur2.setup(600,600, 25, .2, 2);
+}
+
+void OscDisplay::buildGui(ofxGuiGroup *parent){
+    group = parent->addGroup("osc parameters");
+    group->setShowHeader(false);
+    
+    globalGroup = group->addGroup("Global Controls");
+    globalGroup->add(colorWidth.set("Hue Width", 157, 0, 255));
+    globalGroup->add(colorShift.set("Hue Shift", 133, 0, 255));
+//    globalGroup->add(smooth.set("Smooth", 3.5, 1., 5.));
+    globalGroup->add<ofxGuiFloatSlider>(smooth.set("Smooth", 3.5, 1., 5.), ofJson({{"precision", 2}}));
+    
+    oscGroup = group->addGroup("Dot Controls");
+    oscGroup->add(oscColorShift.set("Hue Shift", 50, 0, 255));
+    oscGroup->add(speed.set("Speed", 1.6, 0.1, 10.));
+
+    
+    group->add(parameters);
 }
 
 
 void OscDisplay::draw(){
+    ofPushStyle();
     ofPushMatrix();
-
+    
     drawOscillator(width, height);
     
     blur2.begin();
@@ -51,20 +55,33 @@ void OscDisplay::draw(){
     blur2.draw();
     
     ofPopMatrix();
+    ofPopStyle();
 }
 
 
 void OscDisplay::update(std::vector<utils::soundData> newData){
-
     for(utils::soundData container : newData){
+        if(dataSize != container.data.size()) {
+            dataSize = container.data.size();
+            scale.resize(dataSize);
+            raw_scale.resize(dataSize);
+            xVals.resize(dataSize);
+            yVals.resize(dataSize);
+            rVals.resize(dataSize);
+        }
+        
         switch (container.label) {
             case utils::SMOOTH_SCALE:
             case utils::SMOOTH_SCALE_OT:
-                scale = container.data;
+                for(int i=0; i<scale.size(); i++){
+                    scale[i] = utils::approxRollingAverage(scale[i], container.data[i], (int)(smooth));
+                }
                 break;
                 
             case utils::RAW_SCALE:
-                raw_scale = container.data;
+                for(int i=0; i<scale.size(); i++){
+                    raw_scale[i] = utils::approxRollingAverage(raw_scale[i], container.data[i], (int)(smooth));
+                }
                 break;
             default:
                 break;
@@ -142,14 +159,17 @@ void OscDisplay::drawPolar(int w, int h){
 
         sat = 100+scale[i]*155;
         brightness = 90+scale[i]*165;
-        float alpha = min((float)255.0, (40+280*scale[i]));
-        if(scale[i] < 0.15) brightness = scale[i]*255;
+        float alpha = min((float)255.0, (40+260*scale[i]));
+        if(scale[i] < 0.15) {
+            brightness = scale[i]*255;
+            alpha = scale[i]*255;
+        }
         
             
         ofPath path;
         ofSetCurveResolution(100);
         ofColor color = ofColor::fromHsb(hue, sat, brightness);
-        path.setFillColor(ofColor(color, brightness));
+        path.setFillColor(ofColor(color, alpha));
         
         path.moveTo(x1,y1);
         path.arc(0,0,rSmall, rSmall, deg, deg2);
@@ -171,16 +191,9 @@ void OscDisplay::drawPolar(int w, int h){
 //--------------------------------------------------------------------------------------
 // oscillator
 //--------------------------------------------------------------------------------------
-void OscDisplay::drawOscillator(int w, int h){
+void OscDisplay::drawOscillator(float w, float h){
     if(scale.size() <= 1) return;
 
-    for(int i=0; i<scale.size(); i++){
-        float val1 = utils::approxRollingAverage(osc_data1[i], scale[i], 20);
-        float val2 = utils::approxRollingAverage(osc_data2[i], raw_scale[i], 6);
-        
-        osc_data1[i] += (val1-osc_data1[i])*smooth;
-        osc_data2[i] += (val2-osc_data2[i])*smooth;
-    }
     float constraint = min(w, h);
     float maxR = (constraint*0.9)/2;
     float minR = (constraint*0.05)/2;
@@ -193,42 +206,43 @@ void OscDisplay::drawOscillator(int w, int h){
     ofTranslate(w/2, h/2);
     
     float newsum = 0;
-    for(int i=0; i<scale.size(); i++){
-        newsum += osc_data1[i];
+    for(int i=0; i<dataSize; i++){
+        newsum += scale[i];
     }
-    newsum /= scale.size();
+    newsum /= dataSize;
     
     sum = utils::approxRollingAverage(sum, newsum, 15);
     
-    timer += sum/1.75;
+    timer += sum*speed;
     
-    for(int i=0; i<scale.size(); i++){
-        radius = minR+(maxR-minR)*(osc_data1[i]+3*sum)/2;
+    for(int i=0; i<dataSize; i++){
+        radius = minR+(maxR-minR)*(scale[i]+3*sum)/2;
         
-        hue = (colorShift+(((float)i/scale.size())*colorWidth));
+        hue = (oscColorShift+colorShift+(((float)i/dataSize)*colorWidth));
         hue = ((int)hue)%255;
-        sat = ((100)+(155.0*osc_data1[i]));
-        brightness = ((255)-(95.0*osc_data1[i]));//*(sum*2.8);
+        sat = ((100)+(155.0*scale[i]));
+        brightness = ((255)-(95.0*scale[i]))*(sum*2.8);
+        
         
         ofColor color = ofColor::fromHsb(hue, sat, brightness);
         ofSetColor(color);
         
         float n = 3;
         
-        float x = radius*cos((i+theta+osc_data1[i])/2);
+        float x = radius*cos((i+theta+scale[i])/2);
         xVals[i] -= xVals[i]/n;
         xVals[i] += x/n;
         
-        float y = radius*sin((i+theta+osc_data2[i])/3);
+        float y = radius*sin((i+theta+scale[i])/3);
         yVals[i] -= yVals[i]/n;
         yVals[i] += y/n;
         
-        float r = (radius/2)*(sum+osc_data1[i])/2;
-        rVals[i] -= rVals[i]/n;
-        rVals[i] += r/n;
+        float r = (radius/2)*(sum+scale[i])/2;
+        rVals[i] = max(utils::approxRollingAverage(rVals[i], r, n), (float)0.001);
         
         ofDrawCircle(xVals[i], yVals[i], rVals[i]);
     }
+    
     
     ofPopMatrix();
     blur.end();

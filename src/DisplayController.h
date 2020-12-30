@@ -4,16 +4,14 @@
 //
 //  Created by Mitch on 12/29/20.
 //
-#include "utils.h"
+
+
+#pragma once
+
 #include "Analysis.h"
-#include "ofxGuiExtended.h"
-#include "Display.h"
 #include "LinearDisplay.h"
 #include "RawDisplay.h"
 #include "OscDisplay.h"
-
-#ifndef DisplayController_h
-#define DisplayController_h
 
 class DisplayController{
     
@@ -28,10 +26,12 @@ public:
     void update();
     void updateLayout(int w, int h);
     void minimize();
+    void maximize();
     
     // mode selection
     void setMode(int index);
     int getMode();
+    void incMode();
     
     ofParameterGroup modeSelector;
     
@@ -57,4 +57,4 @@ protected:
 };
 
 
-#endif /* DisplayController_h */
+

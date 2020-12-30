@@ -11,6 +11,7 @@
 #include "Display.h"
 #include "ofxGuiExtended.h"
 
+
 class RawDisplay : public Display {
     
 public:
@@ -21,6 +22,7 @@ public:
     void draw();
     void update(std::vector<utils::soundData> newData);
     void setDimensions(int w, int h);
+    void buildGui(ofxGuiGroup* parent);
     
 protected:
     void drawFftPlot(int w, int h);
@@ -28,11 +30,19 @@ protected:
     std::vector<float> raw_fft;
     
     float halfW, halfH, xOffset, yOffset;
-    int barWidth, margin, maxHeight, y_offset;
+    float barWidth, margin, maxHeight, y_offset;
+    int labelGap, numLabels;
     
     ofxGuiGroup *linLogToggles;
     ofParameterGroup linLogParameters;
-    ofParameter<bool> linlog;
+    ofParameter<bool> lin, log;
+    ofParameter<int> freqsliderStart, freqsliderEnd;
+    
+    ofParameter<float> freqCenter;
+    ofParameter<float> freqWidth;
+    ofParameter<void> reset;
+    
+    void resetParameters();
 
 
     void setRawLinLog(int& index);

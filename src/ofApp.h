@@ -1,12 +1,9 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxFft.h"
 #include "ofxStk.h"
 #include "ofxGuiExtended.h"
 #include "Analysis.h"
-#include "DisplayMode.hpp"
-#include "utils.h"
 #include "DisplayController.h"
 
 #define WIN_WIDTH 1000
@@ -73,6 +70,7 @@ class ofApp : public ofBaseApp{
         ofParameter<void> minimizeButton;
     
         void minimizePressed();
+        void maximize();
     
     
 

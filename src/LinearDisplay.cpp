@@ -5,7 +5,6 @@
 //  Created by Mitch on 12/29/20.
 //
 
-#include <stdio.h>
 #include "LinearDisplay.h"
 /*
  From Display.h
@@ -19,17 +18,23 @@
 
 
 LinearDisplay::LinearDisplay(){
-    name = "Linear";
+    name = "Chromatic";
 }
 
 void LinearDisplay::setup(){
     
+    dataRequest = {utils::SMOOTH_OCTAVE, utils::SMOOTH_SCALE };
+}
+
+void LinearDisplay::buildGui(ofxGuiGroup *parent){
+    group = parent->addGroup("linear parameters");
+    group->setShowHeader(false);
     
     parameters.setName("Linear Controls");
-    parameters.add(overtoneToggle.set("Factor Overtones", false));
+    parameters.add(overtoneToggle.set("Factor Overtones", true));
     parameters.add(colorToggle.set("Color", true));
     
-    dataRequest = {utils::SMOOTH_OCTAVE, utils::SMOOTH_SCALE };
+    group->add(parameters);
 }
 
 

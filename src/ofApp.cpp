@@ -7,6 +7,7 @@
 void ofApp::setup(){
     ofSetFrameRate(60);
     ofBackground(20);
+//    ofSetWindowShape(getPixelScreenCoordScale()*1024, win->getPixelScreenCoordScale()*768);
     
     // Buffer Size determines # of FFT Bins
     // Ideally we want to make it as large as possible before it lags
@@ -239,6 +240,11 @@ void ofApp::minimizePressed(){
     inputToggles->minimize();
 }
 
+void ofApp::maximize(){
+    dc.maximize();
+    inputToggles->maximize();
+}
+
 
 //-------------------------------------------------------------------------------------
 // audio
@@ -315,6 +321,8 @@ void ofApp::audioOut(ofSoundBuffer& buffer){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+//    ofScale(win->getPixelScreenCoordScale(), win->getPixelScreenCoordScale(), 1.0);
+    
     ofPushMatrix();
     ofTranslate(controlWidth, 0);
     
@@ -327,6 +335,24 @@ void ofApp::draw(){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
     // TODO: Add keyboard shortcuts
+    if(key == 'm'){
+        dc.incMode();
+    }
+    if(key == 'q'){
+        minimizePressed();
+    }
+    if(key == 'w'){
+        maximize();
+    }
+    if(key == '1'){
+        dc.setMode(0);
+    }
+    if(key == '2'){
+        dc.setMode(1);
+    }
+    if(key == '3'){
+        dc.setMode(2);
+    }
 }
 
 
