@@ -21,11 +21,28 @@ LinearDisplay::LinearDisplay(){
     name = "Chromatic";
 }
 
+//-------------------------------------------------------------------------------------
+// interface methods
+//-------------------------------------------------------------------------------------
+
 void LinearDisplay::setup(){
     
     dataRequest = {utils::SMOOTH_OCTAVE, utils::SMOOTH_SCALE };
 }
 
+//-------------------------------------------------------------------------------------
+void LinearDisplay::setDimensions(int w, int h){
+    width = w;
+    height = h;
+    
+    halfW = ((float)w*0.9);
+    halfH =  ((float)h*0.425);
+
+    xOffset = h*0.05;
+    yOffset = w*0.05;
+}
+
+//-------------------------------------------------------------------------------------
 void LinearDisplay::buildGui(ofxGuiGroup *parent){
     group = parent->addGroup("linear parameters");
     group->setShowHeader(false);
@@ -37,7 +54,7 @@ void LinearDisplay::buildGui(ofxGuiGroup *parent){
     group->add(parameters);
 }
 
-
+//-------------------------------------------------------------------------------------
 void LinearDisplay::draw(){
     ofPushMatrix();
     ofTranslate(xOffset,yOffset);
@@ -50,7 +67,7 @@ void LinearDisplay::draw(){
     ofPopMatrix();
 }
 
-
+//-------------------------------------------------------------------------------------
 void LinearDisplay::update(std::vector<utils::soundData> newData){
     if(overtoneToggle) dataRequest[1] = utils::SMOOTH_SCALE_OT;
     else dataRequest[1] = utils::SMOOTH_SCALE;
@@ -71,19 +88,14 @@ void LinearDisplay::update(std::vector<utils::soundData> newData){
     }
     
 }
-void LinearDisplay::setDimensions(int w, int h){
-    width = w;
-    height = h;
-    
-    halfW = ((float)w*0.9);
-    halfH =  ((float)h*0.425);
 
-    xOffset = h*0.05;
-    yOffset = w*0.05;
-}
 
-//--------------------------------------------------------------------------------------
-// linear summed-octave
+//-------------------------------------------------------------------------------------
+// drawing
+//-------------------------------------------------------------------------------------
+
+
+// summed-octave
 //--------------------------------------------------------------------------------------
 void LinearDisplay::drawLinOctave(int w, int h){
     
@@ -102,13 +114,13 @@ void LinearDisplay::drawLinOctave(int w, int h){
     ofPopStyle();
     
     if(octave.size() <= 1) return;
+    
     // Initialize graph values
     //    Data = Summed Octave
     //    Bars take up 80% of total width
     //    Margins take up rest of total width
     //    Max bar height is 95% of height
     //    Labels are displayed if bar width > 12 pixels
-    
     barWidth = (((float)w) * 0.8) / (float)octave.size();
     margin = (((float)w) - barWidth*octave.size()) / ((float)octave.size()+1);
     maxHeight = (-20)+((float)h)*0.95;
@@ -147,11 +159,18 @@ void LinearDisplay::drawLinOctave(int w, int h){
             yPosLabel = std::max((int)rect.height-6, (int)-maxHeight-10);
         }
         
+        float hue, sat, brightness;
+        if(colorToggle){
+            hue = (i%12)*(255.0/12);
+            sat = 100+octave[i%12]*155;
+            brightness = 55+octave[i]*200;
+        }
+        else{
+            hue = 0;
+            sat = 0;
+            brightness = octave[i]*255;
+        }
         
-        float hue = (i%12)*(255.0/12);
-        float sat = 100+octave[i%12]*155;
-        if(!colorToggle) sat = 0;
-        float brightness = 55+octave[i]*200;
         
         ofColor color = ofColor::fromHsb(hue, sat, brightness);
         ofSetColor(color);
@@ -162,8 +181,7 @@ void LinearDisplay::drawLinOctave(int w, int h){
         // Draw note label
         if(labelsOn){
             ofSetColor(ofColor::white);
-            std::string label = noteNames[noteNum];
-            ofDrawBitmapString(label, x+labelXOffset, yPosLabel);
+            ofDrawBitmapString(noteNames[noteNum], x+labelXOffset, yPosLabel);
         }
         
         // increment x position, note, and octave (if necessary)
@@ -179,7 +197,7 @@ void LinearDisplay::drawLinOctave(int w, int h){
 
 
 //--------------------------------------------------------------------------------------
-// linear full-scale
+// full-scale
 //--------------------------------------------------------------------------------------
 void LinearDisplay::drawLinScale(int w, int h){
     
@@ -222,7 +240,6 @@ void LinearDisplay::drawLinScale(int w, int h){
         
         ofPushStyle();
         
-        
         ofRectangle rect;
         rect.x = x;
         rect.y = 0;
@@ -237,13 +254,17 @@ void LinearDisplay::drawLinScale(int w, int h){
             rect.height = -scale[i]*maxHeight;
         }
         
-        float hue = (i%12)*(255.0/12);
-        
-        float sat = 100+scale[i]*155;
-        if(!colorToggle) sat = 0;
-        float brightness = 55+scale[i]*200;
-        
-
+        float hue, sat, brightness;
+        if(colorToggle){
+            hue = (i%12)*(255.0/12);
+            sat = 100+scale[i%12]*155;
+            brightness = 55+scale[i]*200;
+        }
+        else{
+            hue = 0;
+            sat = 0;
+            brightness = scale[i]*255;
+        }
         
         ofColor color = ofColor::fromHsb(hue, sat, brightness);
         ofSetColor(color);

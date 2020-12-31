@@ -18,45 +18,63 @@ class RawDisplay : public Display {
 public:
     RawDisplay();
     
-    
+    // interface methods
     void setup();
     void draw();
-    void update(std::vector<utils::soundData> newData);
     void setDimensions(int w, int h);
     void buildGui(ofxGuiGroup* parent);
+    void update(std::vector<utils::soundData> newData);
     
 protected:
+    
+    // drawing methods
     void drawFftPlot(int w, int h);
+    void drawFftWindow(float w, float h);
+    void drawGridLines(float w, float h);
     
-    void drawLinearFftWindow(float w, float h);
-    
+    // local audio data
     std::vector<float> raw_fft;
     std::vector<float> fft_display;
     std::vector<float> fft_display_freqs;
     
-    float halfW, halfH, xOffset, yOffset;
-    float barWidth, margin, maxHeight, y_offset;
-    int labelGap, numLabels;
-    
+    // gui parameters
     ofxGuiGroup *linLogToggles, *windowGroup;
     ofParameterGroup linLogParameters;
     ofParameter<bool> lin, log;
     ofParameter<bool> rescale;
-    ofParameter<int> freqsliderStart, freqsliderEnd;
-    
-    ofParameter<float> freqCenter;
+    ofParameter<float> freqStart;
     ofParameter<float> freqWidth;
-    
     ofParameter<float> smooth;
     ofParameter<void> reset;
+    ofParameter<float> numLines;
     
-    int startBin, endBin;
+    ofParameter<bool> test;
     
+    // gui listeners
     void resetParameters();
     void fftWindowChanged(float& val);
-    float size;
-
     void setRawLinLog(int& index);
+    
+    // fft window 
+    int startBin;
+    int endBin;
+    
+
+    float freqEnd;
+    float numLabels;
+    bool lineB;
+    bool labelB;
+    
+    
+    float halfW;
+    float halfH;
+    float xOffset;
+    float yOffset;
+
+    
+    float size;
+    
+    
     
     std::mutex mtx;
 };

@@ -90,6 +90,8 @@ void Analysis::analyzeFrame(std::vector<float> sample, int bufferSize)
     // Send scaled frame to FFT
     fft->setSignal(normalizedOut);
     
+    delete[] normalizedOut;
+    
     // Retrieve analyzed frame
     raw_fft = {fft->getAmplitude(), fft->getAmplitude()+fft_size};
     

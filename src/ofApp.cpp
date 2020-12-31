@@ -15,8 +15,6 @@ void ofApp::setup(){
     
     // Initialize analysis + display classes
     analysis.init(bufferSize);
-    //dm.init(WIN_WIDTH, WIN_HEIGHT);
-    
     
     // Setup soundstream (default output / input channels)
         // 2 output channels,
@@ -88,20 +86,7 @@ void ofApp::setup(){
     playbackControls->minimize();
     fileManager->minimize();
 
-//
-//
-//    // osc controls
-//    //-------------------------------------------------------------------------------------
-//    oscControls = modeControls->addGroup("Mode Controls");
-//    oscControls->setShowHeader(false);
-//    oscControls->loadTheme("default-theme.json");
-//
-//    oscControls->add(colorWidth.set("Color Width", 120, 0, 255));
-//    oscControls->add(colorShift.set("Color Shift", 0, 0, 255));
-//    oscControls->add(smooth.set("Smooth", 0.25, 0., 1.));
-//    oscControls->add(factorToggle.set("Factor Octaves", false));
-    
-    
+   
     // misc
     //-------------------------------------------------------------------------------------
     dc.setup(&analysis, ofGetWidth(), ofGetHeight(), all);
@@ -321,8 +306,6 @@ void ofApp::audioOut(ofSoundBuffer& buffer){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-//    ofScale(win->getPixelScreenCoordScale(), win->getPixelScreenCoordScale(), 1.0);
-    
     ofPushMatrix();
     ofTranslate(controlWidth, 0);
     
@@ -334,7 +317,6 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    // TODO: Add keyboard shortcuts
     if(key == 'm'){
         dc.incMode();
     }
@@ -369,7 +351,7 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::exit(){
-    // I feel like I should be using this but whenever I add stuff it breaks
+
 }
 
 //--------------------------------------------------------------

@@ -11,6 +11,16 @@
 
 namespace utils {
 
+    enum Mode{ LINEAR, POLAR, RAW, OSC };
+
+    enum soundType{ RAW_FULL, RAW_OCTAVE, SMOOTH_OCTAVE, RAW_SCALE, SMOOTH_SCALE, SMOOTH_SCALE_OT };
+
+    struct soundData {
+        soundType label;
+        std::vector<float> data;
+    };
+
+
     // Approximate Rolling Average from:
     // https://bit.ly/3aIsQRD
     static float approxRollingAverage(float avg, float new_sample, float n) {
@@ -21,14 +31,6 @@ namespace utils {
         return avg;
     }
 
-    enum Mode{ LINEAR, POLAR, RAW, OSC };
-
-    enum soundType{ RAW_FULL, RAW_OCTAVE, SMOOTH_OCTAVE, RAW_SCALE, SMOOTH_SCALE, SMOOTH_SCALE_OT };
-
-    struct soundData {
-        soundType label;
-        std::vector<float> data;
-    };
 
     static void scalePath(ofPath* path, float width, float height){
         std::vector<ofPolyline> outline = path->getOutline();
@@ -41,35 +43,53 @@ namespace utils {
     }
 
 
-    static string labelFromBin(int bin, int size){
-        if(bin < 0) return "";
-        
+    static string formatFreq(float freq){
         std::string label;
-        float freq = (((float) bin) / size)*22050; //at 44100, covers 0-22050Hz
-        
+
         if(freq > 1000){
             freq /= 1000.;
             std::stringstream stream;
             stream << std::fixed << std::setprecision(2) << freq;
             label = stream.str()+"k";
         }
-        else if(freq > 100){
-            freq /= 10;
-            freq *= 10;
-            std::stringstream stream;
-            stream << std::fixed << std::setprecision(0) << freq;
-            label = stream.str();
-        }
         else{
+            freq = round(freq / 10.)*10;
             std::stringstream stream;
             stream << std::fixed << std::setprecision(0) << freq;
             label = stream.str();
         }
-        
+    
         return label;
     }
 
+
+    // Returns width in pixels of a given string when drawn as a bitmap
+    // adapted from https://forum.openframeworks.cc/t/how-to-get-size-of-ofdrawbitmapstring/22578/7
+    static int getBitmapStringWidth(string text){
+    vector<string> lines = ofSplitString(text, "\n");
+        int maxLineLength = 0;
+        for(int i = 0; i < (int)lines.size(); i++) {
+            // tabs are not rendered
+            const string & line(lines[i]);
+            int currentLineLength = 0;
+            for(int j = 0; j < (int)line.size(); j++) {
+                if (line[j] == '\t') {
+                    currentLineLength += 8 - (currentLineLength % 8);
+                } else {
+                    currentLineLength++;
+                }
+            }
+            maxLineLength = MAX(maxLineLength, currentLineLength);
+        }
+        
+        int fontSize = 8;
+
+        return maxLineLength * fontSize;
+    }
+
 }
+
+
 
 
 

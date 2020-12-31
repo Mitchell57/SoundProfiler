@@ -14,15 +14,15 @@ void DisplayController::setup(Analysis* a, int w, int h, ofxGuiGroup* all){
     
     current_mode = 0;
     
-    LinearDisplay* ld = new LinearDisplay();
+    ld = std::shared_ptr<LinearDisplay>(new LinearDisplay());
     ld->setup();
     modes.push_back(ld);
     
-    RawDisplay* rd = new RawDisplay();
+    rd = std::shared_ptr<RawDisplay>(new RawDisplay());
     rd->setup();
     modes.push_back(rd);
     
-    OscDisplay* od = new OscDisplay();
+    od = std::shared_ptr<OscDisplay>(new OscDisplay());
     od->setup();
     modes.push_back(od);
     
@@ -122,7 +122,7 @@ void DisplayController::updateLayout(int w, int h){
     width = w;
     height = h;
     
-    for(Display* mode : modes){
+    for(std::shared_ptr<Display> mode : modes){
         mode->setDimensions(w, h);
     }
 }

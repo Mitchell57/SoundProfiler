@@ -41,7 +41,7 @@ public:
     
     
 protected:
-    std::vector<Display*> modes;
+    std::vector<std::shared_ptr<Display>> modes;
     std::vector<ofxGuiGroup*> modeControls;
     
     ofParameter<bool> disp0, disp1, disp2;
@@ -53,6 +53,10 @@ protected:
     int width, height;
     int current_mode;
     Analysis* analysis;
+    
+    std::shared_ptr<LinearDisplay> ld;
+    std::shared_ptr<RawDisplay> rd;
+    std::shared_ptr<OscDisplay> od;
     
 };
 
