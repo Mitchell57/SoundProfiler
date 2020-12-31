@@ -40,6 +40,35 @@ namespace utils {
         path->scale(width/p_width, height/p_height);
     }
 
+
+    static string labelFromBin(int bin, int size){
+        if(bin < 0) return "";
+        
+        std::string label;
+        float freq = (((float) bin) / size)*22050; //at 44100, covers 0-22050Hz
+        
+        if(freq > 1000){
+            freq /= 1000.;
+            std::stringstream stream;
+            stream << std::fixed << std::setprecision(2) << freq;
+            label = stream.str()+"k";
+        }
+        else if(freq > 100){
+            freq /= 10;
+            freq *= 10;
+            std::stringstream stream;
+            stream << std::fixed << std::setprecision(0) << freq;
+            label = stream.str();
+        }
+        else{
+            std::stringstream stream;
+            stream << std::fixed << std::setprecision(0) << freq;
+            label = stream.str();
+        }
+        
+        return label;
+    }
+
 }
 
 

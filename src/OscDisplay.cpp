@@ -104,7 +104,7 @@ void OscDisplay::setDimensions(int w, int h){
 void OscDisplay::drawPolar(int w, int h){
     if(scale.size() <= 1) return;
     
-    float constraint = min(width, height);
+    float constraint = max(width, height);
     float rMin = (constraint*0.1)/2;
     float rMax = (constraint*0.9)/2;
     
@@ -194,7 +194,7 @@ void OscDisplay::drawPolar(int w, int h){
 void OscDisplay::drawOscillator(float w, float h){
     if(scale.size() <= 1) return;
 
-    float constraint = min(w, h);
+    float constraint = max(w, h);
     float maxR = (constraint*0.9)/2;
     float minR = (constraint*0.05)/2;
 

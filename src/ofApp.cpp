@@ -6,7 +6,7 @@
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofSetFrameRate(60);
-    ofBackground(20);
+    ofBackground(12);
 //    ofSetWindowShape(getPixelScreenCoordScale()*1024, win->getPixelScreenCoordScale()*768);
     
     // Buffer Size determines # of FFT Bins
@@ -50,7 +50,7 @@ void ofApp::setup(){
         {"padding", 2},
         {"background-color", "#181818"},
         {"flex-wrap", "wrap"},
-        {"show-header", false},
+        {"show-header", true},
         {"position", "static"},
     }));
     all->loadTheme("default-theme.json");

@@ -42,6 +42,8 @@ protected:
     // Visual drawers
     void drawPolar(int w, int h);
     void drawOscillator(float w, float h);
+    
+    
 
     // Visual(Osc, Polar) variables
     ofxBlur blur, blur2;
