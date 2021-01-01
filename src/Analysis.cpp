@@ -49,8 +49,12 @@ void Analysis::init(int bufSize){
     
     
     fft_size = fft->getBinSize();
-    raw_fft.resize(fft_size);
-    in_fft.resize(fft_size);
+    
+    for(int i=0; i<fft_size; i++){
+        in_fft.push_back(0.001);
+        raw_fft.push_back(0.001);
+    }
+    
     
     for(int i=0; i<oct_size; i++){
         raw_octave.push_back(0.001);
@@ -65,17 +69,43 @@ void Analysis::init(int bufSize){
         smooth_scale_ot.push_back(0.001);
         
     }
+    
+  //  chrom = new Chromagram(Chromagram::Parameters(44100));
+    
+    
+}
+//--------------------------------------------------------------
+void Analysis::analyzeFrame(std::vector<float> sample, int bufferSize){
+    if(!sendToFft){
+        analyzeFrameFft(sample, bufferSize);
+    }
+    else analyzeFrameQ(sample, bufferSize);
+}
+
+//--------------------------------------------------------------
+void Analysis::analyzeFrameQ(std::vector<float> sample, int bufferSize){
+//    CQBase::RealSequence qIn;
+//    for(float val : sample){
+//        qIn.push_back((double)val);
+//    }
+//
+//    CQBase::RealBlock ret = chrom->process(qIn);
+//
+//    cout << ret.size() << endl;
+    
 }
 
 
+
 //--------------------------------------------------------------
-void Analysis::analyzeFrame(std::vector<float> sample, int bufferSize)
+void Analysis::analyzeFrameFft(std::vector<float> sample, int bufferSize)
 {
     frameReady = false;
     
     // Scale audio input frame to {-1, 1}
     float maxValue = 0;
     float* normalizedOut = new float[bufferSize];
+
     
     for(int i = 0; i < bufferSize; i+=2) {
         if(abs((float)sample[i]) > maxValue) {
@@ -93,11 +123,11 @@ void Analysis::analyzeFrame(std::vector<float> sample, int bufferSize)
     delete[] normalizedOut;
     
     // Retrieve analyzed frame
-    raw_fft = {fft->getAmplitude(), fft->getAmplitude()+fft_size};
+    in_fft = {fft->getAmplitude(), fft->getAmplitude()+fft_size};
     
     float fft_max = 0;
     for(int i=0; i<fft_size; i++){
-        if(raw_fft[i] > fft_max) fft_max = raw_fft[i];
+        if(in_fft[i] > fft_max) fft_max = in_fft[i];
     }
 
     
@@ -110,6 +140,7 @@ void Analysis::analyzeFrame(std::vector<float> sample, int bufferSize)
         raw_octave[i] = 0;
     }
     
+
     
     // Record new amplitudes for individual notes and summed notes
     int note;
@@ -118,7 +149,7 @@ void Analysis::analyzeFrame(std::vector<float> sample, int bufferSize)
         // Simplification for summing notes across octaves (i.e. every A, B, C, etc.)
         note = i%12;
         
-        val = raw_fft[fullBinList[i]];
+        val = in_fft[fullBinList[i]];
         
         // record single note data / max
         raw_scale[i] = val; // individual notes start at audioData[oct_size]
@@ -146,11 +177,11 @@ void Analysis::analyzeFrame(std::vector<float> sample, int bufferSize)
             raw_scale[i] /= scale_max;
         }
     }
-    if(fft_max != 0){
-        for(int i=0; i<fft_size; i++){
-            raw_fft[i] /= fft_max;
-        }
-    }
+//    if(fft_max != 0 && fft_max == fft_max){
+//        for(int i=0; i<fft_size; i++){
+//            in_fft[i] /= fft_max;
+//        }
+//    }
     frameReady = smoothFrame();
     
 }
@@ -163,6 +194,7 @@ bool Analysis::smoothFrame(){
     // NaN checker (doesn't get used often but sometimes it's helpful
     if(raw_scale[0] != raw_scale[0]){
         // NaN. skip frame
+        
         
         // Gradual fade out for smoothed data sources
         for(float val : smooth_scale){
@@ -184,6 +216,7 @@ bool Analysis::smoothFrame(){
         // Haven't observed the same issue on output
     }
     
+    raw_fft = in_fft;
     
     // At the moment, smoothing consists of:
     //   - rolling average to make it less 'jumpy'

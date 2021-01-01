@@ -20,7 +20,7 @@ void ofApp::setup(){
         // 2 output channels,
         // 1 input channel
         // 44100 samples per second
-        // 4096 samples per buffer
+        // (bufferSize) samples per buffer
         // 4 num buffers (latency)
     stk::Stk::setSampleRate(44100.0);
     
@@ -29,7 +29,7 @@ void ofApp::setup(){
     settings.setInListener(this);
     settings.numOutputChannels = 2;
     settings.numInputChannels = 1;
-    settings.numBuffers = 9;
+    settings.numBuffers = 8;
     settings.bufferSize = bufferSize;
     
     soundStream.setup(settings);
@@ -37,6 +37,8 @@ void ofApp::setup(){
     //-------------------------------------------------------------------------------------
     // GUI Initialization
     //-------------------------------------------------------------------------------------
+    
+    
     
     // main panel
     //-------------------------------------------------------------------------------------

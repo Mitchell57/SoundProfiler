@@ -20,6 +20,11 @@ void RawDisplay::setup(){
     startBin = 0;
     endBin = 1025;
     freqEnd = 22050;
+    
+    spectTimer = 0;
+    
+    spectImg.allocate(300, 480, OF_IMAGE_COLOR);
+    spectImg2.allocate(300, 480, OF_IMAGE_COLOR);
 }
 
 void RawDisplay::buildGui(ofxGuiGroup* parent){
@@ -48,7 +53,7 @@ void RawDisplay::buildGui(ofxGuiGroup* parent){
     windowGroup->add<ofxGuiFloatSlider>(numLines, ofJson({{"precision", 0}}));
     windowGroup->add<ofxGuiFloatSlider>(smooth, ofJson({{"precision", 1}}));
     windowGroup->add(rescale.set("Rescale Window", false));
-    windowGroup->add(test.set("Test Ctrl", true));
+    windowGroup->add(gradient.set("Gradient Fill", true));
 
     
     windowGroup->add(reset.set("Reset Settings"), ofJson({{"type", "fullsize"}, {"text-align", "center"}}));
@@ -84,8 +89,14 @@ void RawDisplay::draw(){
     ofPushStyle();
     ofPushMatrix();
     ofTranslate(xOffset,yOffset);
-    drawFftPlot(halfW, 2*halfH);
+    drawFftPlot(halfW, halfH);
     ofPopMatrix();
+    
+    ofPushMatrix();
+    ofTranslate(xOffset,2*yOffset+halfH);
+    drawSpectrogram(halfW, halfH);
+    ofPopMatrix();
+    
     ofPopStyle();
 
 }
@@ -96,10 +107,9 @@ void RawDisplay::update(std::vector<utils::soundData> newData){
     for(utils::soundData container : newData){
         switch (container.label) {
             case utils::RAW_FULL:
-                raw_fft.resize(container.data.size());
-                for(int i=0; i<raw_fft.size(); i++){
-                    raw_fft[i] = utils::approxRollingAverage(raw_fft[i], container.data[i], smooth);
-                }
+                raw_fft = container.data;
+                smooth_fft.resize(raw_fft.size());
+                
                 break;
 
             default:
@@ -107,30 +117,36 @@ void RawDisplay::update(std::vector<utils::soundData> newData){
         }
     }
     
+    avg = 0;
+    for(int i=0; i<raw_fft.size(); i++){
+        smooth_fft[i] = utils::approxRollingAverage(smooth_fft[i], raw_fft[i], smooth);
+        avg += raw_fft[i];
+    }
+    avg /= raw_fft.size();
+    
+    
     std::lock_guard<std::mutex> guard(mtx);
     size = endBin - startBin;
     fft_display.clear();
     fft_display_freqs.clear();
     // Update display data
     for(int i=startBin; i<endBin; i++){
-        if(i < 0 || i >= raw_fft.size()){
+        if(i < 0 || i >= smooth_fft.size()){
             fft_display.push_back(0);
-            fft_display_freqs.push_back(-1);
         }
         else{
-            fft_display.push_back(raw_fft[i]);
-            fft_display_freqs.push_back(i);
+            fft_display.push_back(smooth_fft[i]);
         }
     }
     
     if(rescale){
         float max = 0;
-        for(float val : fft_display){
+        for(float val : raw_fft){
             if(val > max) max = val;
         }
         if(max != 0){
-            for(int i=0; i<fft_display.size(); i++){
-                fft_display[i] /= max;
+            for(int i=0; i<raw_fft.size(); i++){
+                raw_fft[i] /= max;
             }
         }
     }
@@ -148,11 +164,13 @@ void RawDisplay::setDimensions(int w, int h){
 
     xOffset = width*0.05;
     yOffset = height*0.05;
+    
+    
 }
 
 
 void RawDisplay::drawFftPlot(int w, int h){
-    if(raw_fft.size() <= 1) return;
+    if(fft_display.size() <= 1) return;
     
     
     // Draw border
@@ -212,21 +230,26 @@ void RawDisplay::drawFftWindow(float w, float h){
     
     plot.lineTo(w, 0);
     plot.close();
-    plot.setPolyWindingMode(OF_POLY_WINDING_POSITIVE);
-    ofMesh mesh = plot.getTessellation();
-    std::vector<ofColor_<float>> colors;
-    for(glm::vec<3, float, glm::packed_highp> vtx : mesh.getVertices()){
-        float hue = 128+(abs(vtx.y) / h)*128;
-        float brightness = 50 + (abs(vtx.y) / h)*205;
-        
-        colors.push_back(ofColor::fromHsb(hue, brightness, 200));
-    }
-    mesh.addColors(colors);
-    mesh.draw(OF_MESH_FILL);
     
-    //plot.setFillColor(ofColor(ofColor::white, 100));
-    //plot.draw();
-    //smoothPlot.draw();
+    plot.setPolyWindingMode(OF_POLY_WINDING_ODD);
+    if(gradient && y == y){
+        ofMesh mesh = plot.getTessellation();
+        std::vector<ofColor_<float>> colors;
+        for(glm::vec<3, float, glm::packed_highp> vtx : mesh.getVertices()){
+            float hue = 128+(abs(vtx.y) / h)*128;
+            float brightness = 50 + (abs(vtx.y) / h)*205;
+            
+            colors.push_back(ofColor::fromHsb(hue, brightness, 200));
+        }
+        mesh.addColors(colors);
+        mesh.draw(OF_MESH_FILL);
+    }
+    else{
+        plot.setFilled(false);
+        plot.setStrokeWidth(1);
+        plot.setStrokeColor(ofColor::white);
+        plot.draw();
+    }
     
     ofPopMatrix();
 }
@@ -279,6 +302,40 @@ void RawDisplay::drawGridLines(float w, float h){
     }
 }
 
+void RawDisplay::drawSpectrogram(int w, int h){
+//    if(spectTimer >= 30){
+        spectTimer = 0;
+    
+        // update image
+        spectImg2.setFromPixels(spectImg.getPixels());
+        
+        
+        // push old data left
+        for(int x=1; x<spectImg.getWidth(); x++){
+            for(int y=0; y<spectImg.getHeight(); y++){
+                ofColor oldColor = spectImg2.getColor(x-1, y);
+                spectImg.setColor(x, y, oldColor);
+            }
+        }
+        
+        //add new data at end
+        for(int y=0; y<spectImg.getHeight(); y++){
+            float val = (0.5-avg)+raw_fft[y];
+            
+            float h = val*255;
+            float s = 200-(val*155);
+            float b = val*255;
+            ofColor color = ofColor::fromHsb(h, s, b);
+            spectImg.setColor(0, spectImg.getHeight()-(y+1), color);
+        }
+        
+        spectImg.update();
 
+    
+    spectImg.draw(0, 0, 0, w, h);
+
+    //ofColor color = ofColor::fromHsb(raw_fft[y]*255, raw_fft[y]*255, raw_fft[y]*255);
+    //draw image
+}
 
 

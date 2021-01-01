@@ -43,7 +43,7 @@ void DisplayController::setup(Analysis* a, int w, int h, ofxGuiGroup* all){
         
         modes[i]->setDimensions(10, 10); // STUB
         
-        ofxGuiGroup* modeGroup = modeControlGroup->addGroup("Parameters");
+        ofxGuiGroup* modeGroup = modeControlGroup->addGroup("p."+std::to_string(i));
         modeGroup->setShowHeader(false);
         modes[i]->buildGui(modeGroup);
         if(i != 0) modeGroup->minimize();

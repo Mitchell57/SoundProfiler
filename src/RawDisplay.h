@@ -32,8 +32,13 @@ protected:
     void drawFftWindow(float w, float h);
     void drawGridLines(float w, float h);
     
+    void drawSpectrogram(int w, int h);
+    ofImage spectImg, spectImg2;
+    int spectTimer;
+    
     // local audio data
     std::vector<float> raw_fft;
+    std::vector<float> smooth_fft;
     std::vector<float> fft_display;
     std::vector<float> fft_display_freqs;
     
@@ -48,7 +53,7 @@ protected:
     ofParameter<void> reset;
     ofParameter<float> numLines;
     
-    ofParameter<bool> test;
+    ofParameter<bool> gradient;
     
     // gui listeners
     void resetParameters();
@@ -64,6 +69,8 @@ protected:
     float numLabels;
     bool lineB;
     bool labelB;
+    
+    float avg;
     
     
     float halfW;
